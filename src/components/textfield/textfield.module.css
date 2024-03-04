@@ -1,0 +1,14 @@
+.inputField {
+    width: 100%;
+    font-size: 1rem;
+    padding: 8px;
+    background-color: rgb(254, 254, 254);
+    border: 1px solid rgb(203, 213, 224);
+    box-shadow: rgba(10, 10, 10, 0.1) 0px 1px 2px 0px inset;
+    outline: none;
+    box-sizing: border-box; /* Include padding and borders in the width */
+}
+
+.inputField:focus {
+    border-color: black;
+}

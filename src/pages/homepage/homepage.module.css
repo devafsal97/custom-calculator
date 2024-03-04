@@ -1,0 +1,95 @@
+.container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 30px;
+}
+.leftContainer {
+    border-right: 2px solid #f2f2f2;
+    width: 50%;
+    padding: 20px;
+}
+.titleContainer {
+    margin: 0px 0px 16px;
+    padding: 0px 1px 0px 0px;
+    position: relative;
+    font-family: "Avenir Next LT Pro Bold", "Lato", "Helvetica Neue", Arial;
+}
+.descriptionContainer {
+    margin: 0px 0px 16px;
+    padding: 0px 1px 0px 0px;
+    position: relative;
+}
+.instructionContainer{
+    font-family: "Avenir Next LT Pro Bold", "Lato", "Helvetica Neue", Arial;
+    padding: 0px 1px 0px 0px;
+    position: relative;
+}
+.instructionButton {
+    background: none;
+    padding: 0px;
+    border: 0px;
+    font-style: normal;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.rightContainer {
+    width: 50%;
+}
+.leftContainerContent {
+    padding: 0px 100px 0px 20px;
+}
+.labelContainer {
+    margin-bottom: 0.25rem;
+}
+.inputLabe{
+    line-height: 1.25;
+}
+.accountValueInput {
+    width: 100%;
+    font-size: 1rem;
+    padding: 8px;
+    background-color: rgb(254, 254, 254);
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(203, 213, 224);
+    box-shadow: rgba(10, 10, 10, 0.1) 0px 1px 2px 0px inset;
+}
+.buttonSection {
+    margin: 32px 0px 16px;
+    padding: 0px 1px 0px 0px;
+    position: relative;
+    width: 100%;
+}
+.btnContainer {
+    display: flex;
+    justify-content: flex-end;
+}
+.nextBtn {
+    background-color: rgb(0, 74, 100);
+    color: rgb(255, 255, 255);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 700;
+    border: solid;
+    text-align: center;
+    width: auto;
+    padding:12px;
+    cursor: pointer;
+    transition: background-color 0.25s ease-out 0s, color 0.25s ease-out 0s;
+    margin: 0rem !important;
+    border-radius: 5px;
+    font-family: "system-ui";
+    height: 46px;
+}
+.description {
+    line-height: 1.5;
+    margin: 0px 0px 0.5rem;
+}
+.title {
+  margin: 0px;
+}

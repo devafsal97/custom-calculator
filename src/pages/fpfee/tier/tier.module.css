@@ -1,0 +1,16 @@
+.tierValueContainer {
+    display: flex;
+    width: 100%;
+    gap:1rem;
+    justify-content: space-between;
+}
+.tier {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+.fee {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
