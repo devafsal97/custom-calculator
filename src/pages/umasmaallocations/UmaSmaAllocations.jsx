@@ -3,6 +3,7 @@ import TabComponent from "../../components/tab/Tab";
 import Styles from "./umasma.module.css";
 import { useAppContext } from "../../context/AppContext";
 import TextField from "../../components/textfield/TextField";
+import { useNavigate } from "react-router-dom";
 
 const UmaSmaAllocations = () => {
   const {
@@ -11,13 +12,14 @@ const UmaSmaAllocations = () => {
     selectedEquitySMAItems,
     setSelectedEquitySMAItems,
   } = useAppContext();
+  const navigate = useNavigate();
 
   const umasmaAllocationArray = selectedMFEFTItems.concat(
     selectedEquitySMAItems
   );
 
   const onClickHandler = () => {
-    console.log("clicked");
+    navigate("/additionalpage");
   };
   return (
     <div className={Styles.wrapper}>

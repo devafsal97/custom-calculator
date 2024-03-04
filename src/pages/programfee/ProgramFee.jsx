@@ -70,11 +70,16 @@ const ProgramFee = () => {
             <div className={Styles.fpFeeRadioTitleContainer}>
               <div className={Styles.fpFeeTitleAndDescription}>
                 <h1 className={Styles.title}>Program Fee</h1>
-                <p>
+                <p style={{ margin: "0px" }}>
                   The WealthPort Program Fee covers operating and administrative
                   costs associated with WealthPort, including clearing, custody,
                   trading and some common ancillary fees.
                 </p>
+                <div className={Styles.flContainer}>
+                  <button className={Styles.featureListButton}>
+                    Full List of Features
+                  </button>
+                </div>
               </div>
               <div className={Styles.radioContainer}>
                 <Radio

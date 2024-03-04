@@ -40,7 +40,10 @@ const Strategist = () => {
             </p>
           </div>
           <div>
-            <Umasma />
+            {fpFee === "Team-directed" && <TeamDirected></TeamDirected>}
+            {fpFee === "CAAP" && <StrategistCaap></StrategistCaap>}
+            {fpFee === "CAAP Small Account Solutions" && <CaapSas></CaapSas>}
+            {fpFee === "UMA/SMA" && <Umasma></Umasma>}
           </div>
         </div>
         {fpFee !== "UMA/SMA" && (

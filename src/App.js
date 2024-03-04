@@ -7,6 +7,8 @@ import ProgramFee from './pages/programfee/ProgramFee';
 import { AppProvider } from './context/AppContext';
 import Strategist from './pages/strategist/StrategistFee';
 import UmaSmaAllocations from './pages/umasmaallocations/UmaSmaAllocations';
+import AdditionalPage from './pages/additionalpage/AdditionalPage';
+import ResultPage from './pages/resultpage/ResultPage';
 
 
 
@@ -21,6 +23,8 @@ function App() {
             <Route path='/programfee' Component={ProgramFee} />
             <Route path='/strategistfee' Component={Strategist}/>
             <Route path='/umasma' Component={UmaSmaAllocations}/>
+            <Route path='/additionalpage' Component={AdditionalPage}/>
+            <Route path='/resultpage' Component={ResultPage}/>
     </Routes>
     </BrowserRouter>
     </AppProvider>
