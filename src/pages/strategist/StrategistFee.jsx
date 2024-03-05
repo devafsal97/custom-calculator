@@ -6,14 +6,16 @@ import StrategistCaap from "./strategistcaap/StrategistCaap";
 import CaapSas from "./caapsas/CaapSas";
 import Umasma from "./umasma/Umasma";
 import { useAppContext } from "../../context/AppContext";
-import { useNavigate } from "react-router-dom";
 
-const Strategist = () => {
+const Strategist = ({ onNavigate }) => {
   const { fpFee, setFpFee } = useAppContext();
-  const navigate = useNavigate();
+
+  const onBackClickHandler = () => {
+    onNavigate("ProgramFee");
+  };
 
   const onClickHandler = () => {
-    navigate("/umasma");
+    onNavigate("UmaSma");
   };
   return (
     <div className={Styles.wrapper}>
@@ -25,10 +27,21 @@ const Strategist = () => {
         >
           <div className={Styles.navigator}>
             <div>
-              <Button text="Back"></Button>
+              <Button
+                text="Back"
+                onClick={onBackClickHandler}
+                background="grey"
+              ></Button>
             </div>
             <div>
-              <Button text="Reset"></Button>
+              <Button
+                onClick={onClickHandler}
+                text="Next"
+                background="grey"
+              ></Button>
+            </div>
+            <div>
+              <Button text="Reset" background="grey"></Button>
             </div>
           </div>
           <div className={Styles.sfTitleAndDescription}>

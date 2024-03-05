@@ -54,7 +54,7 @@ const Breakpoint = () => {
       {breakPoints.map((breakpoint, index) => (
         <div key={index} className={Styles.breakpointValueContainer}>
           <div className={Styles.breakpoint}>
-            <label>
+            <label className={Styles.label}>
               {index === 0 ? "First Breakpoint" : "Next Breakpoint"}
             </label>
             <TextField
@@ -65,7 +65,7 @@ const Breakpoint = () => {
             />
           </div>
           <div className={Styles.fee}>
-            <label>% Fee</label>
+            <label className={Styles.label}>% Fee</label>
             <TextField
               value={breakpoint.fee}
               onChange={(e) =>

@@ -3,23 +3,23 @@ import Styles from "./homepage.module.css";
 import TextField from "../../components/textfield/TextField";
 import Button from "../../components/button/Button";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../context/AppContext";
 
-const HomePage = () => {
-  const [value, setValue] = useState("");
-  const navigate = useNavigate();
+const HomePage = ({ onNavigate }) => {
+  const { accountValue, setAccountValue } = useAppContext(); // Use context here
+
   const handleChange = (event) => {
     let numericValue = event.target.value.replace(/[^0-9]/g, "");
     if (numericValue) {
       const formattedValue = numberWithCommas(numericValue);
-      setValue("$ " + formattedValue);
+      setAccountValue("$ " + formattedValue); // Update using context
     } else {
-      setValue("");
+      setAccountValue(""); // Update using context
     }
   };
 
   const onClickHandler = () => {
-    navigate("/fpfee");
+    onNavigate("FpFee");
   };
 
   const numberWithCommas = (x) => {
@@ -55,7 +55,7 @@ const HomePage = () => {
               <TextField
                 type="text"
                 onChange={handleChange}
-                value={value}
+                value={accountValue}
               ></TextField>
             </div>
           </div>

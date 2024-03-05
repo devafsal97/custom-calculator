@@ -54,14 +54,16 @@ const Tier = () => {
       {tiers.map((tier, index) => (
         <div key={index} className={Styles.tierValueContainer}>
           <div className={Styles.tier}>
-            <label>{index === 0 ? "First Tier" : "Next Tier"}</label>
+            <label className={Styles.label}>
+              {index === 0 ? "First Tier" : "Next Tier"}
+            </label>
             <TextField
               value={tier.tier}
               onChange={(e) => handleInputChange(index, "tier", e.target.value)}
             />
           </div>
           <div className={Styles.fee}>
-            <label>% Fee</label>
+            <label className={Styles.label}>% Fee</label>
             <TextField
               value={tier.fee}
               onChange={(e) =>

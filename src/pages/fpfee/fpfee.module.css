@@ -43,6 +43,7 @@
 }
 .navigator {
     display: flex;
+    gap: 1px;
 }
 .nextBtnContainer {
     width: 100%;

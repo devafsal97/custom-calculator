@@ -30,18 +30,23 @@
 }
 .statusContainer {
     display: flex;
+    margin-bottom: 16px;
 }
 .statusText {
     margin: 0px;
+    font-size: 13px;
 }
 .statusValue {
     margin: 0px;
+    padding-left: 6px;
 }
 .allocationDataContainer {
     display: flex;
     align-items: center;
     gap:10px;
     width: 100%;
+    margin-bottom: 16px;
+    align-items: flex-start;
 }
 .alocationLabel {
     margin: 0px;
@@ -49,7 +54,7 @@
 }
 .alocationValue {
     margin: 0px;
-    color: red;
+    color: #D91F11;
     font-weight: 600;
 }
 .allocTextContainer {
@@ -57,4 +62,9 @@
 }
 .allocValueContainer {
     width: 50%;
+}
+.allocLabel {
+    font-size: 13px;
+    margin: 0px;
+    margin-bottom: 0.25rem;
 }

@@ -9,20 +9,35 @@ import Paper from "@mui/material/Paper";
 
 function BasicTable({ data, columns }) {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer
+      component={Paper}
+      elevation={0}
+      sx={{
+        boxShadow: "none", // Remove box shadow
+        border: "1px solid rgba(224, 224, 224, 1)", // Restore table border
+        borderRadius: "10px",
+      }}
+    >
       <Table sx={{ minWidth: 650 }} aria-label="basic table">
-        <TableHead>
-          <TableRow>
-            {columns.map((column) => (
-              <TableCell key={column}>{column}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
+        <TableRow>
+          {columns.map((column) => (
+            <TableCell
+              key={column}
+              sx={{ textAlign: "left", padding: "8px", fontSize: "14px" }}
+            >
+              {column}
+            </TableCell>
+          ))}
+        </TableRow>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow key={index} sx={{ height: "36px" }}>
+            <TableRow key={index}>
               {Object.values(row).map((value, index) => (
-                <TableCell sx={{ textAlign: "left" }} key={index} align="right">
+                <TableCell
+                  sx={{ textAlign: "left", padding: "8px", fontSize: "16px" }}
+                  key={index}
+                  align="right"
+                >
                   {value}
                 </TableCell>
               ))}

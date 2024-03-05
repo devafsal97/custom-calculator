@@ -9,24 +9,26 @@ import Strategist from './pages/strategist/StrategistFee';
 import UmaSmaAllocations from './pages/umasmaallocations/UmaSmaAllocations';
 import AdditionalPage from './pages/additionalpage/AdditionalPage';
 import ResultPage from './pages/resultpage/ResultPage';
+import { useState } from 'react';
+import "./global.css"
 
 
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('HomePage');
+  const navigate = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <div className={Styles.appContainer}>
     <AppProvider>
-    <BrowserRouter>
-    <Routes>
-            <Route path='/' Component={HomePage} />
-            <Route path='/fpfee' Component={Fpfee} />
-            <Route path='/programfee' Component={ProgramFee} />
-            <Route path='/strategistfee' Component={Strategist}/>
-            <Route path='/umasma' Component={UmaSmaAllocations}/>
-            <Route path='/additionalpage' Component={AdditionalPage}/>
-            <Route path='/resultpage' Component={ResultPage}/>
-    </Routes>
-    </BrowserRouter>
+    {currentPage === 'HomePage' && <HomePage onNavigate={navigate} />}
+    {currentPage === 'FpFee' && <Fpfee onNavigate={navigate} />}
+    {currentPage === 'ProgramFee' && <ProgramFee onNavigate={navigate} />}
+    {currentPage === 'StrategistFee' && <Strategist onNavigate={navigate} />}
+    {currentPage === 'UmaSma' && <UmaSmaAllocations onNavigate={navigate} />}
+    {currentPage === 'AdditionalPage' && <AdditionalPage onNavigate={navigate} />}
+    {currentPage === 'ResultPage' && <ResultPage onNavigate={navigate} />}
     </AppProvider>
     </div>
   );

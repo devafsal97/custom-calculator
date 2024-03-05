@@ -3,6 +3,7 @@
     width: 100%;
     gap:1rem;
     justify-content: space-between;
+    margin-bottom: 16px;
 }
 .breakpoint {
     width: 50%;
@@ -13,4 +14,8 @@
     width: 50%;
     display: flex;
     flex-direction: column;
+}
+.label {
+    font-size: 13px;
+    margin-bottom: 0.25rem;
 }

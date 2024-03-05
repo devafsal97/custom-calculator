@@ -5,21 +5,24 @@ import { useAppContext } from "../../context/AppContext";
 import TextField from "../../components/textfield/TextField";
 import { useNavigate } from "react-router-dom";
 
-const UmaSmaAllocations = () => {
+const UmaSmaAllocations = ({ onNavigate }) => {
   const {
     selectedMFEFTItems,
     setSelectedMFEFTItems,
     selectedEquitySMAItems,
     setSelectedEquitySMAItems,
   } = useAppContext();
-  const navigate = useNavigate();
 
   const umasmaAllocationArray = selectedMFEFTItems.concat(
     selectedEquitySMAItems
   );
 
   const onClickHandler = () => {
-    navigate("/additionalpage");
+    onNavigate("AdditionalPage");
+  };
+
+  const onBackClickHandler = () => {
+    onNavigate("StrategistFee");
   };
   return (
     <div className={Styles.wrapper}>
@@ -27,10 +30,21 @@ const UmaSmaAllocations = () => {
         <div className={Styles.leftContainer}>
           <div className={Styles.navigator}>
             <div>
-              <Button text="Back"></Button>
+              <Button
+                text="Back"
+                onClick={onBackClickHandler}
+                background="grey"
+              ></Button>
             </div>
             <div>
-              <Button text="Reset"></Button>
+              <Button
+                onClick={onClickHandler}
+                text="Next"
+                background="grey"
+              ></Button>
+            </div>
+            <div>
+              <Button text="Reset" background="grey"></Button>
             </div>
           </div>
           <div className={Styles.fpFeeTitleAndHint}>
@@ -46,11 +60,11 @@ const UmaSmaAllocations = () => {
                 return (
                   <div className={Styles.allocationDataContainer}>
                     <div className={Styles.allocTextContainer}>
-                      <label>{item}</label>
+                      <p className={Styles.allocLabel}>{item}</p>
                       <TextField></TextField>
                     </div>
                     <div className={Styles.allocValueContainer}>
-                      <p className={Styles.alocationLabel}>Value in $</p>
+                      <p className={Styles.allocLabel}>Value in $</p>
                       <p className={Styles.alocationValue}>Under Allocated</p>
                     </div>
                   </div>

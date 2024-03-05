@@ -8,7 +8,8 @@ import Tier from "./tier/Tier";
 import Breakpoint from "./breakpoint/Breakpoint";
 import TabComponent from "../../components/tab/Tab";
 import { useNavigate } from "react-router-dom";
-const Fpfee = () => {
+import ToolTip from "../../components/tooltip/ToolTip";
+const Fpfee = ({ onNavigate }) => {
   const radioItems = [
     { label: "Flat", value: "Flat" },
     { label: "Fixed", value: "Fixed" },
@@ -16,14 +17,17 @@ const Fpfee = () => {
     { label: "Breakpoint", value: "Breakpoint" },
   ];
   const [selectedValue, setSelectedValue] = useState("");
-  const navigate = useNavigate();
 
   const handleChange = (value) => {
     setSelectedValue(value);
   };
 
   const onClickHandler = () => {
-    navigate("/programfee");
+    onNavigate("ProgramFee");
+  };
+
+  const onBackClickHandler = () => {
+    onNavigate("HomePage");
   };
 
   return (
@@ -32,17 +36,30 @@ const Fpfee = () => {
         <div className={Styles.leftContainer}>
           <div className={Styles.navigator}>
             <div>
-              <Button text="Back"></Button>
+              <Button
+                text="Back"
+                onClick={onBackClickHandler}
+                background="grey"
+              ></Button>
             </div>
             <div>
-              <Button text="Reset"></Button>
+              <Button
+                text="Next"
+                onClick={onClickHandler}
+                background="grey"
+              ></Button>
+            </div>
+            <div>
+              <Button text="Reset" background="grey"></Button>
             </div>
           </div>
           <div className={Styles.fpfeeSelectorContainer}>
             <div className={Styles.fpFeeRadioTitleContainer}>
               <div className={Styles.fpFeeTitleAndHint}>
                 <h1 className={Styles.title}>Financial Professional Fee</h1>
-                <span className={Styles.hint}>?</span>
+                <ToolTip text="Maximum Financial Professional Fee for Advisor-directed and Team-directed is 2.25%; CAAP and UMA is 2.15%.">
+                  <span className={Styles.hint}>?</span>
+                </ToolTip>
               </div>
               <Radio
                 items={radioItems}

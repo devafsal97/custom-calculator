@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
   const [fpFee, setFpFee] = useState("Advisor-directed");
   const [selectedMFEFTItems, setSelectedMFEFTItems] = useState([]);
   const [selectedEquitySMAItems, setSelectedEquitySMAItems] = useState([]);
+  const [accountValue, setAccountValue] = useState("");
 
   // You can define other functions or state variables here
 
@@ -21,6 +22,8 @@ export const AppProvider = ({ children }) => {
         setSelectedMFEFTItems,
         selectedEquitySMAItems,
         setSelectedEquitySMAItems,
+        accountValue,
+        setAccountValue,
       }}
     >
       {children}

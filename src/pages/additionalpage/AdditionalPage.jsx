@@ -4,8 +4,9 @@ import TabComponent from "../../components/tab/Tab";
 import TextField from "../../components/textfield/TextField";
 import Styles from "./additionalpage.module.css";
 import { useNavigate } from "react-router-dom";
+import ToolTip from "../../components/tooltip/ToolTip";
 
-const AdditionalPage = () => {
+const AdditionalPage = ({ onNavigate }) => {
   const [fundExpenses, setFundExpenses] = useState("");
   const [financialPayout, setFinancialPayout] = useState("");
   const [auaDiscount, setAuaDiscount] = useState("");
@@ -18,8 +19,6 @@ const AdditionalPage = () => {
     setter(inputValue);
   };
 
-  const navigate = useNavigate();
-
   const handleBlur = (setter, value) => () => {
     if (value === "%") {
       setter("");
@@ -30,7 +29,10 @@ const AdditionalPage = () => {
     value.endsWith("%") && value.length > 1 ? value : value.replace("%", "");
 
   const onClickHandler = () => {
-    navigate("/resultpage");
+    onNavigate("ResultPage");
+  };
+  const onBackClickHandler = () => {
+    onNavigate("UmaSma");
   };
 
   return (
@@ -39,10 +41,21 @@ const AdditionalPage = () => {
         <div className={Styles.leftContainer}>
           <div className={Styles.navigator}>
             <div>
-              <Button text="Back"></Button>
+              <Button
+                text="Back"
+                onClick={onBackClickHandler}
+                background="grey"
+              ></Button>
             </div>
             <div>
-              <Button text="Reset"></Button>
+              <Button
+                onClick={onBackClickHandler}
+                text="Next"
+                background="grey"
+              ></Button>
+            </div>
+            <div>
+              <Button text="Reset" background="grey"></Button>
             </div>
           </div>
           <div className={Styles.adTitleAnddecription}>
@@ -57,7 +70,9 @@ const AdditionalPage = () => {
             <div className={Styles.adFundContainer}>
               <div className={Styles.adTitleHintContainer}>
                 <h2 className={Styles.adh2}>Fund Expenses</h2>
-                <span className={Styles.hint}>?</span>
+                <ToolTip text="Underlying management fees charged by fund managers can be added to this calculation to show impact of fund expenses on total client fee.">
+                  <span className={Styles.hint}>?</span>
+                </ToolTip>
               </div>
               <p className={Styles.adp}>Optional</p>
               <TextField
@@ -70,7 +85,9 @@ const AdditionalPage = () => {
             <div className={Styles.adFundContainer}>
               <div className={Styles.adTitleHintContainer}>
                 <h2 className={Styles.adh2}>Financial Professional Payout</h2>
-                <span className={Styles.hint}>?</span>
+                <ToolTip text="This can be entered to estimate your net compensation on the illustrated account.">
+                  <span className={Styles.hint}>?</span>
+                </ToolTip>
               </div>
               <p className={Styles.adp}>Optional</p>
               <TextField
@@ -83,7 +100,9 @@ const AdditionalPage = () => {
             <div className={Styles.adFundContainer}>
               <div className={Styles.adTitleHintContainer}>
                 <h2 className={Styles.adh2}>WealthPort AUA Discount</h2>
-                <span className={Styles.hint}>?</span>
+                <ToolTip text="WealthPort Program Fee discounts may be available to your clients based off the AUM under a Financial Professional code in WealthPort.">
+                  <span className={Styles.hint}>?</span>
+                </ToolTip>
               </div>
               <p className={Styles.adp}>
                 Enter WealthPort AUA Discount Discount (if applicable)

@@ -8,11 +8,10 @@ import CustomSelect from "../../components/select/Select";
 import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
-const ProgramFee = () => {
+const ProgramFee = ({ onNavigate }) => {
   const [selectedValue, setSelectedValue] = useState("Advisor-directed");
   const [feePaidBy, setFeePaidBy] = useState("");
   const { fpFee, setFpFee } = useAppContext();
-  const navigate = useNavigate();
 
   const onSelectHandler = (event) => {
     console.log("value", event.target.value);
@@ -51,7 +50,11 @@ const ProgramFee = () => {
   };
 
   const onClickHandler = () => {
-    navigate("/strategistfee");
+    onNavigate("StrategistFee");
+  };
+
+  const onBackClickHandler = () => {
+    onNavigate("FpFee");
   };
 
   return (
@@ -60,10 +63,21 @@ const ProgramFee = () => {
         <div className={Styles.leftContainer}>
           <div className={Styles.navigator}>
             <div>
-              <Button text="Back"></Button>
+              <Button
+                text="Back"
+                onClick={onBackClickHandler}
+                background="grey"
+              ></Button>
             </div>
             <div>
-              <Button text="Reset"></Button>
+              <Button
+                onClick={onClickHandler}
+                text="Next"
+                background="grey"
+              ></Button>
+            </div>
+            <div>
+              <Button text="Reset" background="grey"></Button>
             </div>
           </div>
           <div className={Styles.fpfeeSelectorContainer}>

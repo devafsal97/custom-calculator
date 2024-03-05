@@ -15,7 +15,6 @@
     margin: 0px 0px 16px;
     padding: 0px 1px 0px 0px;
     position: relative;
-    font-family: "Avenir Next LT Pro Bold", "Lato", "Helvetica Neue", Arial;
 }
 .descriptionContainer {
     margin: 0px 0px 16px;
@@ -23,7 +22,6 @@
     position: relative;
 }
 .instructionContainer{
-    font-family: "Avenir Next LT Pro Bold", "Lato", "Helvetica Neue", Arial;
     padding: 0px 1px 0px 0px;
     position: relative;
 }
