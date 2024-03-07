@@ -50,7 +50,7 @@ const StepIndicatorComponent = () => {
         <div key={`step-${index}`} style={stepStyle(index)} />
       ))}
     </Box>
-  );
+  ); 
 };
 
 export default StepIndicatorComponent;

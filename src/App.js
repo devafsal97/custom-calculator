@@ -17,7 +17,7 @@ function App() {
     <div className={Styles.appContainer}>
       <AppProvider>
         <BrowserRouter>
-          <StepIndicatorComponent />
+          <StepIndicatorComponent />  
           <Routes>
             <Route path="/" Component={HomePage} />
             <Route path="/fpfee" Component={Fpfee} />
