@@ -5,7 +5,7 @@ const AppContext = createContext();
 
 // Create a provider component
 export const AppProvider = ({ children }) => {
-  // Define your state variables here
+  const [currentStep, setCurrentStep] = useState(0);
   const [fpFee, setFpFee] = useState("Advisor-directed");
   const [selectedMFEFTItems, setSelectedMFEFTItems] = useState([]);
   const [selectedEquitySMAItems, setSelectedEquitySMAItems] = useState([]);
@@ -21,6 +21,8 @@ export const AppProvider = ({ children }) => {
         setSelectedMFEFTItems,
         selectedEquitySMAItems,
         setSelectedEquitySMAItems,
+        currentStep,
+        setCurrentStep,
       }}
     >
       {children}
