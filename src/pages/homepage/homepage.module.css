@@ -46,6 +46,8 @@
 }
 .inputLabe{
     line-height: 1.25;
+    margin: 0px;
+    margin-bottom: 0.25rem;
 }
 .accountValueInput {
     width: 100%;
@@ -90,4 +92,12 @@
 }
 .title {
   margin: 0px;
+}
+.errorlabel {
+    color: #cc4b37;
+}
+.errorMessage {
+    margin: 0px;
+    color: #cc4b37;
+    font-size: 12px;
 }

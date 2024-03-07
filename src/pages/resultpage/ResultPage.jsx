@@ -2,7 +2,10 @@ import Styles from "./resultpage.module.css";
 import Button from "../../components/button/Button";
 import TabComponent from "../../components/tab/Tab";
 
-const ResultPage = () => {
+const ResultPage = ({ onNavigate }) => {
+  const onBackClickHandler = () => {
+    onNavigate("AdditionalPage");
+  };
   return (
     <div className={Styles.wrapper}>
       <div className={Styles.Container}>
@@ -14,7 +17,10 @@ const ResultPage = () => {
               information entered
             </p>
             <div className={Styles.flContainer}>
-              <button className={Styles.featureListButton}>
+              <button
+                className={Styles.featureListButton}
+                onClick={onBackClickHandler}
+              >
                 Go Back and Make Adjustments
               </button>
             </div>

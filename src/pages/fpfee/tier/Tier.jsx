@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import TextField from "../../../components/textfield/TextField"; // Assuming this is a custom component
 import Styles from "./tier.module.css";
-
-const Tier = () => {
-  const [tiers, setTiers] = useState([{ tier: "", fee: "" }]);
+import { useAppContext } from "../../../context/AppContext";
+const Tier = ({ handleCalculation }) => {
+  const { tiers, setTiers } = useAppContext();
 
   const handleInputChange = (index, type, value) => {
     let numericValue = value.replace(/[^0-9]/g, "");
@@ -41,6 +41,9 @@ const Tier = () => {
       tiers.length < 9
     ) {
       setTiers([...newTiers, { tier: "", fee: "" }]);
+    }
+    if (type === "fee") {
+      handleCalculation();
     }
   };
 

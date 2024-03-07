@@ -27,6 +27,7 @@
 }
 .navigator {
     display: flex;
+    gap: 1px;
 }
 .adTitleAnddecription {
     margin-bottom: 40px;

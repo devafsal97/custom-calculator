@@ -1,28 +1,30 @@
 import React, { useState } from "react";
 import TextField from "../../../components/textfield/TextField";
+import { useAppContext } from "../../../context/AppContext";
 
 const TeamDirected = () => {
-  const [value, setValue] = useState("");
-
+  const { teamDirectedValue, setTeamDirectedValue } = useAppContext();
   const handleChange = (event) => {
     // Extract numbers from input and remove any non-numeric characters except the final '%'
     let inputValue = event.target.value.replace(/[^\d]/g, "");
     if (inputValue) {
       inputValue += "%"; // Append '%' if there's any number
     }
-    setValue(inputValue);
+    setTeamDirectedValue(inputValue);
   };
 
   const handleBlur = () => {
     // Ensure '%' is removed if the input is empty on blur
-    if (value === "%") {
-      setValue("");
+    if (teamDirectedValue === "%") {
+      setTeamDirectedValue("");
     }
   };
 
   // A method to simulate the intended behavior without directly manipulating the DOM
   const displayValue =
-    value.endsWith("%") && value.length > 1 ? value : value.replace("%", "");
+    teamDirectedValue.endsWith("%") && teamDirectedValue.length > 1
+      ? teamDirectedValue
+      : teamDirectedValue.replace("%", "");
 
   return (
     <div>

@@ -12,3 +12,7 @@
 .inputField:focus {
     border-color: black;
 }
+
+.error {
+    border-color: #cc4b37;
+}

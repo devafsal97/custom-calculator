@@ -11,7 +11,7 @@ import AdditionalPage from './pages/additionalpage/AdditionalPage';
 import ResultPage from './pages/resultpage/ResultPage';
 import { useState } from 'react';
 import "./global.css"
-
+import StepIndicator from './components/stepindicator/StepIndicator';
 
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
   };
   return (
     <div className={Styles.appContainer}>
+    <StepIndicator currentStep={currentPage}></StepIndicator>
     <AppProvider>
     {currentPage === 'HomePage' && <HomePage onNavigate={navigate} />}
     {currentPage === 'FpFee' && <Fpfee onNavigate={navigate} />}

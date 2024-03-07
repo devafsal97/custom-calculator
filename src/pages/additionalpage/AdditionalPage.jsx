@@ -5,11 +5,14 @@ import TextField from "../../components/textfield/TextField";
 import Styles from "./additionalpage.module.css";
 import { useNavigate } from "react-router-dom";
 import ToolTip from "../../components/tooltip/ToolTip";
+import { useAppContext } from "../../context/AppContext";
 
 const AdditionalPage = ({ onNavigate }) => {
   const [fundExpenses, setFundExpenses] = useState("");
   const [financialPayout, setFinancialPayout] = useState("");
   const [auaDiscount, setAuaDiscount] = useState("");
+  const { financialProfessionalFeeType } = useAppContext();
+  const { fpFee, setFpFee } = useAppContext();
 
   const handleChange = (setter) => (event) => {
     let inputValue = event.target.value.replace(/[^\d]/g, "");
@@ -32,7 +35,11 @@ const AdditionalPage = ({ onNavigate }) => {
     onNavigate("ResultPage");
   };
   const onBackClickHandler = () => {
-    onNavigate("UmaSma");
+    if (fpFee === "UMA/SMA") {
+      onNavigate("UmaSma");
+    } else {
+      onNavigate("StrategistFee");
+    }
   };
 
   return (
@@ -49,7 +56,7 @@ const AdditionalPage = ({ onNavigate }) => {
             </div>
             <div>
               <Button
-                onClick={onBackClickHandler}
+                onClick={onClickHandler}
                 text="Next"
                 background="grey"
               ></Button>
@@ -97,6 +104,26 @@ const AdditionalPage = ({ onNavigate }) => {
                 value={displayValue(financialPayout)}
               />
             </div>
+            {(financialProfessionalFeeType === "Tier" ||
+              financialProfessionalFeeType === "Breakpoint") && (
+              <div className={Styles.adFundContainer}>
+                <div className={Styles.adTitleHintContainer}>
+                  <h2 className={Styles.adh2}>
+                    Total WealthPort Household Value
+                  </h2>
+                  <ToolTip text="Entering a household will allow you to illustrate the value of aggregating multiple accounts for fee calculations.">
+                    <span className={Styles.hint}>?</span>
+                  </ToolTip>
+                </div>
+                <p className={Styles.adp}>Optional</p>
+                <TextField
+                  type="text"
+                  onChange={handleChange(setAuaDiscount)}
+                  onBlur={handleBlur(setAuaDiscount, auaDiscount)}
+                  value={displayValue(auaDiscount)}
+                />
+              </div>
+            )}
             <div className={Styles.adFundContainer}>
               <div className={Styles.adTitleHintContainer}>
                 <h2 className={Styles.adh2}>WealthPort AUA Discount</h2>

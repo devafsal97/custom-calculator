@@ -1,6 +1,6 @@
 import TextField from "../../../components/textfield/TextField";
 
-const Flat = () => {
+const Flat = ({ onFlatValueChange, flatValue, flatValueBlur }) => {
   return (
     <div>
       <h2>Enter Flat Fee (%)</h2>
@@ -12,7 +12,12 @@ const Flat = () => {
         A flat annual percentage fee based on the total account value; billed
         monthly or quarterly.
       </p>
-      <TextField type="text"></TextField>
+      <TextField
+        type="text"
+        value={flatValue}
+        onChange={onFlatValueChange}
+        onBlur={flatValueBlur}
+      ></TextField>
     </div>
   );
 };

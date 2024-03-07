@@ -1,10 +1,12 @@
 import { useState } from "react";
 import CustomSelect from "../../../components/select/Select";
+import { useAppContext } from "../../../context/AppContext";
+
 const StrategistCaap = () => {
-  const [selectValue, setSelectValue] = useState("");
+  const { strategistCaap, setStrategistCaap } = useAppContext();
 
   const onChange = (event) => {
-    setSelectValue(event.target.value);
+    setStrategistCaap(event.target.value);
   };
   const optionsArray = [
     { label: "3Edge Asset Management", value: "3Edge Asset Management" },
@@ -86,7 +88,10 @@ const StrategistCaap = () => {
       label: "Principal Global Investors - Public Growth / Public Income",
       value: "Principal Global Investors - Public Growth / Public Income",
     },
-    { label: "RBA", value: "RBA" },
+    {
+      label: "Richard Bernstein Advisors",
+      value: "Richard Bernstein Advisors",
+    },
     {
       label: "Russell Investments - Risk Assist",
       value: "Russell Investments - Risk Assist",
@@ -130,7 +135,7 @@ const StrategistCaap = () => {
       <CustomSelect
         options={optionsArray}
         onChange={onChange}
-        value={selectValue}
+        value={strategistCaap}
       ></CustomSelect>
     </div>
   );

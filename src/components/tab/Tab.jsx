@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Styles from "./tab.module.css";
 import BasicTable from "../table/table";
+import { useAppContext } from "../../context/AppContext";
 
 function TabComponent() {
   // State variable to store the selected tab
@@ -10,36 +11,7 @@ function TabComponent() {
   const handleTabClick = (tabNumber) => {
     setSelectedTab(tabNumber);
   };
-
-  const columns = ["", "%", "$"];
-
-  const rows = [
-    {
-      name: "Financial Professional Fee",
-      fee: "N/A",
-      ammount: "N/A",
-    },
-    {
-      name: "Program Fee",
-      fee: "0.99%",
-      ammount: "$987",
-    },
-    {
-      name: "Strategist Fee (if applicable)",
-      fee: "N/A",
-      ammount: "N/A",
-    },
-    {
-      name: "Total Account Fee (annualized)",
-      fee: "N/A",
-      ammount: "N/A",
-    },
-    {
-      name: "Total Client Fees (including Fund Expenses)",
-      fee: "N/A",
-      ammount: "N/A",
-    },
-  ];
+  const { rows, columns } = useAppContext();
 
   return (
     <div>

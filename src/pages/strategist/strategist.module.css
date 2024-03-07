@@ -16,6 +16,7 @@
 }
 .navigator {
     display: flex;
+    gap: 1px;
 }
 .title {
     margin: 0px;

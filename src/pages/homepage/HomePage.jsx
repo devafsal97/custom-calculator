@@ -7,18 +7,25 @@ import { useAppContext } from "../../context/AppContext";
 
 const HomePage = ({ onNavigate }) => {
   const { accountValue, setAccountValue } = useAppContext(); // Use context here
+  const [inputError, setInputError] = useState(false);
 
   const handleChange = (event) => {
     let numericValue = event.target.value.replace(/[^0-9]/g, "");
     if (numericValue) {
       const formattedValue = numberWithCommas(numericValue);
       setAccountValue("$ " + formattedValue); // Update using context
+      setInputError(false);
     } else {
       setAccountValue(""); // Update using context
     }
+    // Reset validation state when user starts typing
   };
 
   const onClickHandler = () => {
+    if (!accountValue) {
+      setInputError(true); // Set error state if accountValue is empty
+      return; // Prevent navigation
+    }
     onNavigate("FpFee");
   };
 
@@ -49,14 +56,26 @@ const HomePage = ({ onNavigate }) => {
         <div className={Styles.rightContainer}>
           <div className={Styles.leftContainerContent}>
             <div className={Styles.labelContainer}>
-              <h3 className={Styles.inputLabe}>Enter Account Value*</h3>
+              <h3
+                className={`${Styles.inputLabe} ${
+                  inputError ? Styles.errorlabel : ""
+                }`}
+              >
+                Enter Account Value*
+              </h3>
             </div>
             <div>
               <TextField
                 type="text"
                 onChange={handleChange}
                 value={accountValue}
+                error={inputError}
               ></TextField>
+              {inputError && (
+                <p className={Styles.errorMessage}>
+                  Please enter a number greater than 1
+                </p>
+              )}
             </div>
           </div>
         </div>

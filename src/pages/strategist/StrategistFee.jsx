@@ -6,16 +6,88 @@ import StrategistCaap from "./strategistcaap/StrategistCaap";
 import CaapSas from "./caapsas/CaapSas";
 import Umasma from "./umasma/Umasma";
 import { useAppContext } from "../../context/AppContext";
-
+import { useEffect } from "react";
+import {
+  StrategistCaapSassConst,
+  StrategistCaapConst,
+} from "../../constants/Constants";
 const Strategist = ({ onNavigate }) => {
-  const { fpFee, setFpFee } = useAppContext();
+  const {
+    fpFee,
+    setFpFee,
+    rows,
+    setRows,
+    teamDirectedValue,
+    accountValue,
+    strategistCaapSas,
+    strategistCaap,
+  } = useAppContext();
+
+  useEffect(() => {
+    const updatedRows = rows.map((row) => {
+      if (row.name === "Strategist Fee (if applicable)") {
+        let percentageValue = 0;
+        let calculatedValue = 0;
+
+        if (fpFee === "Advisor-directed") {
+          return { ...row, percentage: "N/A", value: "N/A" };
+        } else if (fpFee === "Team-directed") {
+          percentageValue =
+            parseFloat(teamDirectedValue.replace("%", "")) / 100;
+        } else if (fpFee === "CAAP Small Account Solutions") {
+          percentageValue = StrategistCaapSassConst[strategistCaapSas] / 100;
+        } else if (fpFee === "CAAP") {
+          percentageValue = StrategistCaapConst[strategistCaap] / 100;
+        }
+
+        if (
+          fpFee === "Team-directed" ||
+          fpFee === "CAAP Small Account Solutions" ||
+          fpFee === "CAAP"
+        ) {
+          const numericAccountValue = parseFloat(
+            accountValue.replace(/[^0-9.-]+/g, "")
+          );
+          calculatedValue = numericAccountValue * percentageValue;
+
+          let percentageDisplay =
+            fpFee === "Team-directed"
+              ? teamDirectedValue + "%"
+              : fpFee === "CAAP"
+              ? StrategistCaapConst[strategistCaap] + "%"
+              : StrategistCaapConst[strategistCaapSas] + "%";
+
+          return {
+            ...row,
+            percentage: percentageDisplay,
+            value: `$${calculatedValue.toFixed(2)}`,
+          };
+        }
+
+        return row;
+      }
+      return row;
+    });
+
+    setRows(updatedRows);
+  }, [
+    fpFee,
+    teamDirectedValue,
+    accountValue,
+    strategistCaapSas,
+    strategistCaap,
+  ]);
 
   const onBackClickHandler = () => {
     onNavigate("ProgramFee");
   };
 
   const onClickHandler = () => {
-    onNavigate("UmaSma");
+    if (fpFee === "UMA/SMA") {
+      onNavigate("UmaSma");
+    } else {
+      onNavigate("AdditionalPage");
+    }
   };
   return (
     <div className={Styles.wrapper}>

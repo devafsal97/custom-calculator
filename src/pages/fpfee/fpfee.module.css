@@ -59,3 +59,7 @@
     margin: 0px;
     margin-bottom: 10px;
 }
+.errorMessage {
+    color: #cc4b37;
+    font-weight: 600;
+}

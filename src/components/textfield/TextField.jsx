@@ -1,10 +1,10 @@
 import Styles from "./textfield.module.css";
 
-const TextField = ({ type, onChange, value, onBlur }) => {
+const TextField = ({ type, onChange, value, onBlur, error }) => {
   return (
     <>
       <input
-        className={Styles.inputField}
+        className={`${Styles.inputField} ${error ? Styles.error : ""}`}
         inputMode="numeric"
         type={type}
         onChange={onChange}

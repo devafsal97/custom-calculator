@@ -1,10 +1,11 @@
 import { useState } from "react";
 import CustomSelect from "../../../components/select/Select";
-const CaapSas = () => {
-  const [selectValue, setSelectValue] = useState("");
+import { useAppContext } from "../../../context/AppContext";
 
+const CaapSas = () => {
+  const { strategistCaapSas, setStrategistCaapSas } = useAppContext();
   const onChange = (event) => {
-    setSelectValue(event.target.value);
+    setStrategistCaapSas(event.target.value);
   };
   const optionsArray = [
     {
@@ -32,7 +33,7 @@ const CaapSas = () => {
       <CustomSelect
         options={optionsArray}
         onChange={onChange}
-        value={selectValue}
+        value={strategistCaapSas}
       ></CustomSelect>
     </div>
   );

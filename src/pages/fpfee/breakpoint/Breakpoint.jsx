@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Styles from "./breakpoint.module.css";
 import TextField from "../../../components/textfield/TextField";
+import { useAppContext } from "../../../context/AppContext";
 
-const Breakpoint = () => {
-  const [breakPoints, setBreakPoints] = useState([{ breakpoint: "", fee: "" }]);
+const Breakpoint = ({ handleBreakPoint }) => {
+  const { breakPoints, setBreakPoints } = useAppContext();
 
   const handleInputChange = (index, type, value) => {
     let numericValue = value.replace(/[^0-9]/g, "");
@@ -42,6 +43,8 @@ const Breakpoint = () => {
     ) {
       setBreakPoints([...newBreakpoints, { breakpoint: "", fee: "" }]);
     }
+
+    handleBreakPoint();
   };
 
   return (

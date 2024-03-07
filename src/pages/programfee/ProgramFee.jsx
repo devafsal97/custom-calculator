@@ -11,11 +11,13 @@ import { useNavigate } from "react-router-dom";
 const ProgramFee = ({ onNavigate }) => {
   const [selectedValue, setSelectedValue] = useState("Advisor-directed");
   const [feePaidBy, setFeePaidBy] = useState("");
-  const { fpFee, setFpFee } = useAppContext();
+  const { fpFee, setFpFee, accountValue, houseAUM, rows, setRows } =
+    useAppContext();
+  const [inputError, setInputError] = useState(false);
 
   const onSelectHandler = (event) => {
-    console.log("value", event.target.value);
     setFeePaidBy(event.target.value);
+    setInputError(false);
   };
 
   const radioItems = [
@@ -33,9 +35,107 @@ const ProgramFee = ({ onNavigate }) => {
   ];
 
   const handleChange = (value) => {
+    console.log("value", value);
     setSelectedValue(value);
     setFpFee(value);
+    console.log("accountValue", accountValue);
+    const numericAccountValue = parseFloat(
+      accountValue.replace(/[^0-9.-]+/g, "")
+    );
+    console.log("numericAccountValue", numericAccountValue);
+
+    const programFeeArray = calculateProgramFee(
+      tiers,
+      numericAccountValue,
+      houseAUM,
+      value
+    );
+    const totalProgramFee = programFeeArray.reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+
+    // Calculate the percentage of the total program fee relative to the account value
+    const programFeePercentage = (totalProgramFee / numericAccountValue) * 100;
+
+    const updatedRows = rows.map((row) => {
+      if (row.name === "Program Fee") {
+        return {
+          ...row,
+          percentage: `${programFeePercentage.toFixed(2)}%`,
+          value: `$${totalProgramFee.toFixed(2)}`,
+        };
+      }
+      return row;
+    });
+
+    setRows(updatedRows);
   };
+
+  const calculateProgramFee = (tiers, acctValue, houseAUM, programType) => {
+    console.log("params", tiers, acctValue, houseAUM, programType);
+    let programCol;
+    switch (programType) {
+      case "Advisor-directed":
+        programCol = 0;
+        break;
+      case "Team-directed":
+        programCol = 1;
+        break;
+      case "CAAP":
+        programCol = 2;
+        break;
+      case "CAAP Small Account Solutions":
+        programCol = 3;
+        break;
+      case "UMA/SMA":
+        programCol = 4;
+        break;
+      default:
+        throw new Error("Invalid Program Type");
+    }
+
+    const tierValues = [
+      50000, 50000, 150000, 250000, 500000, 1000000, 3000000, 5000000, 10000000,
+    ];
+    let tierData = tierValues.map((value, index) => ({
+      tierValue: value,
+      pct: tiers[index][programCol],
+    }));
+
+    let maxAUM = Math.max(acctValue, houseAUM);
+    let pctOfHouseAUM = acctValue / maxAUM;
+    let unUsedAcctValue = acctValue;
+    let result = new Array(9).fill(0);
+
+    for (let i = 0; i < tierValues.length; i++) {
+      let tierAccum = tierValues
+        .slice(0, i + 1)
+        .reduce((acc, curr) => acc + curr, 0);
+      if (maxAUM > tierAccum && i < 8) {
+        let appliedValue =
+          Math.round(pctOfHouseAUM * tierData[i].tierValue * 100) / 100;
+        unUsedAcctValue -= appliedValue;
+        result[i] = Math.round(tierData[i].pct * appliedValue * 100) / 100;
+      } else {
+        result[i] = Math.round(tierData[i].pct * unUsedAcctValue * 100) / 100;
+        break;
+      }
+    }
+    return result;
+  };
+
+  const tiers = [
+    [0.0025, 0.0025, 0.004, 0.005, 0.0045],
+    [0.0023, 0.0023, 0.0036, 0.005, 0.0042],
+    [0.002, 0.002, 0.0032, 0.005, 0.0038],
+    [0.0017, 0.0017, 0.0027, 0.005, 0.0035],
+    [0.0014, 0.0014, 0.0021, 0.005, 0.0027],
+    [0.0009, 0.0009, 0.0015, 0.005, 0.002],
+    [0.0006, 0.0006, 0.0012, 0.005, 0.0015],
+    [0.0003, 0.0003, 0.0008, 0.005, 0.001],
+    [0.0001, 0.0001, 0.0005, 0.005, 0.0007],
+  ];
 
   const descriptionContent = {
     "Advisor-directed":
@@ -50,6 +150,10 @@ const ProgramFee = ({ onNavigate }) => {
   };
 
   const onClickHandler = () => {
+    if (!feePaidBy) {
+      setInputError(true); // Set error state if accountValue is empty
+      return; // Prevent navigation
+    }
     onNavigate("StrategistFee");
   };
 
@@ -108,8 +212,20 @@ const ProgramFee = ({ onNavigate }) => {
             </div>
           </div>
           <div className={Styles.feePayContainer}>
-            <h3 style={{ margin: "0px" }}>Program Fee Payment*</h3>
-            <p style={{ margin: "0px" }}>Select who pays program fee</p>
+            <h3
+              className={`${Styles.selectTitle} ${
+                inputError ? Styles.errorColor : ""
+              } `}
+            >
+              Program Fee Payment*
+            </h3>
+            <p
+              className={`${Styles.selectlabel} ${
+                inputError ? Styles.errorColor : ""
+              } `}
+            >
+              Select who pays program fee
+            </p>
             <div className={Styles.selectContainer}>
               <CustomSelect
                 label="Age"
@@ -120,6 +236,10 @@ const ProgramFee = ({ onNavigate }) => {
                 onChange={onSelectHandler}
                 value={feePaidBy}
               ></CustomSelect>
+
+              {inputError && (
+                <p className={Styles.errorMessage}>Please make a selection</p>
+              )}
             </div>
           </div>
         </div>
