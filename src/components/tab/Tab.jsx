@@ -11,7 +11,7 @@ function TabComponent() {
   const handleTabClick = (tabNumber) => {
     setSelectedTab(tabNumber);
   };
-  const { rows, columns } = useAppContext();
+  const { rows, columns, additionalDetailsRows } = useAppContext();
 
   return (
     <div>
@@ -45,7 +45,10 @@ function TabComponent() {
           <BasicTable data={rows} columns={columns}></BasicTable>
         )}
         {selectedTab === 2 && (
-          <BasicTable data={rows} columns={columns}></BasicTable>
+          <BasicTable
+            data={additionalDetailsRows}
+            columns={columns}
+          ></BasicTable>
         )}
         {selectedTab === 3 && (
           <BasicTable data={rows} columns={columns}></BasicTable>

@@ -22,14 +22,20 @@ const Fpfee = ({ onNavigate }) => {
     setFinancialProfessionalFeeType,
     houseAUM,
     breakPoints,
+    calculateTotalAccountFee,
   } = useAppContext();
 
   const [flatValue, setFlatValue] = useState("0%");
   const [fixedValue, setFixedValue] = useState("$0");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [showSumOfTiersError, setShowSumOfTiersError] = useState(false);
+  const [showTierSumOfError, setShowTierSumOfError] = useState(false);
+  const [showBreakpointSumOfError, setShowBreakpointSumOfError] =
+    useState(false);
 
   useEffect(() => {
+    if (financialProfessionalFeeType !== "Tier") {
+      return;
+    }
     // Check if there's at least one tier with a value
     const hasAtLeastOneTierWithValue = tiers.some(
       (tier) => tier.tier.replace(/^\$/, "").trim() !== ""
@@ -48,20 +54,48 @@ const Fpfee = ({ onNavigate }) => {
     );
 
     // Check if the sum of tiers equals accountValue and there's at least one tier with value
-    setShowSumOfTiersError(
+    setShowTierSumOfError(
       hasAtLeastOneTierWithValue && numericAccountValue !== sumOfTiers
     );
-  }, [tiers, accountValue]);
+  }, [tiers, accountValue, financialProfessionalFeeType]);
 
   useEffect(() => {
-    // Check if any tier's fee exceeds 3%
-    const exceedsLimit = tiers.some((tier) => {
-      const feeValue = parseFloat(tier.fee);
-      return feeValue > 3;
-    });
+    if (financialProfessionalFeeType !== "Breakpoint") {
+      return;
+    }
+    const hasAtLeastOneBreakpointWithValue = breakPoints.some(
+      (breakpoint) => breakpoint.breakpoint.replace(/^\$/, "").trim() !== ""
+    );
+    const sumOfBreakpoints = breakPoints.reduce((sum, breakpoint) => {
+      // Convert tier value from string "$10000" to number and add to sum
+      const value = parseFloat(breakpoint.breakpoint.replace(/^\$/, "")); // Remove leading '$' and parse
+      return sum + (isNaN(value) ? 0 : value); // Add to sum, treating NaN as 0
+    }, 0);
 
-    setShowErrorMessage(exceedsLimit);
-  }, [tiers]);
+    const numericAccountValue = parseFloat(
+      accountValue.replace(/[^0-9.-]+/g, "")
+    );
+
+    setShowBreakpointSumOfError(
+      hasAtLeastOneBreakpointWithValue &&
+        numericAccountValue !== sumOfBreakpoints
+    );
+  }, [breakPoints, accountValue, financialProfessionalFeeType]);
+
+  useEffect(() => {
+    const financialProfessionalFee = rows.find(
+      (row) => row.name === "Financial Professional Fee"
+    );
+    let showErrorMessage = false;
+    if (financialProfessionalFee.percentage) {
+      const percentageValue = financialProfessionalFee.percentage.replace(
+        /[^0-9.-]+/g,
+        ""
+      );
+      showErrorMessage = parseFloat(percentageValue) > 3;
+      setShowErrorMessage(showErrorMessage);
+    }
+  }, [rows]);
 
   const radioItems = [
     { label: "Flat", value: "Flat" },
@@ -183,6 +217,10 @@ const Fpfee = ({ onNavigate }) => {
       accountValue.replace(/[^0-9.-]+/g, "")
     );
     let financialProfessionalFeeDollar = dollarValue;
+    console.log(
+      "financialProfessionalFeeDollar",
+      financialProfessionalFeeDollar
+    );
     if (!isNaN(financialProfessionalFeeDollar)) {
       let financialProfessionalFeePercentage =
         (dollarValue / numericAccountValue) * 100;
@@ -268,7 +306,7 @@ const Fpfee = ({ onNavigate }) => {
         return {
           ...row,
           // Assuming percentage calculation is handled elsewhere or differently
-          percentage: (totalTierFee / numericAccountValue) * 100,
+          percentage: (totalTierFee / numericAccountValue) * 100 + "%",
           value: `$${totalTierFee.toFixed(2)}`,
         };
       }
@@ -422,7 +460,9 @@ const Fpfee = ({ onNavigate }) => {
               correct the input entries to continue.
             </p>
           )}
-          {showSumOfTiersError && (
+          {((financialProfessionalFeeType === "Tier" && showTierSumOfError) ||
+            (financialProfessionalFeeType === "Breakpoint" &&
+              showBreakpointSumOfError)) && (
             <p className={Styles.errorMessage}>
               The account or household value has exceeded the range of the
               tiered/breakpoint FP Fee schedule entered. Please update the

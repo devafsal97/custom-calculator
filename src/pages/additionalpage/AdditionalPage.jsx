@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../../components/button/Button";
 import TabComponent from "../../components/tab/Tab";
 import TextField from "../../components/textfield/TextField";
@@ -6,13 +6,51 @@ import Styles from "./additionalpage.module.css";
 import { useNavigate } from "react-router-dom";
 import ToolTip from "../../components/tooltip/ToolTip";
 import { useAppContext } from "../../context/AppContext";
+import CustomSelect from "../../components/select/Select";
 
 const AdditionalPage = ({ onNavigate }) => {
-  const [fundExpenses, setFundExpenses] = useState("");
   const [financialPayout, setFinancialPayout] = useState("");
-  const [auaDiscount, setAuaDiscount] = useState("");
   const { financialProfessionalFeeType } = useAppContext();
-  const { fpFee, setFpFee } = useAppContext();
+  const {
+    fpFee,
+    setFpFee,
+    auaDiscount,
+    setAuaDiscount,
+    rows,
+    setAdditionalDetailsRows,
+    fundExpenses,
+    setFundExpenses,
+  } = useAppContext();
+
+  useEffect(() => {
+    console.log("useEffect called", financialPayout);
+    // This effect runs when financialPayout changes
+    if (financialPayout) {
+      // Find the "Financial Professional Fee" row to get its percentage and value
+      const financialProfessionalFeeRow = rows.find(
+        (row) => row.name === "Financial Professional Fee"
+      );
+
+      // Ensure the row exists before attempting to update
+      if (financialProfessionalFeeRow) {
+        // Update "Gross Annual Fee to Financial Professional" in additionalDetailsRows
+        setAdditionalDetailsRows((prevDetailsRows) => {
+          return prevDetailsRows.map((detailRow) => {
+            if (
+              detailRow.name === "Gross Annual Fee to Financial Professional"
+            ) {
+              return {
+                ...detailRow,
+                percentage: financialProfessionalFeeRow.percentage,
+                value: financialProfessionalFeeRow.value,
+              };
+            }
+            return detailRow;
+          });
+        });
+      }
+    }
+  }, [financialPayout, rows, setAdditionalDetailsRows]);
 
   const handleChange = (setter) => (event) => {
     let inputValue = event.target.value.replace(/[^\d]/g, "");
@@ -20,6 +58,8 @@ const AdditionalPage = ({ onNavigate }) => {
       inputValue += "%";
     }
     setter(inputValue);
+    if (setter === setFinancialPayout) {
+    }
   };
 
   const handleBlur = (setter, value) => () => {
@@ -40,6 +80,10 @@ const AdditionalPage = ({ onNavigate }) => {
     } else {
       onNavigate("StrategistFee");
     }
+  };
+  const onSelectHandler = (event) => {
+    const newValue = event.target.value;
+    setAuaDiscount((prevAuaDiscount) => newValue);
   };
 
   return (
@@ -134,12 +178,25 @@ const AdditionalPage = ({ onNavigate }) => {
               <p className={Styles.adp}>
                 Enter WealthPort AUA Discount Discount (if applicable)
               </p>
-              <TextField
+              {/* <TextField
                 type="text"
                 onChange={handleChange(setAuaDiscount)}
                 onBlur={handleBlur(setAuaDiscount, auaDiscount)}
                 value={displayValue(auaDiscount)}
-              />
+              /> */}
+              <div className={Styles.selectContainer}>
+                <CustomSelect
+                  options={[
+                    { label: "0%", value: "0" },
+                    { label: "10%", value: "10" },
+                    { label: "15%", value: "15" },
+                    { label: "20%", value: "20" },
+                    { label: "25%", value: "25" },
+                  ]}
+                  onChange={onSelectHandler}
+                  value={auaDiscount}
+                ></CustomSelect>
+              </div>
             </div>
           </div>
         </div>

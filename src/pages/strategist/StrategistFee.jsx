@@ -38,6 +38,7 @@ const Strategist = ({ onNavigate }) => {
           percentageValue = StrategistCaapSassConst[strategistCaapSas] / 100;
         } else if (fpFee === "CAAP") {
           percentageValue = StrategistCaapConst[strategistCaap] / 100;
+          console.log("percentageValue", percentageValue);
         }
 
         if (

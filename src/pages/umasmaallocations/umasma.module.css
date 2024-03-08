@@ -40,6 +40,7 @@
 .statusValue {
     margin: 0px;
     padding-left: 6px;
+    color: #48b830;
 }
 .allocationDataContainer {
     display: flex;
@@ -53,7 +54,7 @@
     margin: 0px;
     margin-bottom: 0.25rem;
 }
-.alocationValue {
+.alocationText {
     margin: 0px;
     color: #D91F11;
     font-weight: 600;
@@ -68,4 +69,10 @@
     font-size: 13px;
     margin: 0px;
     margin-bottom: 0.25rem;
+}
+.alocationValue {
+    font-size: 24px;
+    color: black;
+    margin: 0px;
+    font-weight: 700;
 }

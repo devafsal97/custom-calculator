@@ -3,13 +3,12 @@ import Styles from "./programfee.module.css";
 import TabComponent from "../../components/tab/Tab";
 import Radio from "../../components/radiobutton/Radio";
 import BasicTable from "../../components/table/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomSelect from "../../components/select/Select";
 import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
 const ProgramFee = ({ onNavigate }) => {
-  const [selectedValue, setSelectedValue] = useState("Advisor-directed");
   const {
     fpFee,
     setFpFee,
@@ -19,7 +18,9 @@ const ProgramFee = ({ onNavigate }) => {
     setRows,
     feePaidBy,
     setFeePaidBy,
+    auaDiscount,
   } = useAppContext();
+
   const [inputError, setInputError] = useState(false);
 
   const onSelectHandler = (event) => {
@@ -42,45 +43,37 @@ const ProgramFee = ({ onNavigate }) => {
   ];
 
   const handleChange = (value) => {
-    console.log("value", value);
-    setSelectedValue(value);
     setFpFee(value);
-    console.log("accountValue", accountValue);
-    const numericAccountValue = parseFloat(
-      accountValue.replace(/[^0-9.-]+/g, "")
+  };
+  const updateTiers = (auaDiscount, baseTiers) => {
+    const auaDecimal = auaDiscount / 100;
+    return baseTiers.map((tier) =>
+      tier.map((value) =>
+        auaDiscount === 0 ? value : (1 - auaDecimal) * value
+      )
     );
-    console.log("numericAccountValue", numericAccountValue);
-
-    const programFeeArray = calculateProgramFee(
-      tiers,
-      numericAccountValue,
-      houseAUM,
-      value
-    );
-    const totalProgramFee = programFeeArray.reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
-
-    // Calculate the percentage of the total program fee relative to the account value
-    const programFeePercentage = (totalProgramFee / numericAccountValue) * 100;
-
-    const updatedRows = rows.map((row) => {
-      if (row.name === "Program Fee") {
-        return {
-          ...row,
-          percentage: `${programFeePercentage.toFixed(2)}%`,
-          value: `$${totalProgramFee.toFixed(2)}`,
-        };
-      }
-      return row;
-    });
-
-    setRows(updatedRows);
   };
 
-  const calculateProgramFee = (tiers, acctValue, houseAUM, programType) => {
-    console.log("params", tiers, acctValue, houseAUM, programType);
+  const calculateProgramFee = (
+    acctValue,
+    houseAUM,
+    programType,
+    auaDiscount
+  ) => {
+    const baseTiers = [
+      [0.0025, 0.0025, 0.004, 0.005, 0.0045],
+      [0.0023, 0.0023, 0.0036, 0.005, 0.0042],
+      [0.002, 0.002, 0.0032, 0.005, 0.0038],
+      [0.0017, 0.0017, 0.0027, 0.005, 0.0035],
+      [0.0014, 0.0014, 0.0021, 0.005, 0.0027],
+      [0.0009, 0.0009, 0.0015, 0.005, 0.002],
+      [0.0006, 0.0006, 0.0012, 0.005, 0.0015],
+      [0.0003, 0.0003, 0.0008, 0.005, 0.001],
+      [0.0001, 0.0001, 0.0005, 0.005, 0.0007],
+    ];
+    const updatedTiers = updateTiers(auaDiscount, baseTiers);
+    console.log(updatedTiers);
+
     let programCol;
     switch (programType) {
       case "Advisor-directed":
@@ -107,7 +100,7 @@ const ProgramFee = ({ onNavigate }) => {
     ];
     let tierData = tierValues.map((value, index) => ({
       tierValue: value,
-      pct: tiers[index][programCol],
+      pct: updatedTiers[index][programCol],
     }));
 
     let maxAUM = Math.max(acctValue, houseAUM);
@@ -132,17 +125,41 @@ const ProgramFee = ({ onNavigate }) => {
     return result;
   };
 
-  const tiers = [
-    [0.0025, 0.0025, 0.004, 0.005, 0.0045],
-    [0.0023, 0.0023, 0.0036, 0.005, 0.0042],
-    [0.002, 0.002, 0.0032, 0.005, 0.0038],
-    [0.0017, 0.0017, 0.0027, 0.005, 0.0035],
-    [0.0014, 0.0014, 0.0021, 0.005, 0.0027],
-    [0.0009, 0.0009, 0.0015, 0.005, 0.002],
-    [0.0006, 0.0006, 0.0012, 0.005, 0.0015],
-    [0.0003, 0.0003, 0.0008, 0.005, 0.001],
-    [0.0001, 0.0001, 0.0005, 0.005, 0.0007],
-  ];
+  useEffect(() => {
+    console.log("Changeled");
+    const numericAccountValue = parseFloat(
+      accountValue.replace(/[^0-9.-]+/g, "")
+    );
+
+    const programFeeArray = calculateProgramFee(
+      numericAccountValue,
+      houseAUM,
+      fpFee,
+      auaDiscount
+    );
+    const totalProgramFee = programFeeArray.reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+    const programFeePercentage = (totalProgramFee / numericAccountValue) * 100;
+    const updatedRows = rows.map((row) => {
+      if (row.name === "Program Fee") {
+        return {
+          ...row,
+          percentage: `${programFeePercentage.toFixed(2)}%`,
+          value: `$${totalProgramFee.toFixed(2)}`,
+        };
+      }
+      return row;
+    });
+
+    setRows(updatedRows);
+  }, [accountValue, houseAUM, fpFee, auaDiscount]);
+
+  useEffect(() => {
+    console.log("Effect run:", { accountValue, houseAUM, fpFee, auaDiscount });
+    // Rest of your effect logic...
+  }, [accountValue, houseAUM, fpFee, auaDiscount]);
 
   const descriptionContent = {
     "Advisor-directed":
@@ -237,7 +254,7 @@ const ProgramFee = ({ onNavigate }) => {
               <CustomSelect
                 label="Age"
                 options={[
-                  { label: "Paid by Fp", value: "Paid by Fp" },
+                  { label: "Paid by FP", value: "Paid by FP" },
                   { label: "Paid by Client", value: "Paid by Client" },
                 ]}
                 onChange={onSelectHandler}
