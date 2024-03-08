@@ -1,12 +1,17 @@
 import { useState } from "react";
 import CustomSelect from "../../../components/select/Select";
 import { useAppContext } from "../../../context/AppContext";
+import Styles from "./caapsas.module.css";
 
 const CaapSas = () => {
-  const { strategistCaapSas, setStrategistCaapSas } = useAppContext();
+  const { strategistCaapSas, setStrategistCaapSas, accountValue } =
+    useAppContext();
   const onChange = (event) => {
     setStrategistCaapSas(event.target.value);
   };
+
+  const numericAccountValue = accountValue.replace(/[^0-9]/g, "");
+
   const optionsArray = [
     {
       label: "American Funds - Standard & Tax-aware",
@@ -27,14 +32,33 @@ const CaapSas = () => {
     },
   ];
 
+  console.log("account value", accountValue.replace(/[^0-9]/g, ""));
+  console.log(accountValue.replace(/[^0-9]/g, "") >= 5000);
+  console.log(accountValue.replace(/[^0-9]/g, "") <= 10000);
+
+  let filteredOptions = optionsArray;
+  if (numericAccountValue >= 5000 && numericAccountValue <= 10000) {
+    filteredOptions = optionsArray.slice(0, -2);
+    console.log("filteredOptions", filteredOptions);
+  }
+
   return (
     <div>
-      <h3>Strategist CAAP SAS</h3>
-      <CustomSelect
-        options={optionsArray}
-        onChange={onChange}
-        value={strategistCaapSas}
-      ></CustomSelect>
+      {numericAccountValue > 5000 ? (
+        <div>
+          <h3>Strategist CAAP SAS</h3>
+          <CustomSelect
+            options={filteredOptions}
+            onChange={onChange}
+            value={strategistCaapSas}
+          ></CustomSelect>
+        </div>
+      ) : (
+        <p className={Styles.errorMessage}>
+          Account value does not meet program minimum. Please correct account
+          value to continue.
+        </p>
+      )}
     </div>
   );
 };

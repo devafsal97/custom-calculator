@@ -10,9 +10,16 @@ import { useNavigate } from "react-router-dom";
 
 const ProgramFee = ({ onNavigate }) => {
   const [selectedValue, setSelectedValue] = useState("Advisor-directed");
-  const [feePaidBy, setFeePaidBy] = useState("");
-  const { fpFee, setFpFee, accountValue, houseAUM, rows, setRows } =
-    useAppContext();
+  const {
+    fpFee,
+    setFpFee,
+    accountValue,
+    houseAUM,
+    rows,
+    setRows,
+    feePaidBy,
+    setFeePaidBy,
+  } = useAppContext();
   const [inputError, setInputError] = useState(false);
 
   const onSelectHandler = (event) => {

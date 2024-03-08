@@ -17,6 +17,7 @@ export const AppProvider = ({ children }) => {
   const [strategistCaapSas, setStrategistCaapSas] = useState("");
   const [strategistCaap, setStrategistCaap] = useState("");
   const [houseAUM, setHouseAUM] = useState(0);
+  const [feePaidBy, setFeePaidBy] = useState("");
   const [financialProfessionalFeeType, setFinancialProfessionalFeeType] =
     useState("");
   const [rows, setRows] = useState([
@@ -74,6 +75,8 @@ export const AppProvider = ({ children }) => {
         houseAUM,
         breakPoints,
         setBreakPoints,
+        feePaidBy,
+        setFeePaidBy,
       }}
     >
       {children}

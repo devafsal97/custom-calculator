@@ -1,9 +1,12 @@
 import { useState } from "react";
 import CustomSelect from "../../../components/select/Select";
 import { useAppContext } from "../../../context/AppContext";
+import Styles from "./strategistcaap.module.css";
 
 const StrategistCaap = () => {
-  const { strategistCaap, setStrategistCaap } = useAppContext();
+  const { strategistCaap, setStrategistCaap, accountValue } = useAppContext();
+
+  const numericAccountValue = accountValue.replace(/[^0-9]/g, "");
 
   const onChange = (event) => {
     setStrategistCaap(event.target.value);
@@ -131,12 +134,21 @@ const StrategistCaap = () => {
 
   return (
     <div>
-      <h3>Strategist CAAP</h3>
-      <CustomSelect
-        options={optionsArray}
-        onChange={onChange}
-        value={strategistCaap}
-      ></CustomSelect>
+      {numericAccountValue > 50000 ? (
+        <div>
+          <h3>Strategist CAAP</h3>
+          <CustomSelect
+            options={optionsArray}
+            onChange={onChange}
+            value={strategistCaap}
+          ></CustomSelect>
+        </div>
+      ) : (
+        <p className={Styles.errorMessage}>
+          Account value does not meet program minimum. Please correct account
+          value to continue.
+        </p>
+      )}
     </div>
   );
 };

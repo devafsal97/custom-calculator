@@ -40,3 +40,8 @@
 .esContainer {
     margin-top: 16px;
 }
+.errorMessage {
+    font-size: 16px;
+    color: #cc4b37;
+    font-weight: 600;
+}

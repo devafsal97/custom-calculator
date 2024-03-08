@@ -8,7 +8,10 @@ const Umasma = () => {
     setSelectedMFEFTItems,
     selectedEquitySMAItems,
     setSelectedEquitySMAItems,
+    accountValue,
   } = useAppContext();
+
+  const numericAcountValue = accountValue.replace(/[^0-9]/g, "");
 
   const toggleSelection = (itemName, array, setArray) => {
     if (array.includes(itemName)) {
@@ -22,6 +25,7 @@ const Umasma = () => {
     {
       name: "12th Street Asset Management",
       url: "https://imagedelivery.net/RxM-_yk1wsGjVidUVgzK1A/E7qZoMCWAJg5FN2xd-1702200917690-zANBYNJ7EmCmRvifL/public",
+      allocationValue: 50000,
     },
     {
       name: "Aligned Investors",
@@ -310,76 +314,101 @@ const Umasma = () => {
 
   return (
     <div>
-      <div>
-        <h3 style={{ margin: "0px", marginBottom: "10px" }}>
-          Select MF/ETF Strategists
-        </h3>
-        <div className={Styles.imagesContainer}>
-          {MFEFT.map((item) => {
-            const isSelected = selectedMFEFTItems.includes(item.name);
-            return (
-              <div
-                key={item.name}
-                className={Styles.imageLabelContainer}
-                onClick={() =>
-                  toggleSelection(
-                    item.name,
-                    selectedMFEFTItems,
-                    setSelectedMFEFTItems
-                  )
-                }
-              >
-                <div className={Styles.imageContainer}>
-                  <img className={Styles.imgtag} src={item.url} alt="image" />
-                  {isSelected && (
-                    <div className={Styles.tickIcon}>
-                      <CheckCircleIcon
-                        sx={{ width: "18px", height: "18px", color: "#004964" }}
+      {numericAcountValue > 10000 ? (
+        <div>
+          <div>
+            <h3 style={{ margin: "0px", marginBottom: "10px" }}>
+              Select MF/ETF Strategists
+            </h3>
+            <div className={Styles.imagesContainer}>
+              {MFEFT.map((item) => {
+                const isSelected = selectedMFEFTItems.includes(item.name);
+                return (
+                  <div
+                    key={item.name}
+                    className={Styles.imageLabelContainer}
+                    onClick={() =>
+                      toggleSelection(
+                        item.name,
+                        selectedMFEFTItems,
+                        setSelectedMFEFTItems
+                      )
+                    }
+                  >
+                    <div className={Styles.imageContainer}>
+                      <img
+                        className={Styles.imgtag}
+                        src={item.url}
+                        alt="image"
                       />
+                      {isSelected && (
+                        <div className={Styles.tickIcon}>
+                          <CheckCircleIcon
+                            sx={{
+                              width: "18px",
+                              height: "18px",
+                              color: "#004964",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <p className={Styles.imageTitle}>{item.name}</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div className={Styles.esContainer}>
-        <h3 style={{ margin: "0px", marginBottom: "10px" }}>
-          Select Equity SMA Strategists
-        </h3>
-        <div className={Styles.imagesContainer}>
-          {EquitySma.map((item) => {
-            const isSelected = selectedEquitySMAItems.includes(item.name);
-            return (
-              <div
-                key={item.name}
-                className={Styles.imageLabelContainer}
-                onClick={() =>
-                  toggleSelection(
-                    item.name,
-                    selectedEquitySMAItems,
-                    setSelectedEquitySMAItems
-                  )
-                }
-              >
-                <div className={Styles.imageContainer}>
-                  <img className={Styles.imgtag} src={item.url} alt="image" />
-                  {isSelected && (
-                    <div className={Styles.tickIcon}>
-                      <CheckCircleIcon
-                        sx={{ width: "18px", height: "18px", color: "#004964" }}
+                    <p className={Styles.imageTitle}>{item.name}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className={Styles.esContainer}>
+            <h3 style={{ margin: "0px", marginBottom: "10px" }}>
+              Select Equity SMA Strategists
+            </h3>
+            <div className={Styles.imagesContainer}>
+              {EquitySma.map((item) => {
+                const isSelected = selectedEquitySMAItems.includes(item.name);
+                return (
+                  <div
+                    key={item.name}
+                    className={Styles.imageLabelContainer}
+                    onClick={() =>
+                      toggleSelection(
+                        item.name,
+                        selectedEquitySMAItems,
+                        setSelectedEquitySMAItems
+                      )
+                    }
+                  >
+                    <div className={Styles.imageContainer}>
+                      <img
+                        className={Styles.imgtag}
+                        src={item.url}
+                        alt="image"
                       />
+                      {isSelected && (
+                        <div className={Styles.tickIcon}>
+                          <CheckCircleIcon
+                            sx={{
+                              width: "18px",
+                              height: "18px",
+                              color: "#004964",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <p className={Styles.imageTitle}>{item.name}</p>
-              </div>
-            );
-          })}
+                    <p className={Styles.imageTitle}>{item.name}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className={Styles.errorMessage}>
+          Account value does not meet program minimum. Please correct account
+          value to continue.
+        </p>
+      )}
     </div>
   );
 };
