@@ -72,7 +72,7 @@ const ProgramFee = ({ onNavigate }) => {
       [0.0001, 0.0001, 0.0005, 0.005, 0.0007],
     ];
     const updatedTiers = updateTiers(auaDiscount, baseTiers);
-    console.log(updatedTiers);
+    // console.log(updatedTiers);
 
     let programCol;
     switch (programType) {
@@ -126,7 +126,7 @@ const ProgramFee = ({ onNavigate }) => {
   };
 
   useEffect(() => {
-    console.log("Changeled");
+    // console.log("Changeled");
     const numericAccountValue = parseFloat(
       accountValue.replace(/[^0-9.-]+/g, "")
     );
@@ -157,7 +157,7 @@ const ProgramFee = ({ onNavigate }) => {
   }, [accountValue, houseAUM, fpFee, auaDiscount]);
 
   useEffect(() => {
-    console.log("Effect run:", { accountValue, houseAUM, fpFee, auaDiscount });
+    // console.log("Effect run:", { accountValue, houseAUM, fpFee, auaDiscount });
     // Rest of your effect logic...
   }, [accountValue, houseAUM, fpFee, auaDiscount]);
 

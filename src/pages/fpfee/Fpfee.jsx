@@ -23,6 +23,7 @@ const Fpfee = ({ onNavigate }) => {
     houseAUM,
     breakPoints,
     calculateTotalAccountFee,
+    removeExtraPeriods,
   } = useAppContext();
 
   const [flatValue, setFlatValue] = useState("0%");
@@ -80,18 +81,17 @@ const Fpfee = ({ onNavigate }) => {
       hasAtLeastOneBreakpointWithValue &&
         numericAccountValue !== sumOfBreakpoints
     );
+    //setRows(updatedRows);
   }, [breakPoints, accountValue, financialProfessionalFeeType]);
 
   useEffect(() => {
+    // console.log("use effect called");
     const financialProfessionalFee = rows.find(
       (row) => row.name === "Financial Professional Fee"
     );
     let showErrorMessage = false;
     if (financialProfessionalFee.percentage) {
-      const percentageValue = financialProfessionalFee.percentage.replace(
-        /[^0-9.-]+/g,
-        ""
-      );
+      const percentageValue = financialProfessionalFee.percentage;
       showErrorMessage = parseFloat(percentageValue) > 3;
       setShowErrorMessage(showErrorMessage);
     }
@@ -105,6 +105,7 @@ const Fpfee = ({ onNavigate }) => {
   ];
 
   const handleChange = (value) => {
+    // console.log(value)
     setFinancialProfessionalFeeType(value); // Update the selected fee type
 
     // Perform calculation based on the selected fee type
@@ -122,7 +123,7 @@ const Fpfee = ({ onNavigate }) => {
         onTierChangeHandler();
         break;
       case "Breakpoint":
-        // No calculation needed for Breakpoint fee type
+        handleBreakPoint();
         break;
       default:
         break;
@@ -140,6 +141,12 @@ const Fpfee = ({ onNavigate }) => {
   const flatValueBlur = () => {
     if (flatValue === "%") {
       setFlatValue("");
+    } else if (flatValue) {
+      // Check if it ends with ".", append "0" if it does
+      let newValue = flatValue.endsWith(".") ? flatValue + "0" : flatValue;
+      // Then, check if the new value (potentially with "0" added) doesn't end with "%", append "%"
+      newValue = newValue.endsWith("%") ? newValue : newValue + "%";
+      setFlatValue(newValue);
     }
   };
 
@@ -148,22 +155,32 @@ const Fpfee = ({ onNavigate }) => {
       ? flatValue
       : flatValue.replace("%", "");
 
-  const onFlatValueChange = (event) => {
-    let inputValue = event.target.value.replace(/[^\d]/g, "");
-    console.log("input value", inputValue);
-    if (inputValue) {
-      inputValue += "%"; // Append '%' if there's any number
+  const handleFocus = (e, type) => {
+    const val = e.target.value;
+    if (type === "flat") {
+      setFlatValue(val.replace("%", ""));
+    } else if (type === "fixed") {
+      setFixedValue(val.replace("%", ""));
     }
-    console.log("input value %", inputValue);
-    setFlatValue(inputValue);
+  };
+
+  const onFlatValueChange = (event) => {
+    let inputValue = event.target.value.replace(/[^\d.]/g, "");
+    if (inputValue.endsWith("%")) {
+      inputValue = inputValue.slice(0, -1);
+    }
+
+    const newValue = removeExtraPeriods(inputValue);
+
+    setFlatValue(newValue);
 
     if (inputValue) {
       let percentage = parseFloat(inputValue.replace(/[^0-9.-]+/g, ""));
       let numericAccountValue = parseFloat(
         accountValue.replace(/[^0-9.-]+/g, "")
       );
-      console.log("percentage", isNaN(percentage));
-      console.log("numericAccountValue", isNaN(numericAccountValue));
+      // console.log("percentage", isNaN(percentage));
+      // console.log("numericAccountValue", isNaN(numericAccountValue));
       let financialProfessionalFeeDollar =
         numericAccountValue * (percentage / 100);
       if (!isNaN(financialProfessionalFeeDollar)) {
@@ -205,22 +222,18 @@ const Fpfee = ({ onNavigate }) => {
 
   const onFixedValueChange = (event) => {
     let inputValue = event.target.value.replace(/[^\d]/g, "");
-    console.log("input value ", inputValue);
+    // console.log("input value ", inputValue);
 
     if (inputValue) {
       inputValue = "$" + inputValue;
     }
-    console.log("input value with $", inputValue);
+    // console.log("input value with $", inputValue);
     setFixedValue(inputValue);
     let dollarValue = parseFloat(inputValue.replace(/[^0-9.-]+/g, ""));
     let numericAccountValue = parseFloat(
       accountValue.replace(/[^0-9.-]+/g, "")
     );
     let financialProfessionalFeeDollar = dollarValue;
-    console.log(
-      "financialProfessionalFeeDollar",
-      financialProfessionalFeeDollar
-    );
     if (!isNaN(financialProfessionalFeeDollar)) {
       let financialProfessionalFeePercentage =
         (dollarValue / numericAccountValue) * 100;
@@ -240,7 +253,6 @@ const Fpfee = ({ onNavigate }) => {
   };
 
   const onFixedBlur = () => {
-    // Ensure '%' is removed if the input is empty on blur
     if (fixedValue === "$") {
       setFixedValue("");
     }
@@ -258,7 +270,6 @@ const Fpfee = ({ onNavigate }) => {
       }
       return parseFloat(obj.tier.slice(1));
     });
-
     while (tierArray.length < 9) {
       tierArray.push(0);
     }
@@ -273,9 +284,9 @@ const Fpfee = ({ onNavigate }) => {
     while (feeArray.length < 9) {
       feeArray.push(0);
     }
-    console.log("tiers", tiers);
-    console.log("tierArray", tierArray);
-    console.log("feeArray", feeArray);
+    // console.log("tiers", tiers);
+    // console.log("tierArray", tierArray);
+    // console.log("feeArray", feeArray);
 
     // Ensure accountValue is a number and replace any non-numeric characters
     let numericAccountValue = parseFloat(
@@ -284,7 +295,7 @@ const Fpfee = ({ onNavigate }) => {
 
     // Ensure numericAccountValue is not NaN; if it is, set it to 0 or another default value
     if (isNaN(numericAccountValue)) {
-      console.log("numericAccountValue is NaN, setting to default value of 0");
+      // console.log("numericAccountValue is NaN, setting to default value of 0");
       numericAccountValue = 0;
     }
 
@@ -297,10 +308,9 @@ const Fpfee = ({ onNavigate }) => {
 
     // Ensure totalTierFee is not NaN
     if (isNaN(totalTierFee)) {
-      console.log("totalTierFee resulted in NaN");
+      // console.log("totalTierFee resulted in NaN");
       totalTierFee = 0; // Set to default or handle as needed
     }
-
     const updatedRows = rows.map((row) => {
       if (row.name === "Financial Professional Fee") {
         return {
@@ -355,7 +365,6 @@ const Fpfee = ({ onNavigate }) => {
       }
       return parseFloat(obj.breakpoint.slice(1));
     });
-
     const feeArray = breakPoints.map((obj) => {
       if (!obj.fee || obj.fee === "") {
         return 0;
@@ -373,14 +382,13 @@ const Fpfee = ({ onNavigate }) => {
       breakpointArray,
       feeArray
     );
-    console.log("feeResults", feeResults);
 
     const updatedRows = rows.map((row) => {
       if (row.name === "Financial Professional Fee") {
         return {
           ...row,
 
-          percentage: (feeResults / numericAccountValue) * 100,
+          percentage: (feeResults[0].fee / numericAccountValue) * 100,
           value: `$${feeResults[0].fee.toFixed(2)}`,
         };
       }
@@ -396,9 +404,9 @@ const Fpfee = ({ onNavigate }) => {
     tiers,
     feePercentages
   ) => {
-    console.log("accountValue", accountValue);
-    console.log("tiers", tiers);
-    console.log("feePercentages", feePercentages);
+    // console.log("accountValue", accountValue);
+    // console.log("tiers", tiers);
+    // console.log("feePercentages", feePercentages);
 
     // Initialize variables for results and cumulative calculations
     let results = tiers.map(() => ({ valueInBreakpoint: 0, fee: 0 }));
@@ -486,6 +494,9 @@ const Fpfee = ({ onNavigate }) => {
           </div>
           {financialProfessionalFeeType === "Flat" && (
             <Flat
+              onFocus={(e) => {
+                handleFocus(e, "flat");
+              }}
               onFlatValueChange={onFlatValueChange}
               flatValue={flatDisplayValue}
               flatValueBlur={flatValueBlur}
@@ -499,7 +510,12 @@ const Fpfee = ({ onNavigate }) => {
             ></Fixed>
           )}
           {financialProfessionalFeeType === "Tier" && (
-            <Tier handleCalculation={onTierChangeHandler}></Tier>
+            <Tier
+              handleCalculation={onTierChangeHandler}
+              onFocus={(e) => {
+                handleFocus(e, "tier");
+              }}
+            ></Tier>
           )}
           {financialProfessionalFeeType === "Breakpoint" && (
             <Breakpoint handleBreakPoint={handleBreakPoint}></Breakpoint>

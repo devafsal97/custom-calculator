@@ -1,6 +1,6 @@
 import Styles from "./textfield.module.css";
 
-const TextField = ({ type, onChange, value, onBlur, error }) => {
+const TextField = ({ type, onChange, value, onBlur, error, onFocus }) => {
   return (
     <>
       <input
@@ -11,6 +11,7 @@ const TextField = ({ type, onChange, value, onBlur, error }) => {
         value={value}
         pattern="\d*"
         onBlur={onBlur}
+        onFocus={onFocus}
       ></input>
     </>
   );

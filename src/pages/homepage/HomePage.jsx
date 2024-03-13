@@ -11,7 +11,8 @@ const HomePage = ({ onNavigate }) => {
 
   const handleChange = (event) => {
     let numericValue = event.target.value.replace(/[^0-9]/g, "");
-    if (numericValue) {
+    //console.log(numericValue);
+    if (numericValue && numericValue > 0) {
       const formattedValue = numberWithCommas(numericValue);
       setAccountValue("$ " + formattedValue); // Update using context
       setInputError(false);

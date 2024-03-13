@@ -19,14 +19,14 @@ const StepIndicator = ({ currentStep }) => {
 
   const currentStepIndex = steps.indexOf(adjustedCurrentStep);
 
-  console.log("currentStep:", adjustedCurrentStep);
-  console.log("currentStepIndex:", currentStepIndex);
+  // console.log("currentStep:", adjustedCurrentStep);
+  // console.log("currentStepIndex:", currentStepIndex);
 
   return (
     <div className={Styles.stepperStyle}>
       {steps.map((step, index) => {
-        console.log("step:", step);
-        console.log("index:", index);
+        // console.log("step:", step);
+        // console.log("index:", index);
         return (
           <div
             key={index}
