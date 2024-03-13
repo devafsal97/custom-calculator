@@ -1,5 +1,5 @@
 import TextField from "../../../components/textfield/TextField";
-const Fixed = ({ onFixedValueChange, fixedValue, onFixedBlur }) => {
+const Fixed = ({ onFixedValueChange, fixedValue, onFixedBlur,onFocus }) => {
   return (
     <div>
       <h2>Enter Fixed Fee ($)</h2>
@@ -13,6 +13,7 @@ const Fixed = ({ onFixedValueChange, fixedValue, onFixedBlur }) => {
         value={fixedValue}
         onBlur={onFixedBlur}
         onChange={onFixedValueChange}
+        onFocus={onFocus}
       ></TextField>
     </div>
   );

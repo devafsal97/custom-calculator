@@ -6,51 +6,15 @@ import Styles from "./additionalpage.module.css";
 import { useNavigate } from "react-router-dom";
 import ToolTip from "../../components/tooltip/ToolTip";
 import { useAppContext } from "../../context/AppContext";
-import CustomSelect from "../../components/select/Select";
 
 const AdditionalPage = ({ onNavigate }) => {
+  const { rows, setRows } = useAppContext();
+  const [fundExpenses, setFundExpenses] = useState("");
   const [financialPayout, setFinancialPayout] = useState("");
+  const [auaDiscount, setAuaDiscount] = useState("");
   const { financialProfessionalFeeType } = useAppContext();
-  const {
-    fpFee,
-    setFpFee,
-    auaDiscount,
-    setAuaDiscount,
-    rows,
-    setAdditionalDetailsRows,
-    fundExpenses,
-    setFundExpenses,
-  } = useAppContext();
-
-  useEffect(() => {
-    console.log("useEffect called", financialPayout);
-    // This effect runs when financialPayout changes
-    if (financialPayout) {
-      // Find the "Financial Professional Fee" row to get its percentage and value
-      const financialProfessionalFeeRow = rows.find(
-        (row) => row.name === "Financial Professional Fee"
-      );
-
-      // Ensure the row exists before attempting to update
-      if (financialProfessionalFeeRow) {
-        // Update "Gross Annual Fee to Financial Professional" in additionalDetailsRows
-        setAdditionalDetailsRows((prevDetailsRows) => {
-          return prevDetailsRows.map((detailRow) => {
-            if (
-              detailRow.name === "Gross Annual Fee to Financial Professional"
-            ) {
-              return {
-                ...detailRow,
-                percentage: financialProfessionalFeeRow.percentage,
-                value: financialProfessionalFeeRow.value,
-              };
-            }
-            return detailRow;
-          });
-        });
-      }
-    }
-  }, [financialPayout, rows, setAdditionalDetailsRows]);
+  const { fpFee, setFpFee } = useAppContext();
+  const [total, setTotal] = useState({ percentage: "", value: "" });
 
   const handleChange = (setter) => (event) => {
     let inputValue = event.target.value.replace(/[^\d]/g, "");
@@ -58,8 +22,6 @@ const AdditionalPage = ({ onNavigate }) => {
       inputValue += "%";
     }
     setter(inputValue);
-    if (setter === setFinancialPayout) {
-    }
   };
 
   const handleBlur = (setter, value) => () => {
@@ -81,10 +43,65 @@ const AdditionalPage = ({ onNavigate }) => {
       onNavigate("StrategistFee");
     }
   };
-  const onSelectHandler = (event) => {
-    const newValue = event.target.value;
-    setAuaDiscount((prevAuaDiscount) => newValue);
-  };
+  useEffect(() => {
+    let percentageValue = 0;
+    let calculatedValue = 0;
+    const updatedRows = rows.map((row) => {
+      if (
+        row.name === "Financial Professional Fee" ||
+        row.name === "Program Fee" ||
+        row.name === "Strategist Fee (if applicable)"
+      ) {
+        if (row.percentage !== "N/A") {
+          const pValue = parseFloat(row.percentage.replace("%", ""));
+          percentageValue += pValue;
+        }
+        if (row.value !== "N/A") {
+          const cValue = parseFloat(row.value.replace("$", ""));
+          calculatedValue += cValue;
+        }
+      }
+      setTotal((currentTotal) => ({
+        ...currentTotal,
+        percentage: percentageValue,
+      }));
+      setTotal((currentTotal) => ({ ...currentTotal, value: calculatedValue }));
+      if (row.name === "Total Account Fee (annualized)") {
+        row.percentage = percentageValue + "%";
+        row.value = "$" + calculatedValue;
+      }
+      if (row.name === "Total Client Fees (including Fund Expenses)") {
+        const fundExp = parseFloat(fundExpenses.replace("%", ""));
+        // console.log(
+        //   percentageValue,
+        //   " percentageValue percentageValue percentageValue "
+        // );
+        if (fundExpenses === NaN || fundExpenses === "") {
+          // console.log("percentageValue", percentageValue, row.percentage);
+          row.percentage = percentageValue;
+          // console.log("percentageValue", percentageValue, row.percentage);
+        }
+      }
+      return row;
+    });
+    setRows(updatedRows);
+    // console.log(fundExpenses, "fundExpenses");
+  }, []);
+
+  useEffect(() => {
+    if (fundExpenses !== "") {
+    // console.log("exicuted")
+      const updatedRows = rows.map((row) => {
+        if (row.name === "Total Client Fees (including Fund Expenses)") {
+          const fundExp = parseFloat(fundExpenses.replace("%", ""));
+          const value = total.percentage + fundExp;
+          row.percentage = value + "%";
+        }
+        return row;
+      });
+      setRows(updatedRows);
+    }
+  }, [fundExpenses]);
 
   return (
     <div className={Styles.wrapper}>
@@ -178,25 +195,12 @@ const AdditionalPage = ({ onNavigate }) => {
               <p className={Styles.adp}>
                 Enter WealthPort AUA Discount Discount (if applicable)
               </p>
-              {/* <TextField
+              <TextField
                 type="text"
                 onChange={handleChange(setAuaDiscount)}
                 onBlur={handleBlur(setAuaDiscount, auaDiscount)}
                 value={displayValue(auaDiscount)}
-              /> */}
-              <div className={Styles.selectContainer}>
-                <CustomSelect
-                  options={[
-                    { label: "0%", value: "0" },
-                    { label: "10%", value: "10" },
-                    { label: "15%", value: "15" },
-                    { label: "20%", value: "20" },
-                    { label: "25%", value: "25" },
-                  ]}
-                  onChange={onSelectHandler}
-                  value={auaDiscount}
-                ></CustomSelect>
-              </div>
+              />
             </div>
           </div>
         </div>

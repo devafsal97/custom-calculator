@@ -1,6 +1,6 @@
 import TextField from "../../../components/textfield/TextField";
 
-const Flat = ({ onFlatValueChange, flatValue, flatValueBlur }) => {
+const Flat = ({ onFlatValueChange, flatValue, flatValueBlur, onFocus }) => {
   return (
     <div>
       <h2>Enter Flat Fee (%)</h2>
@@ -17,6 +17,7 @@ const Flat = ({ onFlatValueChange, flatValue, flatValueBlur }) => {
         value={flatValue}
         onChange={onFlatValueChange}
         onBlur={flatValueBlur}
+        onFocus={onFocus}
       ></TextField>
     </div>
   );

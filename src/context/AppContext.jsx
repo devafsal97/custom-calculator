@@ -92,8 +92,9 @@ export const AppProvider = ({ children }) => {
     });
 
     // Effect logic here, which will only run when serializedDeps changes
-    let financialProfessionalFeePercentage =
-      parseFloat(financialProfessionalFee?.percentage.replace("%", "")) || 0;
+    let financialProfessionalFeePercentage = parseFloat(
+      financialProfessionalFee?.percentage || 0
+    );
     let programFeePercentage =
       parseFloat(programFee?.percentage.replace("%", "")) || 0;
     let strategistFeePercentage =
@@ -105,7 +106,7 @@ export const AppProvider = ({ children }) => {
     let strategistFeeDollar =
       parseFloat(strategistFee?.value.replace("$", "")) || 0;
 
-    console.log("feePaidBy", feePaidBy);
+    // console.log("feePaidBy", feePaidBy);
     let totalPercentage =
       feePaidBy === "Paid by FP"
         ? financialProfessionalFeePercentage + strategistFeePercentage
@@ -189,7 +190,7 @@ export const AppProvider = ({ children }) => {
         strategistFeePercentage +
         numnericFundExpense;
 
-      console.log("totalPercentage", totalPercentage);
+      //console.log("totalPercentage", totalPercentage);
       const updatedRows = rows.map((row) => {
         if (row.name === "Total Client Fees (including Fund Expenses)") {
           return {
@@ -223,7 +224,17 @@ export const AppProvider = ({ children }) => {
     }),
     fundExpenses,
   ]);
+  const removeExtraPeriods = (value) => {
+    const firstPeriodIndex = value.indexOf(".");
 
+    if (firstPeriodIndex === -1) {
+      return value;
+    }
+    const beforeFirstPeriod = value.substring(0, firstPeriodIndex + 1);
+    const afterFirstPeriod = value.substring(firstPeriodIndex + 1);
+    const cleanedAfterFirstPeriod = afterFirstPeriod.replace(/\./g, "");
+    return beforeFirstPeriod + cleanedAfterFirstPeriod;
+  };
   return (
     <AppContext.Provider
       value={{
@@ -259,6 +270,7 @@ export const AppProvider = ({ children }) => {
         setAdditionalDetailsRows,
         fundExpenses,
         setFundExpenses,
+        removeExtraPeriods,
       }}
     >
       {children}

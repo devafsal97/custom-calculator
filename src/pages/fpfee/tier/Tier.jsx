@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TextField from "../../../components/textfield/TextField"; // Assuming this is a custom component
 import Styles from "./tier.module.css";
 import { useAppContext } from "../../../context/AppContext";
-const Tier = ({ handleCalculation }) => {
+const Tier = ({ handleCalculation, onFocus }) => {
   const { tiers, setTiers } = useAppContext();
 
   const handleInputChange = (index, type, value) => {
@@ -16,7 +16,7 @@ const Tier = ({ handleCalculation }) => {
       }
     } else if (type === "fee") {
       // Ensure any entered % signs are removed and only append one at the end
-      numericValue = `${numericValue.replace(/%/g, "")}%`; // Removes all % then adds one at the end
+      numericValue = numericValue; //`${numericValue.replace(/%/g, "")}%`; // Removes all % then adds one at the end
     }
 
     newTiers[index][type] = numericValue;
@@ -45,6 +45,28 @@ const Tier = ({ handleCalculation }) => {
     if (type === "fee") {
       handleCalculation();
     }
+  };
+  const handleFocus = (e, index, type) => {
+    const valueWithoutPercent = e.target.value.replace("%", ""); // Remove "%" if present
+    // Update the specific tier object at the given index
+    setTiers(
+      tiers.map((tier, i) =>
+        i === index ? { ...tier, [type]: valueWithoutPercent } : tier
+      )
+    );
+  };
+
+  const handleBlur = (e, index, type) => {
+    const valueWithPercent =
+      e.target.value && !e.target.value.endsWith("%")
+        ? e.target.value + "%"
+        : e.target.value; // Append "%" if necessary
+    // Update the specific tier object at the given index
+    setTiers(
+      tiers.map((tier, i) =>
+        i === index ? { ...tier, [type]: valueWithPercent } : tier
+      )
+    );
   };
 
   return (
@@ -76,6 +98,8 @@ const Tier = ({ handleCalculation }) => {
                   e.target.value.replace(/%/g, "")
                 )
               }
+              onFocus={(e) => handleFocus(e, index, "fee")}
+              onBlur={(e) => handleBlur(e, index, "fee")}
               // No need for onKeyDown, onFocus, or onClick handlers here as the logic is simplified
             />
           </div>
