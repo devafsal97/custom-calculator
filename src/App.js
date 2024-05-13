@@ -12,26 +12,29 @@ import ResultPage from './pages/resultpage/ResultPage';
 import { useState } from 'react';
 import "./global.css"
 import StepIndicator from './components/stepindicator/StepIndicator';
+import CalculatorPage from './pages/calculator/Calculator';
 
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('HomePage');
-  const navigate = (page) => {
-    setCurrentPage(page);
-  };
+  // const [currentPage, setCurrentPage] = useState('HomePage');
+  // const navigate = (page) => {
+  //   setCurrentPage(page);
+  // };
   return (
-    <div className={Styles.appContainer}>
-    <StepIndicator currentStep={currentPage}></StepIndicator>
-    <AppProvider>
-    {currentPage === 'HomePage' && <HomePage onNavigate={navigate} />}
-    {currentPage === 'FpFee' && <Fpfee onNavigate={navigate} />}
-    {currentPage === 'ProgramFee' && <ProgramFee onNavigate={navigate} />}
-    {currentPage === 'StrategistFee' && <Strategist onNavigate={navigate} />}
-    {currentPage === 'UmaSma' && <UmaSmaAllocations onNavigate={navigate} />}
-    {currentPage === 'AdditionalPage' && <AdditionalPage onNavigate={navigate} />}
-    {currentPage === 'ResultPage' && <ResultPage onNavigate={navigate} />}
-    </AppProvider>
-    </div>
+    // <div className={Styles.appContainer}>
+    // <StepIndicator currentStep={currentPage}></StepIndicator>
+    // <AppProvider>
+    // {currentPage === 'HomePage' && <HomePage onNavigate={navigate} />}
+    // {currentPage === 'FpFee' && <Fpfee onNavigate={navigate} />}
+    // {currentPage === 'ProgramFee' && <ProgramFee onNavigate={navigate} />}
+    // {currentPage === 'StrategistFee' && <Strategist onNavigate={navigate} />}
+    // {currentPage === 'UmaSma' && <UmaSmaAllocations onNavigate={navigate} />}
+    // {currentPage === 'AdditionalPage' && <AdditionalPage onNavigate={navigate} />}
+    // {currentPage === 'ResultPage' && <ResultPage onNavigate={navigate} />}
+    // </AppProvider>
+    // </div>
+    <CalculatorPage/>
+
   );
 }
 

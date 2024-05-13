@@ -1,0 +1,68 @@
+.step-indicator {
+    display: flex;
+    flex-direction: column;
+    max-width: 364px;
+    padding-right: 11px;
+  }
+  
+  .step {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .step-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .completed-icon {
+    background-color: #186ade; /* Replace with your selected color */
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  
+  .circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 2px solid #9fb1bd;
+  }
+  
+  .current-circle {
+    border: 2px solid #186ade;
+  }
+  
+  .step-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  .step-title {
+    color: #1c2b36;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .step-description {
+    color: #3e5463;
+    font-size: 11px;
+    line-height: 16px;
+  }
+  
+  .step-line {
+    background-color: #9fb1bd;
+    width: 2px;
+    margin: 0 auto;
+    height: 24px;
+  }
+  
