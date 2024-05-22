@@ -2,7 +2,11 @@ import { useState } from "react";
 import CustomSelect from "../../../components/select/Select";
 import { useAppContext } from "../../../context/AppContext";
 import Styles from "./caapsas.module.css";
-
+import {
+  StrategistCaapSassConst,
+  StrategistCaapConst,
+  strategistMFETF
+} from "../../../constants/Constants";
 const CaapSas = () => {
   const { strategistCaapSas, setStrategistCaapSas, accountValue } =
     useAppContext();
@@ -36,29 +40,29 @@ const CaapSas = () => {
   console.log(accountValue.replace(/[^0-9]/g, "") >= 5000);
   console.log(accountValue.replace(/[^0-9]/g, "") <= 10000);
 
-  let filteredOptions = optionsArray;
+  let filteredOptions = StrategistCaapConst;
   if (numericAccountValue >= 5000 && numericAccountValue <= 10000) {
-    filteredOptions = optionsArray.slice(0, -2);
+    filteredOptions = StrategistCaapConst.slice(0, -2);
     console.log("filteredOptions", filteredOptions);
   }
 
   return (
     <div>
-      {numericAccountValue > 5000 ? (
+      {/* {numericAccountValue > 5000 ? ( */}
         <div>
           <h3>Strategist CAAP SAS</h3>
           <CustomSelect
-            options={filteredOptions}
+            options={StrategistCaapConst}
             onChange={onChange}
             value={strategistCaapSas}
           ></CustomSelect>
         </div>
-      ) : (
+      {/* ) : (
         <p className={Styles.errorMessage}>
           Account value does not meet program minimum. Please correct account
           value to continue.
         </p>
-      )}
+      )} */}
     </div>
   );
 };

@@ -1,50 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import "./calculator.css";
 import FinancialProfessionalFee from "../../components/FPFee/FinancialProfessionalFee";
 import ProgramFeeSelection from "../../components/ProgramFee/ProgramFeeSelection";
 import ProgramFeePayment from "../../components/ProgramFeePayment/ProgramFeePayment";
 // import ProgramFeeDetails from "../../components/ProgramFeeDetails/ProgramFeeDetails";
-import StrategistFee from '../../components/CaapAndSas/StrategistFee';
-import AdditionalDetail from '../../components/AdditionalDetail/AdditionalDetail';
-import StepIndicator from '../../components/StepIndicatorFolder/StepIndicator';
-import YourEstimatedResults from '../../components/Results/YourEstimatedResults';
-import StepFooter from '../../components/StepFooter/StepFooter';
-
+import StrategistFee from "../../components/CaapAndSas/StrategistFee";
+import AdditionalDetail from "../../components/AdditionalDetail/AdditionalDetail";
+import StepIndicator from "../../components/StepIndicatorFolder/StepIndicator";
+import YourEstimatedResults from "../../components/Results/YourEstimatedResults";
+import StepFooter from "../../components/StepFooter/StepFooter";
+import { useIntersectionObserver } from "../../components/useIntersectionObserver/useIntersectionObserver";
+import { useCalculationStorage } from "../../context/StorageContext";
 function CalculatorPage() {
   const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
+  const sectionsRef = useIntersectionObserver(setCurrentStep);
+  const {
+    calculationData,
+    setCalculationData,
+    handleChange,
+    getCalculationDataValue,
+  } = useCalculationStorage();
 
-  // const handleFinancialProfessionalFeeComplete = () => {
-  //   if (!completedSteps.includes(1)) {
-  //     setCompletedSteps((prev) => [...prev, 1]);
-  //   }
-  // };
-
-  // const handleProgramFeeSelectionComplete = () => {
-  //   if (!completedSteps.includes(2)) {
-  //     setCompletedSteps((prev) => [...prev, 2]);
-  //   }
-  // };
-
-  // const handleStrategistFeeComplete = () => {
-  //   if (!completedSteps.includes(3)) {
-  //     setCompletedSteps((prev) => [...prev, 3]);
-  //   }
-  // };
-
-  // const handleAdditionalDetailComplete = () => {
-  //   if (!completedSteps.includes(4)) {
-  //     setCompletedSteps((prev) => [...prev, 4]);
-  //   }
-  // };
   const handleOptionChange = (option) => {
     setSelectedOption(option);
     // handleProgramFeeSelectionComplete();
   };
   return (
-
     <div>
-     
       {/* Header Section */}
       <div className="headerContainer">
         <img
@@ -54,90 +38,131 @@ function CalculatorPage() {
         />
       </div>
       <div className="filler-top"></div>
-      <div className='calculation-wrapper-outer'>
-      <div className='calculation-left'>
+      <div className="calculation-wrapper-outer">
+        <div className="calculation-left">
+          {/* Main Content Section */}
+          <h1> WealthPort Fee Calculator</h1>
+          <div className="container">
+            <div className="contentWrapper">
+              <div className="imageColumn">
+                <img loading="lazy" src="/icon.svg" className="featureImage" />
+              </div>
+              <div className="textColumn">
+                <div className="description">
+                  Use this tool to calculate the estimated account fees for any
+                  WealthPort program fee type or to compare investment options.
+                  Save each estimate's unique link to share or revisit directly
+                  through your browser. Export your estimate to an Excel or PDF
+                  to quickly share and analyze your estimated fees.
+                  <br />
+                  <p>Get Started below.</p>
+                  <br />
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* Main Content Section */}
-      <h1> WealthPort Fee Calculator</h1>
-      <div className="container">
-        <div className="contentWrapper">
-          <div className="imageColumn">
-            <img
-              loading="lazy"
-              src="/icon.svg"
-              className="featureImage"
+          {/* Scenario Section */}
+          <div className="filler"></div>
+
+          <div
+            className="scenario-container"
+            ref={(el) => (sectionsRef.current[1] = el)}
+          >
+            <div className="scenario-header">
+              Enter a Name for this Scenario
+            </div>
+            <div className="scenario-label">Scenario Name</div>
+            <input
+              onChange={handleChange}
+              name="scenario-name"
+              className="scenario-input"
+              type="text"
             />
           </div>
-          <div className="textColumn">
-            <div className="description">
-              Use this tool to calculate the estimated account fees for any WealthPort program fee type or to compare investment options. Save each estimate's unique link to share or revisit directly through your browser. Export your estimate to an Excel or PDF to quickly share and analyze your estimated fees.
-              <br />
-              <p>
-              Get Started below.
-              </p>
-              <br />
-            </div>
+
+          {/* Account Value Section */}
+          <div className="filler"></div>
+
+          <div
+            className="scenario-container"
+            // ref={(el) => (sectionsRef.current[2] = el)}
+          >
+            <div className="header-title">Enter Account Value</div>
+            <div className="label-title">Account Value</div>
+            <input
+              onChange={handleChange}
+              name="account-value"
+              className="scenario-input"
+              type="number"
+            />
+          </div>
+
+          {/* Financial Professional Fee Section */}
+          <div className="filler"></div>
+          <div ref={(el) => (sectionsRef.current[2] = el)}>
+            <FinancialProfessionalFee
+              handleChange={handleChange}
+              setCalculationData={setCalculationData}
+              calculationData={calculationData}
+              getCalculationDataValue={getCalculationDataValue}
+            ></FinancialProfessionalFee>
+          </div>
+
+          {/* Select Program Fee Section */}
+          <div className="filler"></div>
+          <div ref={(el) => (sectionsRef.current[3] = el)}>
+            <ProgramFeeSelection
+              handleChange={handleChange}
+              onOptionChange={handleOptionChange}
+            />
+          </div>
+
+          {/* Program Fee Payment Section */}
+          <div className="filler"></div>
+          <div ref={(el) => (sectionsRef.current[4] = el)}>
+            <ProgramFeePayment handleChange={handleChange}></ProgramFeePayment>
+          </div>
+
+          {/* Strategist Fee Section */}
+
+          {/* <ProgramFeeDetails selectedOption={selectedOption} /> */}
+          <div className="filler"></div>
+          <div ref={(el) => (sectionsRef.current[5] = el)}>
+            <StrategistFee
+              handleChange={handleChange}
+              getCalculationDataValue={getCalculationDataValue}
+              feeType={selectedOption}
+              setCalculationData={setCalculationData}
+              calculationData={calculationData}
+            ></StrategistFee>
+          </div>
+
+          {/* Additional Details Section */}
+          <div className="filler"></div>
+
+          <div ref={(el) => (sectionsRef.current[6] = el)}>
+            <AdditionalDetail handleChange={handleChange}></AdditionalDetail>
+          </div>
+          <div className="filler"></div>
+        </div>
+        <div className="calculation-right">
+          <div className="calculation-right-container">
+            <StepIndicator calculationData={calculationData} />
+            <YourEstimatedResults
+              handleChange={handleChange}
+              getCalculationDataValue={getCalculationDataValue}
+              feeType={selectedOption}
+              setCalculationData={setCalculationData}
+              calculationData={calculationData}
+            ></YourEstimatedResults>
           </div>
         </div>
       </div>
-
-      {/* Scenario Section */}
-      <div className="filler"></div>
-      <div className="scenario-container">
-        <div className="scenario-header">Enter a Name for this Scenario</div>
-        <div className="scenario-label">Scenario Name</div>
-        <input className="scenario-input" type="text" />
-      </div>
-
-      {/* Account Value Section */}
-      <div className="filler"></div>
-      <div className="account-value-container">
-        <div className="header-title">Enter Account Value</div>
-        <div className="label-title">Account Value</div>
-        <input className="scenario-input" type="number" />
-      </div>
-
-      {/* Financial Professional Fee Section */}
-      <div className="filler"></div>
-      <FinancialProfessionalFee></FinancialProfessionalFee>
-
-      {/* Select Program Fee Section */}
-      <div className="filler"></div>
-      <ProgramFeeSelection onOptionChange={handleOptionChange} />
-    
-
-      {/* Program Fee Payment Section */}
-      <div className="filler"></div>
-      <ProgramFeePayment></ProgramFeePayment>
-
-     
-
-      {/* Strategist Fee Section */}
-
-      {/* <ProgramFeeDetails selectedOption={selectedOption} /> */}
-      <div className="filler"></div>
-      <StrategistFee feeType={selectedOption}  ></StrategistFee>
-   
-
-      {/* Additional Details Section */}
-      <div className="filler"></div>
-
-      <AdditionalDetail ></AdditionalDetail>
-      <div className="filler"></div>
-
-      </div>
-      <div className='calculation-right'>
-      <StepIndicator/>
-      <YourEstimatedResults></YourEstimatedResults>
-      </div>
-     
-      </div>
       <div className="filler-top"></div>
-      <StepFooter></StepFooter>
+      <StepFooter currentStep={currentStep}></StepFooter>
     </div>
   );
 }
-
-
 
 export default CalculatorPage;

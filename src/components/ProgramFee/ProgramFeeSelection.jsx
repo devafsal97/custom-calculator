@@ -34,10 +34,11 @@ const programOptions = [
   }
 ];
 
-const ProgramFeeSelection = ({ onOptionChange }) => {
+const ProgramFeeSelection = ({ onOptionChange,handleChange }) => {    
     const [selectedOption, setSelectedOption] = useState("");
 
     const handleOptionChange = (event) => {
+      handleChange(event)
       const option = event.target.value;
       setSelectedOption(option);
       onOptionChange(option); // Call the prop function with the selected option

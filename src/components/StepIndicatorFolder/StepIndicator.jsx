@@ -1,114 +1,120 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import StepContent from '@mui/material/StepContent';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import * as React from "react";
+import { useEffect, useState } from "react";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import StepIndicator from "./StepIndicator.css";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const steps = [
   {
-    label: 'Enter Account Value',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed',
+    id: 1,
+    title: "Enter Account Value",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },
   {
-    label: 'Select Financial Professional Fee',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed',
+    id: 2,
+    title: "Select Financial Professional Fee",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed Lorem ipsum dolor sit amet.",
   },
   {
-    label: 'Configure Strategist Fee',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed',
+    id: 3,
+    title: "Configure Program Fee",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },
   {
-    label: 'Configure Program Fee',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed',
+    id: 4,
+    title: "Configure Strategist Fee",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
+
   {
-    label: 'Add Additional Details',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed',
-  },
-  {
-    label: 'View Scenario Results',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed',
+    id: 5,
+    title: "Add Additional Details",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },
 ];
 
-export default function VerticalLinearStepper() {
-  const [activeStep, setActiveStep] = React.useState(0);
+const VerticalLinearStepper = ({ calculationData }) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState(new Set());
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+  useEffect(() => {
+    const newCompletedSteps = new Set(completedSteps);
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+    if (calculationData["scenario-name"] && calculationData["account-value"]) {
+      newCompletedSteps.add(1);
+    } else {
+      newCompletedSteps.delete(1);
+    }
+    if (calculationData["FPfeeType"]) {
+      newCompletedSteps.add(2);
+    } else {
+      newCompletedSteps.delete(2);
+    }
+    if (calculationData["paymentOption"]) {
+      newCompletedSteps.add(3);
+    } else {
+      newCompletedSteps.delete(3);
+    }
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+if ((calculationData?.paymentOption === "caap" && Object.keys(calculationData?.strategistFeeCaap).length > 0) ||
+    (calculationData?.paymentOption === "caap-small-account" && Object.keys(calculationData?.strategistFeeCaapSmallAccount).length > 0) ||
+    (calculationData?.paymentOption === "team-directed" && calculationData?.teamDirectedInput > 0) ||
+    (calculationData?.paymentOption === "uma-sma" && calculationData?.['UMA-SMA-Strategist-Fee'].length > 0)) {
+    newCompletedSteps.add(4);
+} else {
+    newCompletedSteps.delete(4);
+}
+
+
+    if (
+      calculationData?.AdditionalDetails?.fundExpenses > 0 &&
+      calculationData?.AdditionalDetails?.fpPayOut > 0 &&
+      calculationData?.AdditionalDetails?.auaDiscount !== ""
+    ) {
+      newCompletedSteps.add(5);
+    } else {
+      newCompletedSteps.delete(5);
+    }
+
+    setCompletedSteps(newCompletedSteps);
+  }, [calculationData]);
 
   return (
-    <Box sx={{ maxWidth: 400 }}>
-      <Stepper activeStep={activeStep} orientation="vertical">
-        {steps.map((step, index) => (
-          <Step key={step.label}>
-            <StepLabel
-              optional={
-                index === 2 ? (
-                  <Typography variant="caption"></Typography>
-                ) : null
-              }
-              sx={{
-                '& .MuiStepIcon-root': { color: '#186ADE' },
-                fontFamily: 'Avenir Next, sans-serif',
-                color: '#186ADE',
-              }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: 'Avenir Next, sans-serif',
-                }}
-              >
-                {step.label}
-              </Typography>
-            </StepLabel>
-            <StepContent>
-              <Typography
-                sx={{
-                  fontFamily: 'Avenir Next, sans-serif',
-                }}
-              >
-                {step.description}
-              </Typography>
-              {/* <Button onClick={handleNext} sx={{ mt: 1, mr: 1 }}>
-                {index === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button> */}
-              {/* {index !== 0 && (
-                <Button onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
-                  Back
-                </Button>
-              )} */}
-            </StepContent>
-          </Step>
-        ))}
-      </Stepper>
-      {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography
-            sx={{
-              fontFamily: 'Avenir Next, sans-serif',
-            }}
-          >
-            All steps completed - you&apos;re finished
-          </Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
-          </Button>
-        </Paper>
-      )}
-    </Box>
+    <div className="step-indicator">
+      {steps.map((step) => (
+        <div
+          key={step.id}
+          className={`step ${activeStep === step.id ? "active" : ""}`}
+          onClick={() => setActiveStep(step.id)}
+        >
+          <div className="step-line-parent">
+            <div className={`step-line ${step.id === 1 ? "noLine" : ""}`}></div>
+            {completedSteps.has(step.id) ? (
+              <CheckCircleIcon
+                sx={{ fill: "#186ADE", width: "18px", height: "18px" }}
+              />
+            ) : (
+              <RadioButtonUncheckedIcon
+                sx={{ fill: "#186ADE", width: "18px", height: "18px" }}
+              />
+            )}
+            <div
+              className={`step-line ${
+                step.id === steps.length ? "noLine" : ""
+              }`}
+            ></div>
+          </div>
+          <div className="title">
+            {step.title} <p>{step.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
   );
-}
+};
+
+export default VerticalLinearStepper;

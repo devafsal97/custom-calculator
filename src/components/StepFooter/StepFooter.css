@@ -6,6 +6,8 @@
   font-size: 16px;
   line-height: 150%;
   padding: 12px 40px;
+  position: sticky;
+  bottom: 0;
 }
 
 @media (max-width: 991px) {
