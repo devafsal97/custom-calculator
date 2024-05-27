@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CircularProgress from "../CircularProgress/CircularProgress";
 // import './FinancialProfessionalFee.css';
+import { useCalculationStorage } from "../../context/StorageContext";
 
 const FinancialProfessionalFee = ({
   onComplete,
@@ -9,8 +10,61 @@ const FinancialProfessionalFee = ({
   calculationData,
   getCalculationDataValue,
 }) => {
+  const [tierValueSum, setTierValueSum] = useState({
+    doller: "",
+    percentage: "",
+  });
+  const [breakPointValueSum, setBreakPointValueSum] = useState({
+    doller: "",
+    percentage: "",
+  });
+  const calculateSums = (data) => {
+    let amounts = [];
+    let percentages = [];
+
+    if (data) {
+      Object.values(data).forEach((item) => {
+        amounts.push(parseFloat(item.amount || 0));
+        percentages.push(parseFloat(item.percentage || 0));
+      });
+    }
+    const sumOfAmounts = amounts.reduce((acc, val) => acc + val, 0);
+    const sumOfPercentages = percentages.reduce((acc, val) => acc + val, 0);
+    return { sumOfAmounts, sumOfPercentages };
+  };
+  const [tierCompletionStatus, setTierCompletionStatus] = useState(0);
+  const [breakPointCompletionStatus, setBreakPointCompletionStatus] =
+    useState(0);
+  useEffect(() => {
+    const FPfeeTiers = getCalculationDataValue("FPfeeTiers");
+    const FPfeeBreakPoints = getCalculationDataValue("FPfeeBreakPoints");
+    const accountValue = getCalculationDataValue("account-value");
+
+    const { sumOfAmounts: sumOfTiers, sumOfPercentages: sumOfTierPercentages } =
+      calculateSums(FPfeeTiers);
+    const {
+      sumOfAmounts: sumOfBreakPoints,
+      sumOfPercentages: sumOfBreakPointPercentages,
+    } = calculateSums(FPfeeBreakPoints);
+
+    setTierValueSum({ doller: sumOfTiers, percentage: sumOfTierPercentages });
+    setBreakPointValueSum({
+      doller: sumOfBreakPoints,
+      percentage: sumOfBreakPointPercentages,
+    });
+    const tierCompletion = accountValue ? (sumOfTiers / accountValue) * 100 : 0;
+    const breakPointCompletion = accountValue
+      ? (sumOfBreakPoints / accountValue) * 100
+      : 0;
+
+    setTierCompletionStatus(tierCompletion);
+    setBreakPointCompletionStatus(breakPointCompletion);
+   
+  }, [calculationData]);
+
+  const { totalAccountFeeValues,errorMessages,setErrorMessages } = useCalculationStorage();
   // State for the fee type selection
-  const [feeType, setFeeType] = useState("");
+  const [feeType, setFeeType] = useState(getCalculationDataValue("FPfeeType"));
 
   const fetchBreakPoints = () => {
     const tiersData = getCalculationDataValue("FPfeeBreakPoints");
@@ -179,6 +233,16 @@ const FinancialProfessionalFee = ({
               placeholder="%"
               className="scenario-input"
             />
+
+            <p
+              className={`error-message ${
+                getCalculationDataValue("FPfeeFlat")?.amount > "2.25" || getCalculationDataValue("FPfeeFlat")?.amount > 2.25
+                  ? "active"
+                  : ""
+              }`}
+            >
+              Please enter a number between 0 and 2.25
+            </p>
           </div>
         );
       case "fixed":
@@ -198,6 +262,16 @@ const FinancialProfessionalFee = ({
               value={getCalculationDataValue("FPfeeFixed")?.amount || ""}
               className="scenario-input"
             />
+            <p
+              className={`error-message ${
+                totalAccountFeeValues.rate && totalAccountFeeValues.rate > "3"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              The total account fee has exceeded the maximum limit of 3%. Please
+              correct the input entries to continue.
+            </p>
           </div>
         );
       case "tier":
@@ -209,7 +283,24 @@ const FinancialProfessionalFee = ({
                 A blended rate fee based on applying the % Fee to the value of
                 the account that falls into each respective fee tier.
               </div>
-              <CircularProgress percentage={0} />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "200px",
+                  flexDirection: "column",
+                }}
+              >
+                <CircularProgress percentage={tierCompletionStatus} />
+                {tierCompletionStatus < 100 ? (
+                  <p className="circular-message">Under Allocated</p>
+                ) : tierCompletionStatus > 100 ? (
+                  <p className="circular-message">Over Allocated</p>
+                ) : (
+                  <p className="circular-message">Allocation Complete</p>
+                )}
+              </div>
             </div>
             {tiers.map((tier, index) => (
               <div key={index} className="tier-breakpoint-row">
@@ -255,6 +346,24 @@ const FinancialProfessionalFee = ({
             ) : (
               ""
             )}
+            <p
+              className={`error-message ${
+                getCalculationDataValue("account-value") &&
+                getCalculationDataValue("account-value") < tierValueSum.doller
+                  ? "active"
+                  : ""
+              }`}
+            >
+              Tier doller value is greater than the account value
+            </p>
+            <p
+              className={`error-message ${
+                3 < tierValueSum.percentage ? "active" : ""
+              }`}
+            >
+              The input value has exceeded the maximum limit of 3%. Please
+              correct the input entries to continue.
+            </p>
           </div>
         );
       case "breakpoint":
@@ -266,7 +375,24 @@ const FinancialProfessionalFee = ({
                 A blended rate fee based on applying the % Fee to the value of
                 the account that falls into each respective fee tier.
               </div>
-              <CircularProgress percentage={0} />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "200px",
+                  flexDirection: "column",
+                }}
+              >
+                <CircularProgress percentage={breakPointCompletionStatus} />
+                {breakPointCompletionStatus < 100 ? (
+                  <p className="circular-message">Under Allocated</p>
+                ) : breakPointCompletionStatus > 100 ? (
+                  <p className="circular-message">Over Allocated</p>
+                ) : (
+                  <p className="circular-message">Allocation Complete</p>
+                )}
+              </div>
             </div>
 
             {breakpoints.map((bp, index) => (
@@ -310,7 +436,25 @@ const FinancialProfessionalFee = ({
               />
               <div className="tier-breakpoint-btn">Add Another Breakpoint</div>
             </div>
-
+            <p
+              className={`error-message ${
+                getCalculationDataValue("account-value") &&
+                getCalculationDataValue("account-value") <
+                  breakPointValueSum.doller
+                  ? "active"
+                  : ""
+              }`}
+            >
+              Tier doller value is greater than the account value
+            </p>
+            <p
+              className={`error-message ${
+                3 < breakPointValueSum.percentage ? "active" : ""
+              }`}
+            >
+              The input value has exceeded the maximum limit of 3%. Please
+              correct the input entries to continue.
+            </p>
             {/* <div>
               <h4>Breakpoints Complete</h4>
               <p>{Math.round(calculateBreakpointProgress())}%</p>

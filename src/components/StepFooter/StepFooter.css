@@ -69,3 +69,10 @@
     padding: 0 20px;
   }
 }
+
+.step-save.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #cccccc;
+  color: #666666;
+}

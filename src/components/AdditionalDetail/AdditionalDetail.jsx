@@ -1,44 +1,33 @@
 import React, { useState } from "react";
 import "./AdditionalDetail.css";
 
-const AdditionalDetail = ({ handleChange }) => {
+const AdditionalDetail = ({
+  handleChange,
+  getCalculationDataValue,
+  setCalculationData,
+  calculationData,
+}) => {
   // State for the WealthPort AUA discount selection
-  const [selectedDiscount, setSelectedDiscount] = useState("0%");
-  const [fundExpenses, setFundExpenses] = useState("");
-  const [fpPayOut, setFpPayOut] = useState("");
-
-  // const handleDiscountChange = (event) => {
-  //   const { name, value } = event.target;
-
-  //   if (name === 'auaDiscount') {
-  //     setSelectedDiscount(value);
-  //   } else if (name === 'fundExpenses') {
-  //     setFundExpenses(value);
-  //   } else if (name === 'fpPayOut') {
-  //     setFpPayOut(value);
-  //   }
-
-  //   // Create and send custom event object
-  //   const eventObject = {
-  //     target: {
-  //       name: 'AdditionalDetails',
-  //       value: {
-  //         fundExpenses,
-  //         fpPayOut,
-  //         auaDiscount: name === 'auaDiscount' ? value : selectedDiscount,
-  //       },
-  //     },
-  //   };
-  //   handleChange(eventObject);
-  // };
+  const [selectedDiscount, setSelectedDiscount] = useState(
+    getCalculationDataValue("AdditionalDetails")?.auaDiscount || "0%"
+  );
+  const [fundExpenses, setFundExpenses] = useState(
+    getCalculationDataValue("AdditionalDetails")?.fundExpenses
+  );
+  const [fpPayOut, setFpPayOut] = useState(
+    getCalculationDataValue("AdditionalDetails")?.fpPayOut
+  );
+  const [houseHoldValue, setHouseHoldValue] = useState(
+    getCalculationDataValue("AdditionalDetails")?.houseHoldValue || ''
+  );
 
   const handleDiscountChange = (event) => {
     const { name, value } = event.target;
-
     // Temporary variables to hold the updated values
     let updatedSelectedDiscount = selectedDiscount;
     let updatedFundExpenses = fundExpenses;
     let updatedFpPayOut = fpPayOut;
+    let updatedHouseHoldValue = houseHoldValue;
 
     // Update the temporary variables based on the input change
     if (name === "auaDiscount") {
@@ -50,6 +39,9 @@ const AdditionalDetail = ({ handleChange }) => {
     } else if (name === "fpPayOut") {
       updatedFpPayOut = value;
       setFpPayOut(value);
+    } else if (name === "houseHoldValue") {
+      updatedHouseHoldValue = value;
+      setHouseHoldValue(value);
     }
 
     // Create and send custom event object with the updated values
@@ -60,12 +52,13 @@ const AdditionalDetail = ({ handleChange }) => {
           fundExpenses: updatedFundExpenses,
           fpPayOut: updatedFpPayOut,
           auaDiscount: updatedSelectedDiscount,
+          houseHoldValue: updatedHouseHoldValue,
         },
       },
     };
     handleChange(eventObject);
   };
-  const handleHouseHoldValue = () => {}
+
   return (
     <div className="additional-detail-container">
       <div className="header">Additional Detail (Optional)</div>
@@ -101,16 +94,16 @@ const AdditionalDetail = ({ handleChange }) => {
           </div>
         </div>
       </div>
-      <div className="subsection">
+      <div className="subsection household">
         <div className="subsection-header">Household Value</div>
         <div className="input-group">
           <input
-            onChange={handleHouseHoldValue}
-            name="fpPayOut"
+            onChange={handleDiscountChange}
+            name="houseHoldValue"
             type="number"
-            placeholder="%"
+            placeholder="$"
             className="input-field"
-            value={fpPayOut}
+            value={houseHoldValue}
           />
         </div>
       </div>

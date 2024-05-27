@@ -5,6 +5,55 @@ const CalculationStorageContext = createContext();
 
 // Create the provider component
 const CalculationStorageProvider = ({ children }) => {
+  const [errorMessages,setErrorMessages] = useState([])
+  const [stepsCompleted, setStepsCompleted] = useState(false);
+  const [render, setRender] = useState(false);
+  const [accountValue, setAccountValue] = useState({
+    rate: "",
+    price: "",
+  });
+  const [fundExpenses, setFundExpenses] = useState({
+    rate: "",
+    price: "",
+  });
+
+  const [fpPayout, setFpPayout] = useState({
+    rate: "",
+    price: "",
+  });
+
+  const [houseHoldValue, setHouseHoldValue] = useState({
+    rate: "",
+    price: "",
+  });
+  const [feeType, setFeeType] = useState();
+  const [programFee, setProgramFee] = useState();
+
+  const [programFeeValues, setProgramFeeValues] = useState({
+    rate: "",
+    price: "",
+  });
+  const [strategistFeeValues, setStrategistFeeValues] = useState({
+    rate: "",
+    price: "",
+  });
+  const [totalAccountFeeValues, setTotalAccountFeeValues] = useState({
+    rate: "",
+    price: "",
+  });
+  const [totalClientFeeValues, setTotalClientFeeValues] = useState({
+    rate: "",
+    price: "",
+  });
+  const [grossAnnualFeeValues, setgrossAnnualFeeValues] = useState({
+    rate: "",
+    price: "",
+  });
+  const [netAnnualFeeValues, setNetAnnualFeeValues] = useState({
+    rate: "",
+    price: "",
+  });
+  const [fpValues, setFpValues] = useState({ rate: "", price: "" });
   const [calculationData, setCalculationData] = useState({
     "scenario-name": "",
     "account-value": "",
@@ -50,6 +99,7 @@ const CalculationStorageProvider = ({ children }) => {
   useEffect(() => {
     console.log(calculationData);
   }, [calculationData]);
+
   return (
     <CalculationStorageContext.Provider
       value={{
@@ -57,6 +107,36 @@ const CalculationStorageProvider = ({ children }) => {
         setCalculationData,
         handleChange,
         getCalculationDataValue,
+        programFeeValues,
+        setProgramFeeValues,
+        strategistFeeValues,
+        setStrategistFeeValues,
+        totalAccountFeeValues,
+        setTotalAccountFeeValues,
+        totalClientFeeValues,
+        setTotalClientFeeValues,
+        grossAnnualFeeValues,
+        setgrossAnnualFeeValues,
+        netAnnualFeeValues,
+        setNetAnnualFeeValues,
+        fpValues,
+        setFpValues,
+        accountValue,
+        setAccountValue,
+        fundExpenses,
+        setFundExpenses,
+        fpPayout,
+        setFpPayout,
+        houseHoldValue,
+        setHouseHoldValue,
+        feeType,
+        setFeeType,
+        programFee,
+        setProgramFee,
+        render,
+        setRender,
+        stepsCompleted,
+        setStepsCompleted,errorMessages,setErrorMessages
       }}
     >
       {children}

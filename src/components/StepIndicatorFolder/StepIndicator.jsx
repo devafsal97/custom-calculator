@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import StepIndicator from "./StepIndicator.css";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
+import { useCalculationStorage } from "../../context/StorageContext";
 const steps = [
   {
     id: 1,
@@ -38,6 +38,7 @@ const steps = [
 ];
 
 const VerticalLinearStepper = ({ calculationData }) => {
+  const { stepsCompleted, setStepsCompleted } = useCalculationStorage();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(new Set());
 
@@ -60,19 +61,26 @@ const VerticalLinearStepper = ({ calculationData }) => {
       newCompletedSteps.delete(3);
     }
 
-if ((calculationData?.paymentOption === "caap" && Object.keys(calculationData?.strategistFeeCaap).length > 0) ||
-    (calculationData?.paymentOption === "caap-small-account" && Object.keys(calculationData?.strategistFeeCaapSmallAccount).length > 0) ||
-    (calculationData?.paymentOption === "team-directed" && calculationData?.teamDirectedInput > 0) ||
-    (calculationData?.paymentOption === "uma-sma" && calculationData?.['UMA-SMA-Strategist-Fee'].length > 0)) {
-    newCompletedSteps.add(4);
-} else {
-    newCompletedSteps.delete(4);
-}
-
+    if (
+      (calculationData?.paymentOption === "caap" &&
+        Object.keys(calculationData?.strategistFeeCaap).length > 0) ||
+      (calculationData?.paymentOption === "caap-small-account" &&
+        Object.keys(calculationData?.strategistFeeCaapSmallAccount).length >
+          0) ||
+      (calculationData?.paymentOption === "team-directed" &&
+        calculationData?.teamDirectedInput > 0) ||
+      (calculationData?.paymentOption === "uma-sma" &&
+        calculationData?.["UMA-SMA-Strategist-Fee"].length > 0)
+    ) {
+      newCompletedSteps.add(4);
+    } else {
+      newCompletedSteps.delete(4);
+    }
 
     if (
       calculationData?.AdditionalDetails?.fundExpenses > 0 &&
       calculationData?.AdditionalDetails?.fpPayOut > 0 &&
+calculationData?.AdditionalDetails?.houseHoldValue > 0 &&
       calculationData?.AdditionalDetails?.auaDiscount !== ""
     ) {
       newCompletedSteps.add(5);
@@ -81,6 +89,8 @@ if ((calculationData?.paymentOption === "caap" && Object.keys(calculationData?.s
     }
 
     setCompletedSteps(newCompletedSteps);
+    const allStepsCompleted = newCompletedSteps.size === 5;
+    setStepsCompleted(allStepsCompleted);
   }, [calculationData]);
 
   return (

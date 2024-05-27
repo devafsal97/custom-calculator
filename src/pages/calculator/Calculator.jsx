@@ -9,20 +9,21 @@ import AdditionalDetail from "../../components/AdditionalDetail/AdditionalDetail
 import StepIndicator from "../../components/StepIndicatorFolder/StepIndicator";
 import YourEstimatedResults from "../../components/Results/YourEstimatedResults";
 import StepFooter from "../../components/StepFooter/StepFooter";
-import { useIntersectionObserver } from "../../components/useIntersectionObserver/useIntersectionObserver";
+import useIntersectionObserver from "../../components/useIntersectionObserver/useIntersectionObserver"
 import { useCalculationStorage } from "../../context/StorageContext";
 function CalculatorPage() {
-  const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
-  const [selectedOption, setSelectedOption] = useState("");
-  const [currentStep, setCurrentStep] = useState(0);
-  const sectionsRef = useIntersectionObserver(setCurrentStep);
   const {
     calculationData,
     setCalculationData,
     handleChange,
     getCalculationDataValue,
+    setRender,
+    render,
   } = useCalculationStorage();
-
+  const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
+  const [selectedOption, setSelectedOption] = useState();
+  const [currentStep, setCurrentStep] = useState(0);
+  const sectionsRef = useIntersectionObserver(setCurrentStep);
   const handleOptionChange = (option) => {
     setSelectedOption(option);
     // handleProgramFeeSelectionComplete();
@@ -74,10 +75,13 @@ function CalculatorPage() {
             </div>
             <div className="scenario-label">Scenario Name</div>
             <input
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+              }}
               name="scenario-name"
               className="scenario-input"
               type="text"
+              value={getCalculationDataValue("scenario-name")}
             />
           </div>
 
@@ -95,6 +99,7 @@ function CalculatorPage() {
               name="account-value"
               className="scenario-input"
               type="number"
+              value={getCalculationDataValue("account-value")}
             />
           </div>
 
@@ -115,20 +120,30 @@ function CalculatorPage() {
             <ProgramFeeSelection
               handleChange={handleChange}
               onOptionChange={handleOptionChange}
+              getCalculationDataValue={getCalculationDataValue}
             />
           </div>
 
           {/* Program Fee Payment Section */}
           <div className="filler"></div>
           <div ref={(el) => (sectionsRef.current[4] = el)}>
-            <ProgramFeePayment handleChange={handleChange}></ProgramFeePayment>
+            <ProgramFeePayment
+              getCalculationDataValue={getCalculationDataValue}
+              handleChange={handleChange}
+            ></ProgramFeePayment>
           </div>
 
           {/* Strategist Fee Section */}
 
           {/* <ProgramFeeDetails selectedOption={selectedOption} /> */}
           <div className="filler"></div>
-          <div ref={(el) => (sectionsRef.current[5] = el)}>
+          <div
+            ref={(el) =>
+              getCalculationDataValue("paymentOption") && getCalculationDataValue("paymentOption") !== '' && getCalculationDataValue("paymentOption") !== "advisor-directed"
+                ? (sectionsRef.current[5] = el)
+                : null
+            }
+          >
             <StrategistFee
               handleChange={handleChange}
               getCalculationDataValue={getCalculationDataValue}
@@ -142,7 +157,12 @@ function CalculatorPage() {
           <div className="filler"></div>
 
           <div ref={(el) => (sectionsRef.current[6] = el)}>
-            <AdditionalDetail handleChange={handleChange}></AdditionalDetail>
+            <AdditionalDetail
+              handleChange={handleChange}
+              getCalculationDataValue={getCalculationDataValue}
+              setCalculationData={setCalculationData}
+              calculationData={calculationData}
+            ></AdditionalDetail>
           </div>
           <div className="filler"></div>
         </div>
@@ -160,7 +180,11 @@ function CalculatorPage() {
         </div>
       </div>
       <div className="filler-top"></div>
-      <StepFooter currentStep={currentStep}></StepFooter>
+      <StepFooter
+        currentStep={currentStep}
+        setRender={setRender}
+        render={render}
+      ></StepFooter>
     </div>
   );
 }

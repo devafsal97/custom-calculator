@@ -1074,3 +1074,44 @@ body {
   top: 100px;
   /* margin-top: 14px; */
 }
+
+.error-message {
+  font-family: Avenir Next, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  padding-top: 5px;
+  color: #AF0801;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 1s linear;
+  display: none;
+  margin: 0;
+}
+
+.error-message.active {
+  display: block;
+  transition: all 1s linear;
+  visibility: visible;
+  opacity: 1;
+
+}
+
+.circular-message {
+  text-align: center;
+  font-family: "Avenir Next";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  margin: 0;
+  padding-top: 5px;
+}
+
+.percentage-text {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+}

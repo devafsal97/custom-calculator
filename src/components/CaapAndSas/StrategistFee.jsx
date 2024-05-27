@@ -20,21 +20,39 @@ const strategistEquitySMA = [
 ];
 
 const StrategistFee = ({
-  feeType,
   handleChange,
   getCalculationDataValue,
   setCalculationData,
   calculationData,
 }) => {
-  const [selectedOption, setSelectedOption] = useState("");
+  const [feeType, setFeeType] = useState(
+    getCalculationDataValue("paymentOption")
+  );
+  useEffect(() => {
+    setFeeType(getCalculationDataValue("paymentOption"));
+  }, [calculationData]);
+
+  const [selectedMFOptions, setSelectedMFOptions] = useState();
+  const [selectedOption, setSelectedOption] = useState();
+
   const [showCalculation, setShowCalculation] = useState(false);
-  const [selectedMFETF, setSelectedMFETF] = useState([]);
-  const [selectedEquitySMA, setSelectedEquitySMA] = useState([]);
+  const initialOptions =
+    getCalculationDataValue("UMA-SMA-Strategist-Fee") || [];
+
+  const initialEquitySMA = initialOptions.filter(
+    (option) => option.type === "Equity"
+  );
+  const initialMFETF = initialOptions.filter(
+    (option) => option.type === "MFEFT"
+  );
+
+  const [selectedEquitySMA, setSelectedEquitySMA] = useState(initialEquitySMA);
+  const [selectedMFETF, setSelectedMFETF] = useState(initialMFETF);
   const [editingStrategist, setEditingStrategist] = useState(null);
   const handleFocus = (selected) => {
     setEditingStrategist(selected.value);
   };
-
+  
   const strategistOptions = Object.keys(StrategistCaapConst).map((key) => ({
     value: StrategistCaapConst[key],
     key: key,
@@ -48,8 +66,7 @@ const StrategistFee = ({
   );
 
   const handleOptionChange = (event) => {
-    const selectedValue = event.target.value;
-    setSelectedOption(selectedValue);
+    const selectedValue = event.target.value;        
     const paymentOption = getCalculationDataValue("paymentOption");
     const selectedLabel =
       strategistOptions.find((option) => option.value == selectedValue)?.key ||
@@ -82,61 +99,13 @@ const StrategistFee = ({
     setShowCalculation((prev) => !prev);
   };
 
-  // const handleMFETFChange = (selectedOptions, type) => {
-  //   setSelectedMFETF(selectedOptions);
-  //   const updatedOptions = selectedOptions.map((option) => ({
-  //     name: option.label,
-  //     inputValue: "",
-  //     value: option.value,
-  //     dollarValue: "",
-  //   }));
-
-  //   // Update calculationData with the new options
-  //   setCalculationData((prevData) => ({
-  //     ...prevData,
-  //     "UMA-SMA-Strategist-Fee": [
-  //       ...prevData["UMA-SMA-Strategist-Fee"],
-  //       ...updatedOptions.filter(
-  //         (newOption) =>
-  //           !prevData["UMA-SMA-Strategist-Fee"].find(
-  //             (existingOption) => existingOption.name === newOption.name
-  //           )
-  //       ),
-  //     ],
-  //   }));
-  // };
-
-  // const handleEquitySMAChange = (selectedOptions, type) => {
-
-  //   setSelectedEquitySMA(selectedOptions || []);
-  //   const updatedOptions = selectedOptions.map((option) => ({
-  //     name: option.label,
-  //     inputValue: "",
-  //     value: option.value,
-  //     dollarValue: "",
-  //     type:option.type
-  //   }));
-  //   // Update calculationData with the new options
-  //   setCalculationData((prevData) => ({
-  //     ...prevData,
-  //     "UMA-SMA-Strategist-Fee": [
-  //       ...prevData["UMA-SMA-Strategist-Fee"],
-  //       ...updatedOptions.filter(
-  //         (newOption) =>
-  //           !prevData["UMA-SMA-Strategist-Fee"].find(
-  //             (existingOption) => existingOption.name === newOption.name
-  //           )
-  //       ),
-  //     ],
-  //   }));
-  // };
-
   const handleMFETFChange = (selectedOptions, type) => {
     setSelectedMFETF(selectedOptions || []);
 
     // Convert the selected options to the format expected by the state
     const updatedOptions = selectedOptions.map((option) => ({
       name: option.label,
+      label: option.label,
       inputValue: "",
       value: option.value,
       dollarValue: "",
@@ -187,6 +156,7 @@ const StrategistFee = ({
     const updatedOptions = selectedOptions.map((option) => ({
       name: option.label,
       inputValue: "",
+      label: option.label,
       value: option.value,
       dollarValue: "",
       type: type, // Assume each option inherits the type from the handler's argument
@@ -229,7 +199,7 @@ const StrategistFee = ({
     });
   };
 
-  const handleStrategistInput = (e, type) => {    
+  const handleStrategistInput = (e, type) => {
     const { name, value, dataset, key } = e.target;
     const strategistName = dataset.label;
     const accountValue = parseFloat(calculationData["account-value"]) || 0;
@@ -327,6 +297,7 @@ const StrategistFee = ({
           type="number"
           placeholder="%"
           className="scenario-input"
+          value={getCalculationDataValue("teamDirectedInput") || ""}
         />
       </div>
     );
@@ -346,7 +317,7 @@ const StrategistFee = ({
         {getCalculationDataValue("paymentOption") === "caap" ? (
           <select
             className="strategist-dropdown scenario-input"
-            value={selectedOption}
+            value={selectedOption}            
             onChange={handleOptionChange}
           >
             <option value="" disabled>
@@ -362,8 +333,8 @@ const StrategistFee = ({
           "caap-small-account" ? (
           <select
             className="strategist-dropdown scenario-input"
-            value={selectedOption}
             onChange={handleOptionChange}
+            //value={selectedOption}
           >
             <option value="" disabled>
               Select a strategist option
@@ -401,7 +372,7 @@ const StrategistFee = ({
             The Strategist Fee covers costs associated with asset allocation and
             model trading services. Applicable to CAAP, UMA, and Team-directed.
           </div>{" "}
-          <CircularProgress percentage={0} />
+          {/* <CircularProgress percentage={0} /> */}
         </div>
         <div className="strategist-select-section">
           <div className="strategist-select-title">
@@ -415,6 +386,7 @@ const StrategistFee = ({
               type: option.type,
             }))}
             key="MF/ETF Strategists"
+            value={selectedMFETF}
             onChange={(e) => handleMFETFChange(e, "MFEFT")}
             className="strategist-select"
             data-label="Select MF/ETF Strategists"

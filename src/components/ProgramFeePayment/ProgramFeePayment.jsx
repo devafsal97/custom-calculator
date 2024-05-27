@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-const ProgramFeePayment = ({handleChange}) => {
+const ProgramFeePayment = ({handleChange,getCalculationDataValue}) => {
   // State for the selected payment option
-  const [paymentOption, setPaymentOption] = useState("");
+  const [paymentOption, setPaymentOption] = useState(getCalculationDataValue("programOption"));
 
   // Handle the change of radio button selection
   const handlePaymentChange = (event) => {

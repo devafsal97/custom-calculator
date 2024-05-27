@@ -35,7 +35,7 @@
   cursor: pointer;
   font-family: 'Avenir Next', sans-serif;
   color: #3e5463;
-  min-width: 32%;
+  /* min-width: 32%; */
   font-size: 12px;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .results-content {
-  margin-top: 16px;
+  margin-top: 10px;
 }
 
 .result-content {
@@ -88,20 +88,25 @@
 }
 
 .result-value {
-  flex: 1 1;
+  /* flex: 1 1; */
   text-align: right;
   font-family: 'Avenir Next', sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
   line-height: 15px;
-  width: 58px;
+  width: 59px;
   overflow: hidden;
   word-wrap: break-word;
-  padding: 0 10px;
-  padding-right: 27px;
+  /* padding: 0 10px;
+  padding-right: 27px; */
 }
-
+.rate-label.labels,.price-label.labels {
+  width: 59px;
+}
+.price-label.labels{
+  text-align: right;
+}
 .iconsContainer {
   display: flex;
   justify-content: space-between;
@@ -117,11 +122,20 @@
 .flex-container {
   display: flex;
   justify-content: space-between;
-  width: 47.3%;
+  /* width: 47.3%; */
   font-size: 12px;
   line-height: 11px;
+  gap:33px;
 }
 
 .price-label {
-  padding-right: 10%;
+  /* padding-right: 10%; */
+}
+.result-value-container {
+  display: flex;
+  gap: 50px;
+}
+
+.result-value.single-column {
+  width: fit-content;
 }

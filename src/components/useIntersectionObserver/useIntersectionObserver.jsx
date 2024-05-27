@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export const useIntersectionObserver = (setCurrentStep) => {
+export const useIntersectionObserver = (setCurrentComponent) => {
   const sectionsRef = useRef([]);
   const observerRef = useRef(null);
 
@@ -10,23 +10,25 @@ export const useIntersectionObserver = (setCurrentStep) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const step = sectionsRef.current.indexOf(entry.target);
-            setCurrentStep(step);
+            setCurrentComponent(step);
           }
         });
       },
-      { threshold: 0.5 } // Adjust this value as needed
+      { threshold: 1 }
     );
 
     sectionsRef.current.forEach((section) => {
-      observerRef.current.observe(section);
+      if (section) {
+        observerRef.current.observe(section);
+      }
     });
 
-    return () => {
-      if (observerRef.current) {
+    return () => {  if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
-  }, [setCurrentStep]);
+  }, [setCurrentComponent]);
 
   return sectionsRef;
 };
+export default useIntersectionObserver;

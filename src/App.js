@@ -1,5 +1,5 @@
 import logo from "./logo.svg";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import HomePage from "./pages/homepage/HomePage";
 import Styles from "./app.module.css";
 import Fpfee from "./pages/fpfee/Fpfee";
@@ -14,6 +14,9 @@ import "./global.css";
 import StepIndicator from "./components/stepindicator/StepIndicator";
 import CalculatorPage from "./pages/calculator/Calculator";
 import { CalculationStorageProvider } from "./context/StorageContext";
+
+import EstimatedResults from "./pages/EstimatedResults/EstimatedResults";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   // const [currentPage, setCurrentPage] = useState('HomePage');
@@ -33,9 +36,17 @@ function App() {
     // {currentPage === 'ResultPage' && <ResultPage onNavigate={navigate} />}
     // </AppProvider>
     // </div>
-    <CalculationStorageProvider>
-      <CalculatorPage />
-    </CalculationStorageProvider>
+    // <CalculationStorageProvider>
+    //   <CalculatorPage />
+    // </CalculationStorageProvider>
+    <Router>
+      <CalculationStorageProvider>
+        <Routes>
+          <Route path="/" element={<CalculatorPage />} />
+          <Route path="/results" element={<EstimatedResults />} />
+        </Routes>
+      </CalculationStorageProvider>
+    </Router>
   );
 }
 

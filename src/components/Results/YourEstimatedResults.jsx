@@ -3,41 +3,46 @@ import "./YourEstimatedResults.css"; // Create this CSS file for styling
 import calculateBreakpointFees from "./CalculateBreakpointFees";
 import calculateProgramFee from "./CalculateProgramFee";
 import calculateTierFee from "./CalculateTierFee";
+import { useCalculationStorage } from "../../context/StorageContext";
 import { Co2Sharp } from "@mui/icons-material";
 const YourEstimatedResults = ({
   handleChange,
   getCalculationDataValue,
-  feeType,
   setCalculationData,
   calculationData,
 }) => {
+  const {
+    programFeeValues,
+    setProgramFeeValues,
+    strategistFeeValues,
+    setStrategistFeeValues,
+    totalAccountFeeValues,
+    setTotalAccountFeeValues,
+    totalClientFeeValues,
+    setTotalClientFeeValues,
+    grossAnnualFeeValues,
+    setgrossAnnualFeeValues,
+    netAnnualFeeValues,
+    setNetAnnualFeeValues,
+    fpValues,
+    setFpValues,
+    accountValue,
+    setAccountValue,
+    fundExpenses,
+    setFundExpenses,
+    fpPayout,
+    setFpPayout,
+    houseHoldValue,
+    setHouseHoldValue,
+    feeType,
+    setFeeType,
+    programFee,
+    setProgramFee,
+    render,
+  } = useCalculationStorage();
   // State to keep track of the active tab
   const [activeTab, setActiveTab] = useState("total-account-fees");
-  const [fpValues, setFpValues] = useState({ rate: "", price: "" });
-  const [programFeeValues, setProgramFeeValues] = useState({
-    rate: "",
-    price: "",
-  });
-  const [strategistFeeValues, setStrategistFeeValues] = useState({
-    rate: "",
-    price: "",
-  });
-  const [totalAccountFeeValues, setTotalAccountFeeValues] = useState({
-    rate: "",
-    price: "",
-  });
-  const [totalClientFeeValues, setTotalClientFeeValues] = useState({
-    rate: "",
-    price: "",
-  });
-  const [grossAnnualFeeValues, setgrossAnnualFeeValues] = useState({
-    rate: "",
-    price: "",
-  });
-  const [netAnnualFeeValues, setNetAnnualFeeValues] = useState({
-    rate: "",
-    price: "",
-  });
+
   const strategistFeeCaap = getCalculationDataValue("strategistFeeCaap");
   const strategistFeeCaapSmallAccount = getCalculationDataValue(
     "strategistFeeCaapSmallAccount"
@@ -54,6 +59,49 @@ const YourEstimatedResults = ({
     const UmaSmaStrategistFee =
       getCalculationDataValue("UMA-SMA-Strategist-Fee") || [];
     const programOption = getCalculationDataValue("programOption") || "";
+    const householdAUM =
+      getCalculationDataValue("AdditionalDetails")?.houseHoldValue || 0;
+    const fundExp =
+      getCalculationDataValue("AdditionalDetails")?.fundExpenses || 0;
+    const fpPayout = parseFloat(
+      getCalculationDataValue("AdditionalDetails")?.fpPayOut || 0
+    );
+
+    // Summary value
+
+    setAccountValue({ rate: 0, price: accountValue });
+    setFundExpenses({ rate: fundExp, price: "N/A" });
+    setFpPayout({ rate: fpPayout, price: "N/A" });
+    setHouseHoldValue({ rate: householdAUM, price: "N/A" });
+    const mapFeeType = (type, mappings) => {
+      return mappings[type] || "N/A";
+    };
+
+    const programTypeMappings = {
+      "advisor-directed": "Advisor Directed",
+      caap: "CAAP",
+      "caap-small-account": "CAAP Small Account Solutions",
+      "team-directed": "Team Directed",
+      "uma-sma": "UMA/SMA",
+    };
+
+    const fpFeeTypeMappings = {
+      breakpoint: "Breakpoint",
+      tier: "Tier",
+      fixed: "Fixed",
+      flat: "Flat",
+    };
+
+    if (programType) {
+      const feeType = mapFeeType(programType, programTypeMappings);
+      setProgramFee(feeType);
+    }
+
+    if (fpFeeType) {
+      const feeType = mapFeeType(fpFeeType, fpFeeTypeMappings);
+      setFeeType(feeType);
+    }
+
     if (fpFeeType === "flat") {
       const rate = parseFloat(calculationData.FPfeeFlat?.amount) || 0;
       const FPfeeFlat = accountValue !== 0 ? (rate / 100) * accountValue : 0;
@@ -82,7 +130,6 @@ const YourEstimatedResults = ({
       }
 
       if (breakpoints.length > 0 && feePercentages.length > 0 && accountValue) {
-        const householdAUM = 1000;
         const results = calculateBreakpointFees(
           accountValue,
           householdAUM,
@@ -101,7 +148,6 @@ const YourEstimatedResults = ({
         }
       }
     } else if (fpFeeType === "tier") {
-      const householdAUM = 0;
       const FPfeeTiers = calculationData["FPfeeTiers"];
       const tiers = [];
       const feePercentages = [];
@@ -113,7 +159,6 @@ const YourEstimatedResults = ({
         });
       }
       if (tiers.length > 0 && feePercentages.length > 0 && accountValue) {
-        const householdAUM = 1000;
         const results = calculateTierFee(
           accountValue,
           householdAUM,
@@ -145,9 +190,9 @@ const YourEstimatedResults = ({
           totalRate += result;
         });
         const roundedTotalRate = Math.ceil(totalRate);
-        const rate = (roundedTotalRate / accountValue) * 100;
+        const rate = (roundedTotalRate / accountValue) * 100;        
         setProgramFeeValues({
-          rate: rate.toFixed(2),
+          rate: isNaN(rate) ? 'N/A' : rate.toFixed(2),
           price: roundedTotalRate,
         });
       }
@@ -163,7 +208,8 @@ const YourEstimatedResults = ({
       if (
         strategistFeeCaap &&
         Object.keys(strategistFeeCaap).length !== 0 &&
-        accountValue !== 0
+        accountValue !== 0 &&
+        accountValue !== ""
       ) {
         const percentageValue = strategistFeeCaap.value;
         const price =
@@ -219,7 +265,7 @@ const YourEstimatedResults = ({
       if (programOption === "fp") {
         totalAccountFee =
           parseFloat(fpValues.rate || 0) +
-          parseFloat(programFeeValues.rate || 0);
+          parseFloat(strategistFeeValues.rate || 0);
 
         //Annual Fee
 
@@ -237,13 +283,13 @@ const YourEstimatedResults = ({
       }
       let dollerValue = (totalAccountFee / 100) * accountValue;
       setTotalAccountFeeValues({
-        rate: totalAccountFee.toFixed(2),
-        price: dollerValue.toFixed(2),
+        rate: isNaN(totalAccountFee) ? 'N/A' : totalAccountFee.toFixed(2),
+        price: isNaN(dollerValue) ? 'N/A' : dollerValue.toFixed(2),
       });
-      let percentageValue = (netAnnualFee / accountValue) * 100;
+      let percentageValue =  (netAnnualFee / accountValue) * 100;        
       setNetAnnualFeeValues({
-        rate: percentageValue.toFixed(2),
-        price: netAnnualFee.toFixed(2),
+        rate: isNaN(percentageValue) || percentageValue === Infinity ? 'N/A' : percentageValue.toFixed(2),
+        price: isNaN(netAnnualFee) ? 'N/A' : netAnnualFee.toFixed(2),
       });
     }
     const totalClientFees =
@@ -253,8 +299,8 @@ const YourEstimatedResults = ({
       parseFloat(fundExpences);
     let clientDollerValue = (totalClientFees / 100) * accountValue;
     setTotalClientFeeValues({
-      rate: totalClientFees.toFixed(2),
-      price: clientDollerValue.toFixed(2),
+      rate: isNaN(totalClientFees) ? 'N/A' : totalClientFees.toFixed(2),
+      price: isNaN(clientDollerValue) ? 'N/A' : clientDollerValue.toFixed(2),
     });
     let grossannualfee;
     if (fpPayout && fpPayout != 0) {
@@ -266,7 +312,7 @@ const YourEstimatedResults = ({
       grossannualfee !== "N/A" ? (grossannualfee / 100) * accountValue : "N/A";
 
     setgrossAnnualFeeValues({
-      rate: grossannualfee,
+      rate: isNaN(grossannualfee) ? 'N/A' : grossannualfee.toFixed(2),
       price: grossAnnualFeeDollerValue,
     });
   }, [fpValues, programFeeValues, strategistFeeValues]);
@@ -287,8 +333,10 @@ const YourEstimatedResults = ({
           <div className="result-content">
             <div className="result-row">
               <div className="result-label">Financial Professional Fee</div>
-              <div className="result-value">{fpValues.rate || "N/A"}</div>
-              <div className="result-value">{fpValues.price || "N/A"}</div>
+              <div className="result-value-container">
+                <div className="result-value">{fpValues.rate || "N/A"}</div>
+                <div className="result-value">{fpValues.price || "N/A"}</div>
+              </div>
             </div>
             {/* <div className="divider" />
             <div className="result-row">
@@ -301,31 +349,37 @@ const YourEstimatedResults = ({
             <div className="divider" />
             <div className="result-row">
               <div className="result-label">Program Fee</div>
-              <div className="result-value">
-                {programFeeValues.rate || "N/A"}
-              </div>
-              <div className="result-value">
-                {programFeeValues.price || "N/A"}
+              <div className="result-value-container">
+                <div className="result-value">
+                  {programFeeValues.rate || "N/A"}
+                </div>
+                <div className="result-value">
+                  {programFeeValues.price || "N/A"}
+                </div>
               </div>
             </div>
             <div className="divider" />
             <div className="result-row">
               <div className="result-label">Strategist Fee (if applicable)</div>
-              <div className="result-value">
-                {strategistFeeValues.rate || "N/A"}
-              </div>
-              <div className="result-value">
-                {strategistFeeValues.price || "N/A"}
+              <div className="result-value-container">
+                <div className="result-value">
+                  {strategistFeeValues.rate || "N/A"}
+                </div>
+                <div className="result-value">
+                  {strategistFeeValues.price || "N/A"}
+                </div>
               </div>
             </div>
             <div className="divider" />
             <div className="result-row">
               <div className="result-label">Total Account Fee (annualized)</div>
-              <div className="result-value">
-                {totalAccountFeeValues.rate || "N/A"}
-              </div>
-              <div className="result-value">
-                {totalAccountFeeValues.price || "N/A"}
+              <div className="result-value-container">
+                <div className="result-value">
+                  {totalAccountFeeValues.rate || "N/A"}
+                </div>
+                <div className="result-value">
+                  {totalAccountFeeValues.price || "N/A"}
+                </div>
               </div>
             </div>
             <div className="divider" />
@@ -333,11 +387,13 @@ const YourEstimatedResults = ({
               <div className="result-label">
                 Total Client Fees (including Fund Expenses)
               </div>
-              <div className="result-value">
-                {totalClientFeeValues.rate || "N/A"}
-              </div>
-              <div className="result-value">
-                {totalClientFeeValues.price || "N/A"}
+              <div className="result-value-container">
+                <div className="result-value">
+                  {totalClientFeeValues.rate || "N/A"}
+                </div>
+                <div className="result-value">
+                  {totalClientFeeValues.price || "N/A"}
+                </div>
               </div>
             </div>
           </div>
@@ -349,11 +405,14 @@ const YourEstimatedResults = ({
               <div className="result-label">
                 Gross Annual Fee to Financial Professional
               </div>
-              <div className="result-value">
-                {grossAnnualFeeValues.rate || "N/A"}
-              </div>
-              <div className="result-value">
-                {grossAnnualFeeValues.price || "N/A"}
+              <div className="result-value-container">
+                {" "}
+                <div className="result-value">
+                  {grossAnnualFeeValues.rate || "N/A"}
+                </div>
+                <div className="result-value">
+                  {grossAnnualFeeValues.price || "N/A"}
+                </div>
               </div>
             </div>
             <div className="divider" />
@@ -361,11 +420,13 @@ const YourEstimatedResults = ({
               <div className="result-label">
                 Net Annual Fee to Financial Professional
               </div>
-              <div className="result-value">
-                {netAnnualFeeValues.rate || "N/A"}
-              </div>
-              <div className="result-value">
-                {netAnnualFeeValues.price || "N/A"}
+              <div className="result-value-container">
+                <div className="result-value">
+                  {netAnnualFeeValues.rate || "N/A"}
+                </div>
+                <div className="result-value">
+                  {netAnnualFeeValues.price || "N/A"}
+                </div>
               </div>
             </div>
           </div>
@@ -374,17 +435,49 @@ const YourEstimatedResults = ({
         return (
           <div className="result-content">
             <div className="result-row">
-              <div className="result-label">Financial Professional Fee</div>
-              <div className="result-value">N/A</div>
-              <div className="result-value">N/A</div>
+              <div className="result-label">Account Value</div>
+              <div className="result-value-container">
+                <div className="result-value">{accountValue.rate || "N/A"}</div>
+                <div className="result-value">
+                  {accountValue.price || "N/A"}
+                </div>
+              </div>
             </div>
             <div className="divider" />
             <div className="result-row">
-              <div className="result-label">
-                Net - Program fee paid by client was selected
+              <div className="result-label">Fund Expenses</div>
+              <div className="result-value-container">
+                <div className="result-value">{fundExpenses.rate || "N/A"}</div>
+                <div className="result-value">N/A</div>
               </div>
-              <div className="result-value">N/A</div>
-              <div className="result-value">N/A</div>
+            </div>
+            <div className="divider" />
+            <div className="result-row">
+              <div className="result-label">Financial Professional Payout</div>
+              <div className="result-value-container">
+                <div className="result-value">{fpPayout.rate || "N/A"}</div>
+                <div className="result-value">N/A</div>
+              </div>
+            </div>
+            <div className="divider" />
+            <div className="result-row">
+              <div className="result-label">Household Value</div>
+              <div className="result-value-container">
+                <div className="result-value">
+                  {houseHoldValue.rate || "N/A"}
+                </div>
+                <div className="result-value">N/A</div>
+              </div>
+            </div>
+            <div className="divider" />
+            <div className="result-row">
+              <div className="result-label">Fee Type</div>
+              <div className="result-value single-column">{feeType || "N/A"}</div>
+            </div>
+            <div className="divider" />
+            <div className="result-row">
+              <div className="result-label">Program Fee</div>
+              <div className="result-value single-column">{programFee || "N/A"}</div>
             </div>
           </div>
         );
