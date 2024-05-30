@@ -86,7 +86,7 @@
 
 .fee-input:focus-visible {
     border: 1px solid #9fb1bd;
-    outline-color: #9fb1bd;
+    /* outline-color: #9fb1bd; */
 }
 
 .strategist-item {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./StrategistFee.css";
 import Select from "react-select";
 import CircularProgress from "../CircularProgress/CircularProgress";
+import { useCalculationStorage } from "../../context/StorageContext";
 import {
   StrategistCaapSassConst,
   StrategistCaapConst,
@@ -25,11 +26,13 @@ const StrategistFee = ({
   setCalculationData,
   calculationData,
 }) => {
+  const { index, setIndex } = useCalculationStorage();
+
   const [feeType, setFeeType] = useState(
-    getCalculationDataValue("paymentOption")
+    getCalculationDataValue("paymentOption")[index] || ""
   );
   useEffect(() => {
-    setFeeType(getCalculationDataValue("paymentOption"));
+    setFeeType(getCalculationDataValue("paymentOption")[index] || "");
   }, [calculationData]);
 
   const [selectedMFOptions, setSelectedMFOptions] = useState();
@@ -37,14 +40,13 @@ const StrategistFee = ({
 
   const [showCalculation, setShowCalculation] = useState(false);
   const initialOptions =
-    getCalculationDataValue("UMA-SMA-Strategist-Fee") || [];
-
-  const initialEquitySMA = initialOptions.filter(
-    (option) => option.type === "Equity"
-  );
-  const initialMFETF = initialOptions.filter(
-    (option) => option.type === "MFEFT"
-  );
+    getCalculationDataValue("UMA-SMA-Strategist-Fee")[index] || [];
+  const initialEquitySMA =
+    initialOptions &&
+    initialOptions.filter((option) => option.type === "Equity");
+  const initialMFETF =
+    initialOptions &&
+    initialOptions.filter((option) => option.type === "MFEFT");
 
   const [selectedEquitySMA, setSelectedEquitySMA] = useState(initialEquitySMA);
   const [selectedMFETF, setSelectedMFETF] = useState(initialMFETF);
@@ -52,7 +54,7 @@ const StrategistFee = ({
   const handleFocus = (selected) => {
     setEditingStrategist(selected.value);
   };
-  
+
   const strategistOptions = Object.keys(StrategistCaapConst).map((key) => ({
     value: StrategistCaapConst[key],
     key: key,
@@ -66,23 +68,26 @@ const StrategistFee = ({
   );
 
   const handleOptionChange = (event) => {
-    const selectedValue = event.target.value;        
-    const paymentOption = getCalculationDataValue("paymentOption");
+    const selectedValue = event.target.value;
+    const paymentOption = getCalculationDataValue("paymentOption")[index] || "";
+
     const selectedLabel =
-      strategistOptions.find((option) => option.value == selectedValue)?.key ||
+      strategistOptions.find((option) => option.key == selectedValue) ||
       selectedValue;
     const selectedLabel2 =
-      strategistSaasOptions.find((option) => option.value == selectedValue)
-        ?.key || selectedValue;
+      strategistSaasOptions.find((option) => option.key == selectedValue) ||
+      selectedValue;
     const isCaap = paymentOption === "caap";
     const name = isCaap ? "strategistFeeCaap" : "strategistFeeCaapSmallAccount";
-    const valueName = isCaap ? selectedLabel : selectedLabel2;
+    let selectedOptionValue = isCaap
+      ? selectedLabel.value
+      : selectedLabel2.value;
     handleChange({
       target: {
         name,
         value: {
-          name: valueName,
-          value: selectedValue,
+          name: selectedValue,
+          value: selectedOptionValue,
         },
       },
     });
@@ -99,6 +104,56 @@ const StrategistFee = ({
     setShowCalculation((prev) => !prev);
   };
 
+  // const handleMFETFChange = (selectedOptions, type) => {
+  //   setSelectedMFETF(selectedOptions || []);
+
+  //   // Convert the selected options to the format expected by the state
+  //   const updatedOptions = selectedOptions.map((option) => ({
+  //     name: option.label,
+  //     label: option.label,
+  //     inputValue: "",
+  //     value: option.value,
+  //     dollarValue: "",
+  //     type: type, // Ensure each option includes the type from the handler's argument
+  //   }));
+
+  //   // Update calculationData considering the type of strategist
+  //   setCalculationData((prevData) => {
+  //     // Extract options of the same type and those of different types
+  //     const sameTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
+  //       (opt) => opt.type === type
+  //     );
+  //     const differentTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
+  //       (opt) => opt.type !== type
+  //     );
+
+  //     // Filter out options that are no longer selected of the same type
+  //     const retainedOptions = sameTypeOptions.filter((option) =>
+  //       updatedOptions.some(
+  //         (updatedOption) => updatedOption.name === option.name
+  //       )
+  //     );
+
+  //     // Add new options of the same type not already in the list
+  //     const newOptions = updatedOptions.filter(
+  //       (updatedOption) =>
+  //         !sameTypeOptions.find(
+  //           (existingOption) => existingOption.name === updatedOption.name
+  //         )
+  //     );
+
+  //     // Combine the retained and new options of the same type with the untouched different type options
+  //     return {
+  //       ...prevData,
+  //       "UMA-SMA-Strategist-Fee": [
+  //         ...differentTypeOptions,
+  //         ...retainedOptions,
+  //         ...newOptions,
+  //       ],
+  //     };
+  //   });
+  // };
+
   const handleMFETFChange = (selectedOptions, type) => {
     setSelectedMFETF(selectedOptions || []);
 
@@ -109,18 +164,26 @@ const StrategistFee = ({
       inputValue: "",
       value: option.value,
       dollarValue: "",
-      type: type, // Ensure each option includes the type from the handler's argument
+      type: type,
     }));
 
-    // Update calculationData considering the type of strategist
+    // Update calculationData considering the type of strategist at a specific index
     setCalculationData((prevData) => {
-      // Extract options of the same type and those of different types
-      const sameTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
-        (opt) => opt.type === type
-      );
-      const differentTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
-        (opt) => opt.type !== type
-      );
+      // First, ensure that the array is large enough to include the index
+      let updatedArray = prevData["UMA-SMA-Strategist-Fee"].slice();
+      if (index >= updatedArray.length) {
+        // If the index is out of bounds, fill the array with empty arrays up to the required index
+        updatedArray = [
+          ...updatedArray,
+          ...Array(index - updatedArray.length + 1).fill([]),
+        ];
+      }
+
+      // Extract options of the same type and those of different types at the given index
+      const sameTypeOptions =
+        updatedArray[index]?.filter((opt) => opt.type === type) || [];
+      const differentTypeOptions =
+        updatedArray[index]?.filter((opt) => opt.type !== type) || [];
 
       // Filter out options that are no longer selected of the same type
       const retainedOptions = sameTypeOptions.filter((option) =>
@@ -137,18 +200,69 @@ const StrategistFee = ({
           )
       );
 
-      // Combine the retained and new options of the same type with the untouched different type options
+      // Replace the list at the specific index with the combined retained and new options of the same type, and the untouched different type options
+      updatedArray[index] = [
+        ...differentTypeOptions,
+        ...retainedOptions,
+        ...newOptions,
+      ];
+
       return {
         ...prevData,
-        "UMA-SMA-Strategist-Fee": [
-          ...differentTypeOptions,
-          ...retainedOptions,
-          ...newOptions,
-        ],
+        "UMA-SMA-Strategist-Fee": updatedArray,
       };
     });
   };
 
+  // const handleEquitySMAChange = (selectedOptions, type) => {
+  //   setSelectedEquitySMA(selectedOptions || []);
+
+  //   // Convert the selected options to the format expected by the state
+  //   const updatedOptions = selectedOptions.map((option) => ({
+  //     name: option.label,
+  //     inputValue: "",
+  //     label: option.label,
+  //     value: option.value,
+  //     dollarValue: "",
+  //     type: type, // Assume each option inherits the type from the handler's argument
+  //   }));
+
+  //   // Update calculationData considering the type of strategist
+  //   setCalculationData((prevData) => {
+  //     // Extract options of the same type and those of different types
+  //     const sameTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
+  //       (opt) => opt.type === type
+  //     );
+  //     const differentTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
+  //       (opt) => opt.type !== type
+  //     );
+
+  //     // Filter out options that are no longer selected of the same type
+  //     const retainedOptions = sameTypeOptions.filter((option) =>
+  //       updatedOptions.some(
+  //         (updatedOption) => updatedOption.name === option.name
+  //       )
+  //     );
+
+  //     // Add new options of the same type not already in the list
+  //     const newOptions = updatedOptions.filter(
+  //       (updatedOption) =>
+  //         !sameTypeOptions.find(
+  //           (existingOption) => existingOption.name === updatedOption.name
+  //         )
+  //     );
+
+  //     // Combine the retained and new options of the same type with the untouched different type options
+  //     return {
+  //       ...prevData,
+  //       "UMA-SMA-Strategist-Fee": [
+  //         ...differentTypeOptions,
+  //         ...retainedOptions,
+  //         ...newOptions,
+  //       ],
+  //     };
+  //   });
+  // };
   const handleEquitySMAChange = (selectedOptions, type) => {
     setSelectedEquitySMA(selectedOptions || []);
 
@@ -159,18 +273,25 @@ const StrategistFee = ({
       label: option.label,
       value: option.value,
       dollarValue: "",
-      type: type, // Assume each option inherits the type from the handler's argument
+      type: type,
     }));
 
-    // Update calculationData considering the type of strategist
+    // Update calculationData considering the type of strategist at a specific index
     setCalculationData((prevData) => {
-      // Extract options of the same type and those of different types
-      const sameTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
-        (opt) => opt.type === type
-      );
-      const differentTypeOptions = prevData["UMA-SMA-Strategist-Fee"].filter(
-        (opt) => opt.type !== type
-      );
+      // Ensure the array is large enough to include the index
+      let updatedArray = prevData["UMA-SMA-Strategist-Fee"].slice();
+      if (index >= updatedArray.length) {
+        updatedArray = [
+          ...updatedArray,
+          ...Array(index - updatedArray.length + 1).fill([]),
+        ];
+      }
+
+      // Extract options of the same type and those of different types at the given index
+      const sameTypeOptions =
+        updatedArray[index]?.filter((opt) => opt.type === type) || [];
+      const differentTypeOptions =
+        updatedArray[index]?.filter((opt) => opt.type !== type) || [];
 
       // Filter out options that are no longer selected of the same type
       const retainedOptions = sameTypeOptions.filter((option) =>
@@ -187,14 +308,16 @@ const StrategistFee = ({
           )
       );
 
-      // Combine the retained and new options of the same type with the untouched different type options
+      // Replace the list at the specific index with the combined retained and new options of the same type, and the untouched different type options
+      updatedArray[index] = [
+        ...differentTypeOptions,
+        ...retainedOptions,
+        ...newOptions,
+      ];
+
       return {
         ...prevData,
-        "UMA-SMA-Strategist-Fee": [
-          ...differentTypeOptions,
-          ...retainedOptions,
-          ...newOptions,
-        ],
+        "UMA-SMA-Strategist-Fee": updatedArray,
       };
     });
   };
@@ -202,14 +325,22 @@ const StrategistFee = ({
   const handleStrategistInput = (e, type) => {
     const { name, value, dataset, key } = e.target;
     const strategistName = dataset.label;
-    const accountValue = parseFloat(calculationData["account-value"]) || 0;
+    const accountValue =
+      parseFloat(calculationData["account-value"][index]) || 0;
     const UMA_SMA_Strategist_Fee =
-      getCalculationDataValue("UMA-SMA-Strategist-Fee") || {};
+      getCalculationDataValue("UMA-SMA-Strategist-Fee")[index] || {};
     const dollarValue =
       accountValue !== 0 || accountValue !== null
         ? (accountValue * value) / 100
         : 0;
     const roundedValue = Math.ceil(dollarValue);
+    console.log(
+      strategistName,
+      accountValue,
+      UMA_SMA_Strategist_Fee,
+      dollarValue,
+      "heell"
+    );
     if (type === "Equity") {
       setSelectedEquitySMA((prev) =>
         prev.map((item) =>
@@ -227,24 +358,27 @@ const StrategistFee = ({
         )
       );
     }
-    const updatedStrategists = calculationData["UMA-SMA-Strategist-Fee"]?.map(
-      (strategist) => {
-        if (strategist.name === strategistName) {
-          return {
-            ...strategist,
-            inputValue: value,
-            dollarValue: roundedValue,
-          };
-        }
-        return strategist;
-      }
-    );
 
-    //Use the setCalculationData function to update calculationData
-    setCalculationData((prevData) => ({
-      ...prevData,
-      "UMA-SMA-Strategist-Fee": updatedStrategists,
-    }));
+    // Update the strategist fee array at the specified index
+    const updatedStrategists = UMA_SMA_Strategist_Fee.map((strategist) => {
+      if (strategist.name === strategistName) {
+        return {
+          ...strategist,
+          inputValue: value,
+          dollarValue: roundedValue,
+        };
+      }
+      return strategist;
+    });
+
+    setCalculationData((prevData) => {
+      const updatedArray = [...prevData["UMA-SMA-Strategist-Fee"]];
+      updatedArray[index] = updatedStrategists;
+      return {
+        ...prevData,
+        "UMA-SMA-Strategist-Fee": updatedArray
+      };
+    });
   };
 
   // Function to render selected strategists with input fields for fee and value
@@ -297,7 +431,7 @@ const StrategistFee = ({
           type="number"
           placeholder="%"
           className="scenario-input"
-          value={getCalculationDataValue("teamDirectedInput") || ""}
+          value={getCalculationDataValue("teamDirectedInput")[index] || ""}
         />
       </div>
     );
@@ -314,22 +448,22 @@ const StrategistFee = ({
           model trading services. Applicable to CAAP, UMA, and Team-directed.
         </div>
         <div className="strategist-fee-input-label">{`Strategist ${title}`}</div>
-        {getCalculationDataValue("paymentOption") === "caap" ? (
+        {getCalculationDataValue("paymentOption")[index] === "caap" ? (
           <select
             className="strategist-dropdown scenario-input"
-            value={selectedOption}            
+            value={selectedOption}
             onChange={handleOptionChange}
           >
             <option value="" disabled>
               Select a strategist option
             </option>
             {strategistOptions.map((option) => (
-              <option key={option.key} value={option.value}>
+              <option key={option.key} value={option.key}>
                 {option.key}
               </option>
             ))}
           </select>
-        ) : getCalculationDataValue("paymentOption") ===
+        ) : getCalculationDataValue("paymentOption")[index] ===
           "caap-small-account" ? (
           <select
             className="strategist-dropdown scenario-input"
@@ -340,7 +474,7 @@ const StrategistFee = ({
               Select a strategist option
             </option>
             {strategistSaasOptions.map((option) => (
-              <option key={option.key} value={option.value}>
+              <option key={option.key} value={option.key}>
                 {option.key}
               </option>
             ))}

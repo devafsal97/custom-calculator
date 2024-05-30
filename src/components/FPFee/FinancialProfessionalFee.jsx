@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import CircularProgress from "../CircularProgress/CircularProgress";
 // import './FinancialProfessionalFee.css';
 import { useCalculationStorage } from "../../context/StorageContext";
+import { type } from "@testing-library/user-event/dist/type";
 
 const FinancialProfessionalFee = ({
   onComplete,
@@ -10,14 +11,24 @@ const FinancialProfessionalFee = ({
   calculationData,
   getCalculationDataValue,
 }) => {
-  const [tierValueSum, setTierValueSum] = useState({
-    doller: "",
-    percentage: "",
-  });
-  const [breakPointValueSum, setBreakPointValueSum] = useState({
-    doller: "",
-    percentage: "",
-  });
+  const {
+    totalAccountFeeValues,
+    errorMessages,
+    setErrorMessages,
+    tierValueSum,
+    setTierValueSum,
+    breakPointValueSum,
+    setBreakPointValueSum,index,setIndex
+  } = useCalculationStorage();
+  
+  // const [tierValueSum, setTierValueSum] = useState({
+  //   doller: "",
+  //   percentage: "",
+  // });
+  // const [breakPointValueSum, setBreakPointValueSum] = useState({
+  //   doller: "",
+  //   percentage: "",
+  // });
   const calculateSums = (data) => {
     let amounts = [];
     let percentages = [];
@@ -36,9 +47,9 @@ const FinancialProfessionalFee = ({
   const [breakPointCompletionStatus, setBreakPointCompletionStatus] =
     useState(0);
   useEffect(() => {
-    const FPfeeTiers = getCalculationDataValue("FPfeeTiers");
-    const FPfeeBreakPoints = getCalculationDataValue("FPfeeBreakPoints");
-    const accountValue = getCalculationDataValue("account-value");
+    const FPfeeTiers = getCalculationDataValue("FPfeeTiers")[index] || '';
+    const FPfeeBreakPoints = getCalculationDataValue("FPfeeBreakPoints")[index] || '';
+    const accountValue = getCalculationDataValue("account-value")[index] || '';
 
     const { sumOfAmounts: sumOfTiers, sumOfPercentages: sumOfTierPercentages } =
       calculateSums(FPfeeTiers);
@@ -59,15 +70,13 @@ const FinancialProfessionalFee = ({
 
     setTierCompletionStatus(tierCompletion);
     setBreakPointCompletionStatus(breakPointCompletion);
-   
   }, [calculationData]);
 
-  const { totalAccountFeeValues,errorMessages,setErrorMessages } = useCalculationStorage();
   // State for the fee type selection
-  const [feeType, setFeeType] = useState(getCalculationDataValue("FPfeeType"));
+  const [feeType, setFeeType] = useState(getCalculationDataValue("FPfeeType")[index] || '');
 
   const fetchBreakPoints = () => {
-    const tiersData = getCalculationDataValue("FPfeeBreakPoints");
+    const tiersData = getCalculationDataValue("FPfeeBreakPoints")[index] || '';
     return Object.keys(tiersData).map((key) => ({
       ...tiersData[key], // Spread the amount and percentage
       id: key, // Keep track of the original key if needed
@@ -75,7 +84,7 @@ const FinancialProfessionalFee = ({
   };
 
   const fetchTiers = () => {
-    const tiersData = getCalculationDataValue("FPfeeTiers");
+    const tiersData = getCalculationDataValue("FPfeeTiers")[index]  || '';
     return Object.keys(tiersData).map((key) => ({
       ...tiersData[key], // Spread the amount and percentage
       id: key, // Keep track of the original key if needed
@@ -151,6 +160,7 @@ const FinancialProfessionalFee = ({
       target: {
         name: "FPfeeFixed",
         value: { type: "fixed", amount: value },
+        type: "number",
       },
     });
   };
@@ -160,6 +170,7 @@ const FinancialProfessionalFee = ({
       target: {
         name: "FPfeeFlat",
         value: { type: "flat", amount: value },
+        type: "number",
       },
     });
   };
@@ -212,6 +223,42 @@ const FinancialProfessionalFee = ({
     return ordinals[index] || `Tier ${index + 1}`;
   };
 
+  // Error Setup
+
+  let flatError = "";
+  const FPfeeFlat = getCalculationDataValue("FPfeeFlat")[index];
+  const paymentOption = getCalculationDataValue("paymentOption")[index];
+
+  useEffect(() => {
+    updateErrorMessages(FPfeeFlat, paymentOption);
+  }, [FPfeeFlat, paymentOption]);
+  // totalAccountFeeValues, errorMessages, setErrorMessages
+  let maxValue,
+    minValue = "";
+  const updateErrorMessages = (totalAccountFeeValues, paymentOption) => {
+    let errorKey = null;
+    let maxLimit = 3;
+
+    if (
+      paymentOption === "advisor-directed" ||
+      paymentOption === "team-directed"
+    ) {
+      errorKey = "flat_team_directed";
+      maxLimit = 2.25;
+    } else if (paymentOption === "uma-sma" || paymentOption === "caap") {
+      errorKey = "flat_uma_sma";
+      maxLimit = 2.15;
+    } else {
+      errorKey = "caap_small_account_solutions";
+      maxLimit = 3;
+    }
+
+    if (errorKey !== null && totalAccountFeeValues) {
+      const isError = totalAccountFeeValues > maxLimit;
+      setErrorMessages((prev) => ({ ...prev, [errorKey]: isError }));
+    }
+  };
+
   // Render the appropriate content based on the fee type
   const renderFeeContent = () => {
     switch (feeType) {
@@ -229,14 +276,16 @@ const FinancialProfessionalFee = ({
             <input
               type="number"
               onChange={handleFlat}
-              value={getCalculationDataValue("FPfeeFlat")?.amount || ""}
+              value={getCalculationDataValue("FPfeeFlat")[index]?.amount || ""}
               placeholder="%"
               className="scenario-input"
+              min="0"
             />
 
             <p
               className={`error-message ${
-                getCalculationDataValue("FPfeeFlat")?.amount > "2.25" || getCalculationDataValue("FPfeeFlat")?.amount > 2.25
+                getCalculationDataValue("FPfeeFlat")[index]?.amount > "2.25" ||
+                getCalculationDataValue("FPfeeFlat")[index]?.amount > 2.25
                   ? "active"
                   : ""
               }`}
@@ -259,8 +308,9 @@ const FinancialProfessionalFee = ({
               onChange={handleFixed}
               type="number"
               placeholder="$"
-              value={getCalculationDataValue("FPfeeFixed")?.amount || ""}
+              value={getCalculationDataValue("FPfeeFixed")[index]?.amount || ""}
               className="scenario-input"
+              min="0"
             />
             <p
               className={`error-message ${
@@ -316,6 +366,7 @@ const FinancialProfessionalFee = ({
                       updateTier(index, "amount", e.target.value)
                     }
                     className="scenario-input"
+                    min="0"
                   />
                 </div>
                 <div className="percentage-input">
@@ -328,6 +379,7 @@ const FinancialProfessionalFee = ({
                     onChange={(e) =>
                       updateTier(index, "percentage", e.target.value)
                     }
+                    min="0"
                   />
                 </div>
               </div>
@@ -348,8 +400,8 @@ const FinancialProfessionalFee = ({
             )}
             <p
               className={`error-message ${
-                getCalculationDataValue("account-value") &&
-                getCalculationDataValue("account-value") < tierValueSum.doller
+                getCalculationDataValue("account-value")[index] &&
+                getCalculationDataValue("account-value")[index] < tierValueSum.doller
                   ? "active"
                   : ""
               }`}
@@ -409,6 +461,7 @@ const FinancialProfessionalFee = ({
                     onChange={(e) =>
                       updateBreakpoint(index, "amount", e.target.value)
                     }
+                    min="0"
                   />
                 </div>
                 <div className="percentage-input">
@@ -421,6 +474,7 @@ const FinancialProfessionalFee = ({
                     onChange={(e) =>
                       updateBreakpoint(index, "percentage", e.target.value)
                     }
+                    min="0"
                   />
                 </div>
               </div>
@@ -438,8 +492,8 @@ const FinancialProfessionalFee = ({
             </div>
             <p
               className={`error-message ${
-                getCalculationDataValue("account-value") &&
-                getCalculationDataValue("account-value") <
+                getCalculationDataValue("account-value")[index] &&
+                getCalculationDataValue("account-value")[index] <
                   breakPointValueSum.doller
                   ? "active"
                   : ""

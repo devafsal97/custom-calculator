@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import estimatedResults from "./EstimatedResults.css";
 import Button from "../../components/button/Button";
 import { useNavigate } from "react-router-dom";
@@ -21,13 +21,36 @@ const EstimatedResults = () => {
     totalClientFeeValues,
     grossAnnualFeeValues,
     netAnnualFeeValues,
-    setRender,
-    render,
     getCalculationDataValue,
+    index,
+    setIndex,
+    originalIndex,
+    setOriginalIndex,handleEdit
   } = useCalculationStorage();
+
+  // useEffect(() => {
+  //   setIndex(originalIndex);
+  //   setOriginalIndex(null);
+  // }, []);
+
+  const numberToArray = (index) => {
+    return Array.from({ length: index + 1 }, (_, i) => i);
+  };
+
+  const tableArray = numberToArray(index);
   const handleRedirect = () => {
     navigate("/");
   };
+
+  const handleDelete = (index) => {    
+  };
+  // const handleEdit = (index) => {
+  //   setOriginalIndex(index);
+  //   setIndex(index);
+  //   navigate("/");
+  // };
+
+  console.log(tableArray);
   return (
     <div className="estimated-results">
       <div className="headerContainer">
@@ -61,179 +84,201 @@ const EstimatedResults = () => {
               ></Button>
             </div>
           </div>
-          <div className="investment-container">
-            <div className="header">
-              <div className="title-block">
-                <h1>
-                  {getCalculationDataValue("scenario-name") ||
-                    "Investment Account Fee Estimate 1"}
-                </h1>
-                <p>As of Date: 01-21-2024</p>
+          {tableArray.map((table, index) => (
+            <div key={table} className="investment-container">
+              <div className="header">
+                <div className="title-block">
+                  <h1>
+                    {getCalculationDataValue("scenario-name") ||
+                      "Investment Account Fee Estimate 1"}
+                  </h1>
+                  <p>As of Date: 01-21-2024</p>
+                </div>
+                <div className="actions">
+                  <Button
+                    onClick={() => handleEdit(index)}
+                    text={"Edit"}
+                    configuresStyles={"result-button action-button"}
+                  ></Button>
+                  <Button
+                    onClick={() => handleDelete(index)}
+                    text={"Delete"}
+                    configuresStyles={"result-button action-button"}
+                  ></Button>
+                  <Button
+                    text={"Share"}
+                    configuresStyles={"result-button action-button"}
+                  ></Button>
+                  <Button
+                    text={"Export ▼"}
+                    configuresStyles={"result-button action-button"}
+                  ></Button>
+                </div>
               </div>
-              <div className="actions">
-                <Button
-                  text={"Edit"}
-                  configuresStyles={"result-button action-button"}
-                ></Button>
-                <Button
-                  text={"Delete"}
-                  configuresStyles={"result-button action-button"}
-                ></Button>
-                <Button
-                  text={"Share"}
-                  configuresStyles={"result-button action-button"}
-                ></Button>
-                <Button
-                  text={"Export ▼"}
-                  configuresStyles={"result-button action-button"}
-                ></Button>
+              <div className="fee-details">
+                <div className="left-section-heading">
+                  <div className="section-title">
+                    Financial Professional Payout
+                  </div>
+                  <div className="section-title-icons">
+                    <span className="section-title icons">Rate (%)</span>
+                    <span className="section-title icons">Price ($)</span>
+                  </div>
+                </div>
+
+                <div className="results-divider sub"></div>
+                <div className="row">
+                  <div className="label">Financial Professional Fee</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {fpValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {fpValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Program Fee</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {programFeeValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {programFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Strategist Fee (if applicable)</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {strategistFeeValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {strategistFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Total Account Fee (annualized)</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {totalAccountFeeValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {totalAccountFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">
+                    Total Client Fees (including Fund Expenses)
+                  </div>
+                  <div className="value-container">
+                    <div className="value">
+                      {totalClientFeeValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {totalClientFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">
+                    Gross Annual Fee to Financial Professional
+                  </div>
+                  <div className="value-container">
+                    <div className="value">
+                      {" "}
+                      {grossAnnualFeeValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {" "}
+                      {grossAnnualFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">
+                    Net Annual Fee to Financial Professional
+                  </div>
+                  <div className="value-container">
+                    <div className="value">
+                      {netAnnualFeeValues[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {netAnnualFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Account Value</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {accountValue[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">
+                      {accountValue[index]?.price || "N/A"}
+                    </div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Fund Expenses</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {fundExpenses[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">N/A</div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Financial Professional Payout</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {fpPayout[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">N/A</div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Household Value</div>
+                  <div className="value-container">
+                    <div className="value">
+                      {houseHoldValue[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">N/A</div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Fee Type</div>
+                  <div className="value-container types">
+                    <div className="value">{feeType || "N/A"}</div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
+                <div className="row">
+                  <div className="label">Program Fee</div>
+                  <div className="value-container types">
+                    <div className="value">{programFee || "N/A"}</div>
+                  </div>
+                </div>
+                <div className="results-divider"></div>
               </div>
             </div>
-            <div className="fee-details">
-              <div className="left-section-heading">
-                <div className="section-title">
-                  Financial Professional Payout
-                </div>
-                <div className="section-title-icons">
-                  <span className="section-title icons">Rate (%)</span>
-                  <span className="section-title icons">Price ($)</span>
-                </div>
-              </div>
-
-              <div className="results-divider sub"></div>
-              <div className="row">
-                <div className="label">Financial Professional Fee</div>
-                <div className="value-container">
-                  <div className="value">{fpValues.rate || "N/A"}</div>
-                  <div className="value">{fpValues.price || "N/A"}</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Program Fee</div>
-                <div className="value-container">
-                  <div className="value">{programFeeValues.rate || "N/A"}</div>
-                  <div className="value">{programFeeValues.price || "N/A"}</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Strategist Fee (if applicable)</div>
-                <div className="value-container">
-                  <div className="value">
-                    {strategistFeeValues.rate || "N/A"}
-                  </div>
-                  <div className="value">
-                    {strategistFeeValues.price || "N/A"}
-                  </div>
-                </div>
-              </div>
-
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Total Account Fee (annualized)</div>
-                <div className="value-container">
-                  <div className="value">
-                    {totalAccountFeeValues.rate || "N/A"}
-                  </div>
-                  <div className="value">
-                    {totalAccountFeeValues.price || "N/A"}
-                  </div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">
-                  Total Client Fees (including Fund Expenses)
-                </div>
-                <div className="value-container">
-                  <div className="value">
-                    {totalClientFeeValues.rate || "N/A"}
-                  </div>
-                  <div className="value">
-                    {totalClientFeeValues.price || "N/A"}
-                  </div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">
-                  Gross Annual Fee to Financial Professional
-                </div>
-                <div className="value-container">
-                  <div className="value">
-                    {" "}
-                    {grossAnnualFeeValues.rate || "N/A"}
-                  </div>
-                  <div className="value">
-                    {" "}
-                    {grossAnnualFeeValues.price || "N/A"}
-                  </div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">
-                  Net Annual Fee to Financial Professional
-                </div>
-                <div className="value-container">
-                  <div className="value">
-                    {netAnnualFeeValues.rate || "N/A"}
-                  </div>
-                  <div className="value">
-                    {netAnnualFeeValues.price || "N/A"}
-                  </div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Account Value</div>
-                <div className="value-container">
-                  <div className="value">{accountValue.rate || "N/A"}</div>
-                  <div className="value">{accountValue.price || "N/A"}</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Fund Expenses</div>
-                <div className="value-container">
-                  <div className="value">{fundExpenses.rate || "N/A"}</div>
-                  <div className="value">N/A</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Financial Professional Payout</div>
-                <div className="value-container">
-                  <div className="value">{fpPayout.rate || "N/A"}</div>
-                  <div className="value">N/A</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Household Value</div>
-                <div className="value-container">
-                  <div className="value">{houseHoldValue.rate || "N/A"}</div>
-                  <div className="value">N/A</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Fee Type</div>
-                <div className="value-container">
-                  <div className="value">{feeType || "N/A"}</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-              <div className="row">
-                <div className="label">Program Fee</div>
-                <div className="value-container">
-                  <div className="value">{programFee || "N/A"}</div>
-                </div>
-              </div>
-              <div className="results-divider"></div>
-            </div>
-          </div>
+          ))}
         </div>
 
         <div className="right-sub-section">
@@ -255,11 +300,7 @@ const EstimatedResults = () => {
           </div>
         </div>
       </div>
-      <StepFooter
-        from={"estimated-results"}
-        setRender={setRender}
-        render={render}
-      ></StepFooter>
+      <StepFooter from={"estimated-results"}></StepFooter>
     </div>
   );
 };

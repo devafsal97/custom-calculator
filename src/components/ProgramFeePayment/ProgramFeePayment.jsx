@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useCalculationStorage } from "../../context/StorageContext";
 
 const ProgramFeePayment = ({handleChange,getCalculationDataValue}) => {
-  // State for the selected payment option
-  const [paymentOption, setPaymentOption] = useState(getCalculationDataValue("programOption"));
-
+  
+  const {index,setIndex} = useCalculationStorage();
+// State for the selected payment option
+  const [paymentOption, setPaymentOption] = useState(getCalculationDataValue("programOption")[index]);
+  
   // Handle the change of radio button selection
   const handlePaymentChange = (event) => {
     setPaymentOption(event.target.value);

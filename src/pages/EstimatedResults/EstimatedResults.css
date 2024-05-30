@@ -279,7 +279,7 @@ word-wrap: break-word;
     padding-right: 15px;
     width: fit-content;
 }
-.value-container.value {
+.value-container.types > .value {
     width: fit-content;
 }
 
@@ -295,4 +295,7 @@ word-wrap: break-word;
     font-style: normal;
     font-weight: 600;
     line-height: 24px;
+}
+.investment-container {
+    margin-bottom: 50px;
 }

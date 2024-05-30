@@ -16,10 +16,9 @@ function CalculatorPage() {
     calculationData,
     setCalculationData,
     handleChange,
-    getCalculationDataValue,
-    setRender,
-    render,
+    getCalculationDataValue,index,setIndex   
   } = useCalculationStorage();
+
   const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
   const [selectedOption, setSelectedOption] = useState();
   const [currentStep, setCurrentStep] = useState(0);
@@ -28,6 +27,7 @@ function CalculatorPage() {
     setSelectedOption(option);
     // handleProgramFeeSelectionComplete();
   };
+  
   return (
     <div>
       {/* Header Section */}
@@ -71,7 +71,7 @@ function CalculatorPage() {
             ref={(el) => (sectionsRef.current[1] = el)}
           >
             <div className="scenario-header">
-              Enter a Name for this Scenario
+              Enter a name for this scenario
             </div>
             <div className="scenario-label">Scenario Name</div>
             <input
@@ -81,7 +81,8 @@ function CalculatorPage() {
               name="scenario-name"
               className="scenario-input"
               type="text"
-              value={getCalculationDataValue("scenario-name")}
+              value={getCalculationDataValue("scenario-name")[index] || ''}
+              min='0'
             />
           </div>
 
@@ -99,7 +100,7 @@ function CalculatorPage() {
               name="account-value"
               className="scenario-input"
               type="number"
-              value={getCalculationDataValue("account-value")}
+              value={getCalculationDataValue("account-value")[index]  || ''}
             />
           </div>
 
@@ -181,9 +182,7 @@ function CalculatorPage() {
       </div>
       <div className="filler-top"></div>
       <StepFooter
-        currentStep={currentStep}
-        setRender={setRender}
-        render={render}
+        currentStep={currentStep}        
       ></StepFooter>
     </div>
   );

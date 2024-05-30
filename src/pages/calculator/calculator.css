@@ -212,6 +212,9 @@
   font: 500 14px/143% Avenir Next, -apple-system, Roboto, Helvetica,
     sans-serif;
 }
+input:focus-visible {
+      outline: dashed white;
+}
 
 @media (max-width: 991px) {
   .scenario-label {

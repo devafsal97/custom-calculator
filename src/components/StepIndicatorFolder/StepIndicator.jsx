@@ -38,39 +38,46 @@ const steps = [
 ];
 
 const VerticalLinearStepper = ({ calculationData }) => {
-  const { stepsCompleted, setStepsCompleted } = useCalculationStorage();
+  const { stepsCompleted, setStepsCompleted, index, setIndex } =
+    useCalculationStorage();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(new Set());
 
   useEffect(() => {
     const newCompletedSteps = new Set(completedSteps);
 
-    if (calculationData["scenario-name"] && calculationData["account-value"]) {
+    if (
+      calculationData["scenario-name"][index] &&
+      calculationData["account-value"][index]
+    ) {
       newCompletedSteps.add(1);
     } else {
       newCompletedSteps.delete(1);
     }
-    if (calculationData["FPfeeType"]) {
+    if (calculationData["FPfeeType"][index]) {
       newCompletedSteps.add(2);
     } else {
       newCompletedSteps.delete(2);
     }
-    if (calculationData["paymentOption"]) {
+    if (calculationData["paymentOption"][index]) {
       newCompletedSteps.add(3);
     } else {
       newCompletedSteps.delete(3);
     }
 
     if (
-      (calculationData?.paymentOption === "caap" &&
-        Object.keys(calculationData?.strategistFeeCaap).length > 0) ||
-      (calculationData?.paymentOption === "caap-small-account" &&
-        Object.keys(calculationData?.strategistFeeCaapSmallAccount).length >
-          0) ||
-      (calculationData?.paymentOption === "team-directed" &&
-        calculationData?.teamDirectedInput > 0) ||
-      (calculationData?.paymentOption === "uma-sma" &&
-        calculationData?.["UMA-SMA-Strategist-Fee"].length > 0)
+      (calculationData?.paymentOption?.[index] === "caap" &&
+        calculationData?.strategistFeeCaap?.[index] &&
+        Object.keys(calculationData?.strategistFeeCaap[index])?.length > 0) ||
+      (calculationData?.paymentOption?.[index] === "caap-small-account" &&
+        calculationData?.strategistFeeCaapSmallAccount?.[index] &&
+        Object.keys(calculationData?.strategistFeeCaapSmallAccount[index])
+          .length > 0) ||
+      (calculationData?.paymentOption?.[index] === "team-directed" &&
+        calculationData?.teamDirectedInput?.[index] > 0) ||
+      (calculationData?.paymentOption?.[index] === "uma-sma" &&
+        Array.isArray(calculationData?.["UMA-SMA-Strategist-Fee"]) &&
+        calculationData["UMA-SMA-Strategist-Fee"]?.[index]?.length > 0)
     ) {
       newCompletedSteps.add(4);
     } else {
@@ -78,10 +85,10 @@ const VerticalLinearStepper = ({ calculationData }) => {
     }
 
     if (
-      calculationData?.AdditionalDetails?.fundExpenses > 0 &&
-      calculationData?.AdditionalDetails?.fpPayOut > 0 &&
-calculationData?.AdditionalDetails?.houseHoldValue > 0 &&
-      calculationData?.AdditionalDetails?.auaDiscount !== ""
+      calculationData?.AdditionalDetails[index]?.fundExpenses > 0 &&
+      calculationData?.AdditionalDetails[index]?.fpPayOut > 0 &&
+      calculationData?.AdditionalDetails[index]?.houseHoldValue > 0 &&
+      calculationData?.AdditionalDetails[index]?.auaDiscount !== ""
     ) {
       newCompletedSteps.add(5);
     } else {

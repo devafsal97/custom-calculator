@@ -2,8 +2,16 @@ import React, { useEffect } from "react";
 import "./StepFooter.css";
 import { useNavigate } from "react-router-dom";
 import { useCalculationStorage } from "../../context/StorageContext";
-const StepFooter = ({ currentStep = 1, from, setRender, render }) => {
-  const { fpValues,stepsCompleted,setStepsCompleted } = useCalculationStorage();
+const StepFooter = ({ currentStep = 1, from }) => {
+  const {
+    fpValues,
+    stepsCompleted,
+    setStepsCompleted,
+    index,
+    setIndex,
+    originalIndex,
+    setOriginalIndex,
+  } = useCalculationStorage();
   const navigate = useNavigate();
   const stepLabels = {
     1: "Financial Professional Fee",
@@ -13,11 +21,26 @@ const StepFooter = ({ currentStep = 1, from, setRender, render }) => {
     5: "Strategist Fee",
     6: "Additional Detail",
   };
+
   const handleCancel = () => {
     navigate("/");
   };
+
   const handleSummary = () => {
-    if(stepsCompleted)navigate("/results");
+    if (stepsCompleted && originalIndex !== null) {
+      setIndex(originalIndex);
+      setOriginalIndex(null);
+      navigate("/results");
+    } else if (stepsCompleted && originalIndex === null) {
+      navigate("/results");
+    }
+
+    if (from && from === "estimated-results") {
+      if (index < 2) {
+        setIndex(index + 1);
+        navigate("/");
+      }
+    }
   };
 
   return (
@@ -35,7 +58,15 @@ const StepFooter = ({ currentStep = 1, from, setRender, render }) => {
         <div className="step-cancel" onClick={handleCancel}>
           Cancel
         </div>
-        <div className={`step-save ${stepsCompleted !== true ? "disabled" : ""}`} onClick={handleSummary}>
+        <div
+          className={`step-save ${
+            stepsCompleted !== true ||
+            (from == "estimated-results" && index >= 2)
+              ? "disabled"
+              : ""
+          }`}
+          onClick={handleSummary}
+        >
           {from == "estimated-results"
             ? "Create New Estimate"
             : "Save and View Summary"}

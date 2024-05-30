@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import "./AdditionalDetail.css";
-
+import { useCalculationStorage } from "../../context/StorageContext";
 const AdditionalDetail = ({
   handleChange,
   getCalculationDataValue,
   setCalculationData,
   calculationData,
 }) => {
+  const {index,setIndex} = useCalculationStorage();
+  
   // State for the WealthPort AUA discount selection
   const [selectedDiscount, setSelectedDiscount] = useState(
-    getCalculationDataValue("AdditionalDetails")?.auaDiscount || "0%"
+    getCalculationDataValue("AdditionalDetails")[index]?.auaDiscount || "0%"
   );
   const [fundExpenses, setFundExpenses] = useState(
-    getCalculationDataValue("AdditionalDetails")?.fundExpenses
+    getCalculationDataValue("AdditionalDetails")[index]?.fundExpenses
   );
   const [fpPayOut, setFpPayOut] = useState(
-    getCalculationDataValue("AdditionalDetails")?.fpPayOut
+    getCalculationDataValue("AdditionalDetails")[index]?.fpPayOut
   );
   const [houseHoldValue, setHouseHoldValue] = useState(
-    getCalculationDataValue("AdditionalDetails")?.houseHoldValue || ''
+    getCalculationDataValue("AdditionalDetails")[index]?.houseHoldValue || ""
   );
 
   const handleDiscountChange = (event) => {
@@ -77,6 +79,7 @@ const AdditionalDetail = ({
               placeholder="%"
               className="input-field"
               value={fundExpenses}
+              min="0"
             />
           </div>
         </div>
@@ -90,6 +93,7 @@ const AdditionalDetail = ({
               placeholder="%"
               className="input-field"
               value={fpPayOut}
+              min="0"
             />
           </div>
         </div>
@@ -104,6 +108,7 @@ const AdditionalDetail = ({
             placeholder="$"
             className="input-field"
             value={houseHoldValue}
+            min="0"
           />
         </div>
       </div>
@@ -120,7 +125,7 @@ const AdditionalDetail = ({
               value={discount}
               checked={selectedDiscount === discount}
               onChange={handleDiscountChange}
-              className="discount-radio"
+              className="discount-radio"              
             />
             <span className="discount-value">{discount}</span>
           </label>
