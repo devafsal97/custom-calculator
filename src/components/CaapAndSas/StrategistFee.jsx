@@ -171,7 +171,10 @@ const StrategistFee = ({
     setCalculationData((prevData) => {
       // First, ensure that the array is large enough to include the index
       let updatedArray = prevData["UMA-SMA-Strategist-Fee"].slice();
-      if (index >= updatedArray.length) {
+
+      const allEmpty = updatedArray.every((element) => element === "");
+
+      if (index >= updatedArray.length && !allEmpty) {
         // If the index is out of bounds, fill the array with empty arrays up to the required index
         updatedArray = [
           ...updatedArray,
@@ -376,7 +379,7 @@ const StrategistFee = ({
       updatedArray[index] = updatedStrategists;
       return {
         ...prevData,
-        "UMA-SMA-Strategist-Fee": updatedArray
+        "UMA-SMA-Strategist-Fee": updatedArray,
       };
     });
   };

@@ -55,6 +55,9 @@ const StepFooter = ({ currentStep = 1, from }) => {
         </div>
       )}
       <div className="step-actions">
+        {/* <div className={`step-cancel`} onClick={handleBack}>
+          Back
+        </div> */}
         <div className="step-cancel" onClick={handleCancel}>
           Cancel
         </div>

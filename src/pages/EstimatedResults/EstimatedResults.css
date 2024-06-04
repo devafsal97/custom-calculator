@@ -298,4 +298,8 @@ word-wrap: break-word;
 }
 .investment-container {
     margin-bottom: 50px;
+display: none;
+}
+.investment-container.active{
+    display: block;
 }

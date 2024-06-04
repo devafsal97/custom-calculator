@@ -18,9 +18,11 @@ const FinancialProfessionalFee = ({
     tierValueSum,
     setTierValueSum,
     breakPointValueSum,
-    setBreakPointValueSum,index,setIndex
+    setBreakPointValueSum,
+    index,
+    setIndex,
   } = useCalculationStorage();
-  
+
   // const [tierValueSum, setTierValueSum] = useState({
   //   doller: "",
   //   percentage: "",
@@ -29,6 +31,36 @@ const FinancialProfessionalFee = ({
   //   doller: "",
   //   percentage: "",
   // });
+
+  // Function to update tierValueSum and breakPointValueSum based on index
+const setArrayValueAtIndex = (setStateFunction, index, value) => {
+  setStateFunction((prevState) => {
+    const newState = [...prevState];
+    // Ensure the array is long enough
+    while (newState.length <= index) {
+      newState.push({ doller: "", percentage: "" });
+    }
+    newState[index] = value;
+    return newState;
+  });
+};
+  const updateTierAndBreakPointSums = (
+    index,
+    tierSum,
+    tierPercentage,
+    breakPointSum,
+    breakPointPercentage
+  ) => {
+    setArrayValueAtIndex(setTierValueSum, index, {
+      doller: tierSum,
+      percentage: tierPercentage,
+    });
+    setArrayValueAtIndex(setBreakPointValueSum, index, {
+      doller: breakPointSum,
+      percentage: breakPointPercentage,
+    });
+  };
+
   const calculateSums = (data) => {
     let amounts = [];
     let percentages = [];
@@ -46,10 +78,12 @@ const FinancialProfessionalFee = ({
   const [tierCompletionStatus, setTierCompletionStatus] = useState(0);
   const [breakPointCompletionStatus, setBreakPointCompletionStatus] =
     useState(0);
+
   useEffect(() => {
-    const FPfeeTiers = getCalculationDataValue("FPfeeTiers")[index] || '';
-    const FPfeeBreakPoints = getCalculationDataValue("FPfeeBreakPoints")[index] || '';
-    const accountValue = getCalculationDataValue("account-value")[index] || '';
+    const FPfeeTiers = getCalculationDataValue("FPfeeTiers")[index] || "";
+    const FPfeeBreakPoints =
+      getCalculationDataValue("FPfeeBreakPoints")[index] || "";
+    const accountValue = getCalculationDataValue("account-value")[index] || "";
 
     const { sumOfAmounts: sumOfTiers, sumOfPercentages: sumOfTierPercentages } =
       calculateSums(FPfeeTiers);
@@ -58,11 +92,19 @@ const FinancialProfessionalFee = ({
       sumOfPercentages: sumOfBreakPointPercentages,
     } = calculateSums(FPfeeBreakPoints);
 
-    setTierValueSum({ doller: sumOfTiers, percentage: sumOfTierPercentages });
-    setBreakPointValueSum({
-      doller: sumOfBreakPoints,
-      percentage: sumOfBreakPointPercentages,
-    });
+    // setTierValueSum({ doller: sumOfTiers, percentage: sumOfTierPercentages });
+    // setBreakPointValueSum({
+    //   doller: sumOfBreakPoints,
+    //   percentage: sumOfBreakPointPercentages,
+    // });
+    updateTierAndBreakPointSums(
+      index,
+      sumOfTiers,
+      sumOfTierPercentages,
+      sumOfBreakPoints,
+      sumOfBreakPointPercentages
+    );
+
     const tierCompletion = accountValue ? (sumOfTiers / accountValue) * 100 : 0;
     const breakPointCompletion = accountValue
       ? (sumOfBreakPoints / accountValue) * 100
@@ -73,10 +115,12 @@ const FinancialProfessionalFee = ({
   }, [calculationData]);
 
   // State for the fee type selection
-  const [feeType, setFeeType] = useState(getCalculationDataValue("FPfeeType")[index] || '');
+  const [feeType, setFeeType] = useState(
+    getCalculationDataValue("FPfeeType")[index] || ""
+  );
 
   const fetchBreakPoints = () => {
-    const tiersData = getCalculationDataValue("FPfeeBreakPoints")[index] || '';
+    const tiersData = getCalculationDataValue("FPfeeBreakPoints")[index] || "";
     return Object.keys(tiersData).map((key) => ({
       ...tiersData[key], // Spread the amount and percentage
       id: key, // Keep track of the original key if needed
@@ -84,7 +128,7 @@ const FinancialProfessionalFee = ({
   };
 
   const fetchTiers = () => {
-    const tiersData = getCalculationDataValue("FPfeeTiers")[index]  || '';
+    const tiersData = getCalculationDataValue("FPfeeTiers")[index] || "";
     return Object.keys(tiersData).map((key) => ({
       ...tiersData[key], // Spread the amount and percentage
       id: key, // Keep track of the original key if needed
@@ -401,7 +445,8 @@ const FinancialProfessionalFee = ({
             <p
               className={`error-message ${
                 getCalculationDataValue("account-value")[index] &&
-                getCalculationDataValue("account-value")[index] < tierValueSum.doller
+                getCalculationDataValue("account-value")[index] <
+                  tierValueSum.doller
                   ? "active"
                   : ""
               }`}

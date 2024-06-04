@@ -4,6 +4,7 @@ import Button from "../../components/button/Button";
 import { useNavigate } from "react-router-dom";
 import StepFooter from "../../components/StepFooter/StepFooter";
 import { useCalculationStorage } from "../../context/StorageContext";
+import Comparison from "../../components/Comparison/Comparison";
 const EstimatedResults = () => {
   const navigate = useNavigate();
 
@@ -25,7 +26,9 @@ const EstimatedResults = () => {
     index,
     setIndex,
     originalIndex,
-    setOriginalIndex,handleEdit
+    setOriginalIndex,
+    handleEdit,
+    handleDelete,
   } = useCalculationStorage();
 
   // useEffect(() => {
@@ -41,16 +44,8 @@ const EstimatedResults = () => {
   const handleRedirect = () => {
     navigate("/");
   };
+  const tablesIndex = [0, 1, 2];
 
-  const handleDelete = (index) => {    
-  };
-  // const handleEdit = (index) => {
-  //   setOriginalIndex(index);
-  //   setIndex(index);
-  //   navigate("/");
-  // };
-
-  console.log(tableArray);
   return (
     <div className="estimated-results">
       <div className="headerContainer">
@@ -84,12 +79,12 @@ const EstimatedResults = () => {
               ></Button>
             </div>
           </div>
-          {tableArray.map((table, index) => (
-            <div key={table} className="investment-container">
+          {tablesIndex.map((table, index) => (
+            <div key={table} className={`investment-container ${accountValue[index] && accountValue[index].price == "" ? "active" : ''}`}>
               <div className="header">
                 <div className="title-block">
                   <h1>
-                    {getCalculationDataValue("scenario-name") ||
+                    {getCalculationDataValue("scenario-name")[index] ||
                       "Investment Account Fee Estimate 1"}
                   </h1>
                   <p>As of Date: 01-21-2024</p>
@@ -265,14 +260,14 @@ const EstimatedResults = () => {
                 <div className="row">
                   <div className="label">Fee Type</div>
                   <div className="value-container types">
-                    <div className="value">{feeType || "N/A"}</div>
+                    <div className="value">{feeType[index] || "N/A"}</div>
                   </div>
                 </div>
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Program Fee</div>
                   <div className="value-container types">
-                    <div className="value">{programFee || "N/A"}</div>
+                    <div className="value">{programFee[index] || "N/A"}</div>
                   </div>
                 </div>
                 <div className="results-divider"></div>
@@ -300,6 +295,7 @@ const EstimatedResults = () => {
           </div>
         </div>
       </div>
+      <Comparison />
       <StepFooter from={"estimated-results"}></StepFooter>
     </div>
   );

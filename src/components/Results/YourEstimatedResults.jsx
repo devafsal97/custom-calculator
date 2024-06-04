@@ -49,6 +49,25 @@ const YourEstimatedResults = ({
   const strategistFeeCaapSmallAccount =
     getCalculationDataValue("strategistFeeCaapSmallAccount")[index] || "";
 
+  // const updateStateAtIndex = (setter, value) => {
+  //   setter((prev) => {
+  //     // Create a copy of the previous state
+  //     const updated = [...prev];
+
+  //     // Check if the index is within the bounds of the current state array
+  //     if (index >= updated.length) {
+  //       // Extend the array to include the new index
+  //       updated.push(
+  //         ...Array(index - updated.length + 1).fill({ rate: "", price: "N/A" })
+  //       );
+  //     }
+
+  //     // Update the specified index with the new value
+  //     updated[index] = value;
+
+  //     return updated;
+  //   });
+  // };
   const updateStateAtIndex = (setter, value) => {
     setter((prev) => {
       // Create a copy of the previous state
@@ -57,9 +76,16 @@ const YourEstimatedResults = ({
       // Check if the index is within the bounds of the current state array
       if (index >= updated.length) {
         // Extend the array to include the new index
-        updated.push(
-          ...Array(index - updated.length + 1).fill({ rate: "", price: "N/A" })
-        );
+        if (typeof value === "object") {
+          updated.push(
+            ...Array(index - updated.length + 1).fill({
+              rate: "",
+              price: "N/A",
+            })
+          );
+        } else if (typeof value === "string") {
+          updated.push(...Array(index - updated.length + 1).fill(""));
+        }
       }
 
       // Update the specified index with the new value
@@ -68,7 +94,6 @@ const YourEstimatedResults = ({
       return updated;
     });
   };
-
   useEffect(() => {
     const fpFeeType = getCalculationDataValue("FPfeeType")[index] || "";
     const accountValue =
@@ -123,12 +148,14 @@ const YourEstimatedResults = ({
 
     if (programType) {
       const feeType = mapFeeType(programType, programTypeMappings);
-      setProgramFee(feeType);
+      updateStateAtIndex(setProgramFee, feeType);
+      // setProgramFee(feeType);
     }
 
     if (fpFeeType) {
       const feeType = mapFeeType(fpFeeType, fpFeeTypeMappings);
-      setFeeType(feeType);
+      updateStateAtIndex(setFeeType, feeType);
+      // setFeeType(feeType);
     }
 
     if (fpFeeType === "flat") {
@@ -573,14 +600,14 @@ const YourEstimatedResults = ({
             <div className="result-row">
               <div className="result-label">Fee Type</div>
               <div className="result-value single-column">
-                {feeType || "N/A"}
+                {feeType[index] || "N/A"}
               </div>
             </div>
             <div className="divider" />
             <div className="result-row">
               <div className="result-label">Program Fee</div>
               <div className="result-value single-column">
-                {programFee || "N/A"}
+                {programFee[index] || "N/A"}
               </div>
             </div>
           </div>
