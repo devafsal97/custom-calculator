@@ -4,6 +4,7 @@ const calculateTierFee = (
   breakpoints,
   feePercentages
 ) => {
+  
   let maxVal = Math.max(accountValue, householdAUM);
   let tierValues = [];
   let tierFees = [];
@@ -33,8 +34,9 @@ const calculateTierFee = (
     tierFees.push(tierValue * (feePercentages[i] / 100));
   });
 
-  let totalTierFee = tierFees.reduce((acc, fee) => acc + fee, 0);
+  let totalTierFee = tierFees.reduce((acc, fee) => acc + fee, 0);  
   return { tierValues, tierFees, totalTierFee };
+  
 };
 export default calculateTierFee;
 // // Input values

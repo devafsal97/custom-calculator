@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import StepFooter from "../../components/StepFooter/StepFooter";
 import { useCalculationStorage } from "../../context/StorageContext";
 import Comparison from "../../components/Comparison/Comparison";
+import Modal from "../../components/Modal/Modal";
 const EstimatedResults = () => {
   const navigate = useNavigate();
 
@@ -40,12 +41,33 @@ const EstimatedResults = () => {
     return Array.from({ length: index + 1 }, (_, i) => i);
   };
 
+  const handleNewEstimate = () => {
+    if (index < 2) {
+      setIndex(index + 1);
+      navigate("/");
+    }
+  };
+
   const tableArray = numberToArray(index);
   const handleRedirect = () => {
     navigate("/");
   };
   const tablesIndex = [0, 1, 2];
+  const [showModal, setShowModal] = useState(false);
+  const [deleteIndex,setDeleteIndex] = useState("");
 
+  const handleOpenModal = (index) => {    
+    setShowModal(true);
+    setDeleteIndex(index)
+  };
+
+  const handleCloseModal = (text) => {
+    if(text == "confirm"){
+      handleDelete(deleteIndex);
+    }
+    setShowModal(false);
+    setDeleteIndex("")
+  };
   return (
     <div className="estimated-results">
       <div className="headerContainer">
@@ -72,6 +94,7 @@ const EstimatedResults = () => {
               <Button
                 text={"Create New Estimate"}
                 configuresStyles={"result-button"}
+                onClick={handleNewEstimate}
               ></Button>
               <Button
                 text={"View Comparison"}
@@ -80,7 +103,14 @@ const EstimatedResults = () => {
             </div>
           </div>
           {tablesIndex.map((table, index) => (
-            <div key={table} className={`investment-container ${accountValue[index] && accountValue[index].price !== "" ? "active" : ''}`}>
+            <div
+              key={table}
+              className={`investment-container ${
+                accountValue[index] && accountValue[index].price !== ""
+                  ? "active"
+                  : ""
+              }`}
+            >
               <div className="header">
                 <div className="title-block">
                   <h1>
@@ -96,7 +126,7 @@ const EstimatedResults = () => {
                     configuresStyles={"result-button action-button"}
                   ></Button>
                   <Button
-                    onClick={() => handleDelete(index)}
+                    onClick={() => {handleOpenModal(index)}}
                     text={"Delete"}
                     configuresStyles={"result-button action-button"}
                   ></Button>
@@ -126,34 +156,70 @@ const EstimatedResults = () => {
                   <div className="label">Financial Professional Fee</div>
                   <div className="value-container">
                     <div className="value">
-                      {fpValues[index]?.rate || "N/A"}
+                      {fpValues[index]?.rate
+                        ? `${fpValues[index]?.rate}%`
+                        : "N/A"}
                     </div>
                     <div className="value">
-                      {fpValues[index]?.price || "N/A"}
+                      {fpValues[index]?.price
+                        ? `$${Number(fpValues[index]?.price).toLocaleString()}`
+                        : "N/A"}
                     </div>
                   </div>
                 </div>
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Program Fee</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {programFeeValues[index]?.rate || "N/A"}
                     </div>
                     <div className="value">
                       {programFeeValues[index]?.price || "N/A"}
                     </div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {programFeeValues[index]?.rate
+                        ? `${Number(
+                            programFeeValues[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
+                    </div>
+                    <div className="value">
+                      {programFeeValues[index]?.price
+                        ? `$${Number(
+                            programFeeValues[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Strategist Fee (if applicable)</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {strategistFeeValues[index]?.rate || "N/A"}
                     </div>
                     <div className="value">
                       {strategistFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {strategistFeeValues[index]?.rate
+                        ? `${Number(
+                            strategistFeeValues[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
+                    </div>
+                    <div className="value">
+                      {strategistFeeValues[index]?.price
+                        ? `$${Number(
+                            strategistFeeValues[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
                     </div>
                   </div>
                 </div>
@@ -161,12 +227,28 @@ const EstimatedResults = () => {
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Total Account Fee (annualized)</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {totalAccountFeeValues[index]?.rate || "N/A"}
                     </div>
                     <div className="value">
                       {totalAccountFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {totalAccountFeeValues[index]?.rate
+                        ? `${Number(
+                            totalAccountFeeValues[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
+                    </div>
+                    <div className="value">
+                      {totalAccountFeeValues[index]?.price
+                        ? `$${Number(
+                            totalAccountFeeValues[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
                     </div>
                   </div>
                 </div>
@@ -175,12 +257,33 @@ const EstimatedResults = () => {
                   <div className="label">
                     Total Client Fees (including Fund Expenses)
                   </div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {totalClientFeeValues[index]?.rate || "N/A"}
                     </div>
                     <div className="value">
                       {totalClientFeeValues[index]?.price || "N/A"}
+                    </div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {/* {totalClientFeeValues[index]?.rate */}
+                      {totalClientFeeValues[index]?.rate &&
+                        !isNaN(totalClientFeeValues[index]?.rate) &&
+                        totalClientFeeValues[index]?.rate !== "" 
+                        ? `${Number(
+                            totalClientFeeValues[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
+                    </div>
+                    <div className="value">
+                    {totalClientFeeValues[index]?.rate &&
+                        !isNaN(totalClientFeeValues[index]?.rate) &&
+                        totalClientFeeValues[index]?.rate !== "" 
+                        ? `$${Number(
+                            totalClientFeeValues[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
                     </div>
                   </div>
                 </div>
@@ -192,11 +295,25 @@ const EstimatedResults = () => {
                   <div className="value-container">
                     <div className="value">
                       {" "}
-                      {grossAnnualFeeValues[index]?.rate || "N/A"}
+                      {/* {grossAnnualFeeValues[index]?.rate || "N/A"} */}
+                      {grossAnnualFeeValues[index]?.rate &&
+                      !isNaN(grossAnnualFeeValues[index]?.rate) &&
+                      grossAnnualFeeValues[index]?.rate !== ""
+                        ? `${Number(
+                            grossAnnualFeeValues[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
                     </div>
                     <div className="value">
                       {" "}
-                      {grossAnnualFeeValues[index]?.price || "N/A"}
+                      {/* {grossAnnualFeeValues[index]?.price || "N/A"} */}
+                      {grossAnnualFeeValues[index]?.price &&
+                      !isNaN(grossAnnualFeeValues[index]?.price) &&
+                      grossAnnualFeeValues[index]?.price !== ""
+                        ? `$${Number(
+                            grossAnnualFeeValues[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
                     </div>
                   </div>
                 </div>
@@ -205,33 +322,75 @@ const EstimatedResults = () => {
                   <div className="label">
                     Net Annual Fee to Financial Professional
                   </div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {netAnnualFeeValues[index]?.rate || "N/A"}
                     </div>
                     <div className="value">
                       {netAnnualFeeValues[index]?.price || "N/A"}
                     </div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {netAnnualFeeValues[index]?.rate
+                        ? `${Number(
+                            netAnnualFeeValues[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
+                    </div>
+                    <div className="value">
+                      {netAnnualFeeValues[index]?.price
+                        ? `$${Number(
+                            netAnnualFeeValues[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Account Value</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {accountValue[index]?.rate || "N/A"}
                     </div>
                     <div className="value">
                       {accountValue[index]?.price || "N/A"}
                     </div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {accountValue[index]?.rate
+                        ? `${Number(
+                            accountValue[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
+                    </div>
+                    <div className="value">
+                      {accountValue[index]?.price
+                        ? `$${Number(
+                            accountValue[index]?.price
+                          ).toLocaleString()}`
+                        : "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Fund Expenses</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {fundExpenses[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">N/A</div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {fundExpenses[index]?.rate
+                        ? `${Number(
+                            fundExpenses[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
                     </div>
                     <div className="value">N/A</div>
                   </div>
@@ -239,9 +398,17 @@ const EstimatedResults = () => {
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Financial Professional Payout</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {fpPayout[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">N/A</div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {fpPayout[index]?.rate
+                        ? `${Number(fpPayout[index]?.rate).toLocaleString()}%`
+                        : "N/A"}
                     </div>
                     <div className="value">N/A</div>
                   </div>
@@ -249,9 +416,19 @@ const EstimatedResults = () => {
                 <div className="results-divider"></div>
                 <div className="row">
                   <div className="label">Household Value</div>
-                  <div className="value-container">
+                  {/* <div className="value-container">
                     <div className="value">
                       {houseHoldValue[index]?.rate || "N/A"}
+                    </div>
+                    <div className="value">N/A</div>
+                  </div> */}
+                  <div className="value-container">
+                    <div className="value">
+                      {houseHoldValue[index]?.rate
+                        ? `${Number(
+                            houseHoldValue[index]?.rate
+                          ).toLocaleString()}%`
+                        : "N/A"}
                     </div>
                     <div className="value">N/A</div>
                   </div>
@@ -295,8 +472,15 @@ const EstimatedResults = () => {
           </div>
         </div>
       </div>
-      <Comparison />
-      <StepFooter from={"estimated-results"}></StepFooter>
+
+      <Modal show={showModal} onClose={handleCloseModal}>
+        <p className="modal-heading">Confirm Delete ?</p>
+        <p className="modal-desc">Scenario Name : {getCalculationDataValue("scenario-name")[deleteIndex]}</p>
+        <div className="modal-buttons"><button className="confirm-button" onClick={()=>{handleCloseModal("confirm")}}>Confirm</button>
+        <button className="cancel-button" onClick={()=>{handleCloseModal("cancel")}}>Close</button></div>
+      </Modal>
+      {/* <Comparison /> */}
+      <div className="footer-container"><StepFooter from={"estimated-results"}></StepFooter></div>
     </div>
   );
 };

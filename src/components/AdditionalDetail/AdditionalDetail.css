@@ -46,8 +46,8 @@
   align-items: center;
   border: 1px solid #9fb1bd;
   border-radius: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
+  /* padding-left: 8px;
+  padding-right: 8px; */
 }
 
 .input-field {

@@ -23,6 +23,7 @@
   font-family: Avenir Next, sans-serif;
   font-weight: 600;
   margin: auto 0;
+  min-width: 250px;
 }
 
 @media (max-width: 991px) {

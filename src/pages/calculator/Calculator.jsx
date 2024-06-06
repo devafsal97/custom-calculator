@@ -9,16 +9,17 @@ import AdditionalDetail from "../../components/AdditionalDetail/AdditionalDetail
 import StepIndicator from "../../components/StepIndicatorFolder/StepIndicator";
 import YourEstimatedResults from "../../components/Results/YourEstimatedResults";
 import StepFooter from "../../components/StepFooter/StepFooter";
-import useIntersectionObserver from "../../components/useIntersectionObserver/useIntersectionObserver"
+import useIntersectionObserver from "../../components/useIntersectionObserver/useIntersectionObserver";
 import { useCalculationStorage } from "../../context/StorageContext";
 function CalculatorPage() {
   const {
     calculationData,
     setCalculationData,
     handleChange,
-    getCalculationDataValue,index,setIndex   
+    getCalculationDataValue,
+    index,
+    setIndex,
   } = useCalculationStorage();
-
   const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
   const [selectedOption, setSelectedOption] = useState();
   const [currentStep, setCurrentStep] = useState(0);
@@ -27,7 +28,7 @@ function CalculatorPage() {
     setSelectedOption(option);
     // handleProgramFeeSelectionComplete();
   };
-  
+
   return (
     <div>
       {/* Header Section */}
@@ -57,7 +58,16 @@ function CalculatorPage() {
                   to quickly share and analyze your estimated fees.
                   <br />
                   <p>Get Started below.</p>
-                  <br />
+                  
+                  <p className="calculation-name">
+                    {index === 0
+                      ? "First Calculation"
+                      : index === 1
+                      ? "Second Calculation"
+                      : index === 2
+                      ? "Third Calculation"
+                      : `Calculation ${index + 1}`}
+                  </p>
                 </div>
               </div>
             </div>
@@ -81,8 +91,8 @@ function CalculatorPage() {
               name="scenario-name"
               className="scenario-input"
               type="text"
-              value={getCalculationDataValue("scenario-name")[index] || ''}
-              min='0'
+              value={getCalculationDataValue("scenario-name")[index] || ""}
+              min="0"
             />
           </div>
 
@@ -99,8 +109,10 @@ function CalculatorPage() {
               onChange={handleChange}
               name="account-value"
               className="scenario-input"
-              type="number"
-              value={getCalculationDataValue("account-value")[index]  || ''}
+              type="number" // Use text type to allow for comma-separated numbers
+              value={(
+                getCalculationDataValue("account-value")[index] || ""
+              ).toLocaleString()} //
             />
           </div>
 
@@ -140,7 +152,9 @@ function CalculatorPage() {
           <div className="filler"></div>
           <div
             ref={(el) =>
-              getCalculationDataValue("paymentOption") && getCalculationDataValue("paymentOption") !== '' && getCalculationDataValue("paymentOption") !== "advisor-directed"
+              getCalculationDataValue("paymentOption") &&
+              getCalculationDataValue("paymentOption") !== "" &&
+              getCalculationDataValue("paymentOption") !== "advisor-directed"
                 ? (sectionsRef.current[5] = el)
                 : null
             }
@@ -181,9 +195,7 @@ function CalculatorPage() {
         </div>
       </div>
       <div className="filler-top"></div>
-      <StepFooter
-        currentStep={currentStep}        
-      ></StepFooter>
+      <StepFooter currentStep={currentStep}></StepFooter>
     </div>
   );
 }

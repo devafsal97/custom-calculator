@@ -199,7 +199,6 @@ const YourEstimatedResults = ({
           const totalFee = results?.totalTierFee;
           const rate = (totalFee / accountValue) * 100;
           const price = totalFee;
-
           updateStateAtIndex(setFpValues, {
             rate: rate.toFixed(2),
             price: price.toFixed(4),
@@ -232,8 +231,8 @@ const YourEstimatedResults = ({
       const price = (teamDirectedInput / 100) * accountValue;
 
       updateStateAtIndex(setStrategistFeeValues, {
-        rate: teamDirectedInput,
-        price: price,
+        rate: teamDirectedInput.toFixed(4),
+        price: price.toFixed(2),
       });
     }
     if (programType === "caap") {
@@ -382,15 +381,15 @@ const YourEstimatedResults = ({
             <div className="result-row">
               <div className="result-label">Financial Professional Fee</div>
               <div className="result-value-container">
-                <div className="result-value">
-                  {/* {`${fpValues[index]?.rate}%` || "N/A"} */}
-                  {fpValues[index]?.rate != ""
-                    ? `${fpValues[index].rate}%`
+                <div className="result-value">                  
+                  {fpValues[index]?.rate && fpValues[index]?.rate !== undefined && fpValues[index]?.rate !==""
+                    ? `${Number(fpValues[index].rate)?.toLocaleString()}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {fpValues[index]?.price != ""
-                    ? `$${fpValues[index].price}`
+                  {fpValues[index]?.price != null &&
+                  fpValues[index].price !== "" && fpValues[index].price !== undefined
+                    ? `$${Number(fpValues[index].price)?.toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -408,13 +407,15 @@ const YourEstimatedResults = ({
               <div className="result-label">Program Fee</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {programFeeValues[index]?.rate !== ""
+                  {programFeeValues[index]?.rate !== "" &&
+                  programFeeValues[index]?.rate !== "N/A" && programFeeValues[index]?.rate !== undefined
                     ? `${programFeeValues[index].rate}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {programFeeValues[index]?.price !== ""
-                    ? `$${programFeeValues[index].price}`
+                  {programFeeValues[index]?.price !== "" &&
+                  programFeeValues[index]?.rate !== "N/A" && programFeeValues[index]?.rate !== undefined
+                    ? `$${Number(programFeeValues[index].price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -424,13 +425,13 @@ const YourEstimatedResults = ({
               <div className="result-label">Strategist Fee (if applicable)</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {strategistFeeValues[index]?.rate !== ""
+                  {strategistFeeValues[index]?.rate !== "" && strategistFeeValues[index]?.rate !== "N/A" && strategistFeeValues[index]?.rate !== undefined
                     ? `${strategistFeeValues[index].rate}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {strategistFeeValues[index]?.price !== ""
-                    ? `$${strategistFeeValues[index].price}`
+                  {strategistFeeValues[index]?.price !== "" && strategistFeeValues[index]?.price !== "N/A" && strategistFeeValues[index]?.price !== undefined
+                    ? `$${Number(strategistFeeValues[index].price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -440,13 +441,15 @@ const YourEstimatedResults = ({
               <div className="result-label">Total Account Fee (annualized)</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {totalAccountFeeValues[index]?.rate !== ""
+                  {totalAccountFeeValues[index]?.rate !== "" &&
+                  totalAccountFeeValues[index]?.rate !== "N/A" && totalAccountFeeValues[index]?.rate !== undefined
                     ? `${totalAccountFeeValues[index].rate}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {totalAccountFeeValues[index]?.price !== ""
-                    ? `$${totalAccountFeeValues[index]?.price}`
+                  {totalAccountFeeValues[index]?.price !== "" &&
+                  totalAccountFeeValues[index]?.price !== "N/A" && totalAccountFeeValues[index]?.price !== undefined
+                    ? `$${Number(totalAccountFeeValues[index]?.price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -459,13 +462,15 @@ const YourEstimatedResults = ({
               </div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {totalClientFeeValues[index]?.rate !== '0.0000'
+                  {totalClientFeeValues[index]?.rate !== "0.0000" &&
+                  totalClientFeeValues[index]?.rate !== "N/A" && totalClientFeeValues[index]?.rate !== undefined
                     ? `${totalClientFeeValues[index]?.rate}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {totalClientFeeValues[index]?.price !== '0.00'
-                    ? `$${totalClientFeeValues[index]?.price}`
+                  {totalClientFeeValues[index]?.price !== "0.00" &&
+                  totalClientFeeValues[index]?.price !== "N/A" && totalClientFeeValues[index]?.price !== undefined
+                    ? `$${Number(totalClientFeeValues[index]?.price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -492,8 +497,8 @@ const YourEstimatedResults = ({
 
                 <div className="result-value">
                   {grossAnnualFeeValues[index]?.price !== "" &&
-                  grossAnnualFeeValues[index]?.price !== "N/A"
-                    ? `$${grossAnnualFeeValues[index]?.price}`
+                  grossAnnualFeeValues[index]?.price !== "N/A" && grossAnnualFeeValues[index]?.price !== undefined
+                    ? `$${Number(grossAnnualFeeValues[index]?.price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -505,14 +510,15 @@ const YourEstimatedResults = ({
               </div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {netAnnualFeeValues[index]?.rate !== "" ||
-                  netAnnualFeeValues[index]?.rate === 0
+                  {netAnnualFeeValues[index]?.rate !== "" &&
+                   netAnnualFeeValues[index]?.rate !== undefined
                     ? `${netAnnualFeeValues[index]?.rate}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {netAnnualFeeValues[index]?.price !== ""
-                    ? `$${netAnnualFeeValues[index]?.price}`
+                  {netAnnualFeeValues[index]?.price !== "" &&
+                   netAnnualFeeValues[index]?.price !== undefined
+                    ? `$${Number(netAnnualFeeValues[index]?.price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -526,13 +532,13 @@ const YourEstimatedResults = ({
               <div className="result-label">Account Value</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {accountValue[index]?.rate
-                    ? `${accountValue[index]?.rate}%`
+                  {accountValue[index]?.rate && accountValue[index]?.rate !== undefined && accountValue[index]?.rate !==""
+                    ? `${Number(accountValue[index]?.rate).toLocaleString()}%`
                     : "N/A"}
                 </div>
                 <div className="result-value">
-                  {accountValue[index]?.price
-                    ? `$${accountValue[index]?.price}`
+                  {accountValue[index]?.price && accountValue[index]?.price !== undefined && accountValue[index]?.price !==""
+                    ? `$${Number(accountValue[index]?.price).toLocaleString()}`
                     : "N/A"}
                 </div>
               </div>
@@ -542,7 +548,7 @@ const YourEstimatedResults = ({
               <div className="result-label">Fund Expenses</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {fundExpenses[index]?.rate
+                  {fundExpenses[index]?.rate && fundExpenses[index]?.rate !== undefined && fundExpenses[index]?.rate !=="" 
                     ? `${fundExpenses[index]?.rate}%`
                     : "N/A"}
                 </div>
@@ -554,9 +560,7 @@ const YourEstimatedResults = ({
               <div className="result-label">Financial Professional Payout</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {fpPayout[index]?.rate
-                    ? `${fpPayout[index]?.rate}%`
-                    : "N/A"}
+                  {fpPayout[index]?.rate && fpPayout[index]?.rate !== undefined && fpPayout[index]?.rate !=="" ? `${fpPayout[index]?.rate}%` : "N/A"}
                 </div>
                 <div className="result-value">N/A</div>
               </div>
@@ -565,12 +569,12 @@ const YourEstimatedResults = ({
             <div className="result-row">
               <div className="result-label">Household Value</div>
               <div className="result-value-container">
+                <div className="result-value">N/A</div>
                 <div className="result-value">
-                  N/A
+                  {houseHoldValue[index]?.rate && houseHoldValue[index]?.rate !== undefined && houseHoldValue[index]?.rate !==""
+                    ? `$${Number(houseHoldValue[index]?.rate).toLocaleString()}`
+                    : "N/A"}
                 </div>
-                <div className="result-value">{houseHoldValue[index]?.rate
-                    ? `$${houseHoldValue[index]?.rate}`
-                    : "N/A"}</div>
               </div>
             </div>
             <div className="divider" />

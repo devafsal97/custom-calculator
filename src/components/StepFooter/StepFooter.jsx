@@ -42,18 +42,25 @@ const StepFooter = ({ currentStep = 1, from }) => {
       }
     }
   };
-
+  console.log();
   return (
     <div className="step-footer">
-      {from != "estimated-results" ? (
-        <div className="step-info">{stepLabels[currentStep]}</div>
-      ) : (
-        <div className="result step-info">
-          <span>Financial Professional Fee</span>
-          <span>{`Rate: ${fpValues.rate || "000"} %`}</span>
-          <span>{`Price: ${fpValues.price || "000"} $`}</span>
-        </div>
-      )}
+      <div className="step-info">{stepLabels[currentStep]}</div>
+      <div className="result step-info">
+        <span>Financial Professional Fee</span>
+        {/* <span>{`Rate: ${fpValues[index].rate || "000"} %`}</span>
+          <span>{`Price: $${fpValues[index].price.toLocaleString() || "000"} `}</span> */}
+        <span>{`Rate: ${
+          fpValues[index] && fpValues[index].rate && fpValues[index].rate !== undefined && fpValues[index].rate !== ""
+            ? `${fpValues[index].rate} %`
+            : "000 %"
+        }`}</span>
+        <span>{`Price: ${
+          fpValues[index] && fpValues[index].price && fpValues[index].price !== undefined && fpValues[index].price !== ""
+            ? `$${Number(fpValues[index].price).toLocaleString()}`
+            : "$000"
+        }`}</span>
+      </div>
       <div className="step-actions">
         {/* <div className={`step-cancel`} onClick={handleBack}>
           Back

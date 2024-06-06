@@ -1,9 +1,10 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import StepIndicator from "./StepIndicator.css";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useCalculationStorage } from "../../context/StorageContext";
+import "./StepIndicator.css";  
+
 const steps = [
   {
     id: 1,
@@ -28,7 +29,6 @@ const steps = [
     title: "Configure Strategist Fee",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
-
   {
     id: 5,
     title: "Add Additional Details",
@@ -39,7 +39,7 @@ const steps = [
 
 const VerticalLinearStepper = ({ calculationData }) => {
   const { stepsCompleted, setStepsCompleted, index, setIndex } =
-    useCalculationStorage();
+    useCalculationStorage();    
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(new Set());
 
@@ -87,7 +87,6 @@ const VerticalLinearStepper = ({ calculationData }) => {
     if (
       calculationData?.AdditionalDetails[index]?.fundExpenses > 0 &&
       calculationData?.AdditionalDetails[index]?.fpPayOut > 0 &&
-      calculationData?.AdditionalDetails[index]?.houseHoldValue > 0 &&
       calculationData?.AdditionalDetails[index]?.auaDiscount !== ""
     ) {
       newCompletedSteps.add(5);
@@ -96,40 +95,43 @@ const VerticalLinearStepper = ({ calculationData }) => {
     }
 
     setCompletedSteps(newCompletedSteps);
-    const allStepsCompleted = newCompletedSteps.size === 5;
+    const allStepsCompleted = calculationData.paymentOption[index] === "advisor-directed" ? newCompletedSteps.size === 4 :newCompletedSteps.size === 5;
     setStepsCompleted(allStepsCompleted);
   }, [calculationData]);
 
   return (
     <div className="step-indicator">
-      {steps.map((step) => (
-        <div
-          key={step.id}
-          className={`step ${activeStep === step.id ? "active" : ""}`}
-          onClick={() => setActiveStep(step.id)}
-        >
-          <div className="step-line-parent">
-            <div className={`step-line ${step.id === 1 ? "noLine" : ""}`}></div>
-            {completedSteps.has(step.id) ? (
-              <CheckCircleIcon
-                sx={{ fill: "#186ADE", width: "18px", height: "18px" }}
-              />
-            ) : (
-              <RadioButtonUncheckedIcon
-                sx={{ fill: "#186ADE", width: "18px", height: "18px" }}
-              />
-            )}
-            <div
-              className={`step-line ${
-                step.id === steps.length ? "noLine" : ""
-              }`}
-            ></div>
-          </div>
-          <div className="title">
-            {step.title} <p>{step.description}</p>
-          </div>
-        </div>
-      ))}
+     {steps.map((step) => (
+  // Check if the step id is not 4 or the payment option is not "advisor-directed"
+  !(step.id === 4 && calculationData?.paymentOption?.[index] === "advisor-directed") &&
+  <div
+    key={step.id}
+    className={`step ${activeStep === step.id ? "active" : ""}`}
+    onClick={() => setActiveStep(step.id)}
+  >
+    <div className="step-line-parent">
+      <div className={`step-line ${step.id === 1 ? "noLine" : ""}`}></div>
+      {completedSteps.has(step.id) ? (
+        <CheckCircleIcon
+          sx={{ fill: "#186ADE", width: "18px", height: "18px" }}
+        />
+      ) : (
+        <RadioButtonUncheckedIcon
+          sx={{ fill: "#186ADE", width: "18px", height: "18px" }}
+        />
+      )}
+      <div
+        className={`step-line ${
+          step.id === steps.length ? "noLine" : ""
+        }`}
+      ></div>
+    </div>
+    <div className="title">
+      {step.title} <p>{step.description}</p>
+    </div>
+  </div>
+))}
+
     </div>
   );
 };

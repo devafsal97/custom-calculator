@@ -314,9 +314,9 @@ const CalculationStorageProvider = ({ children }) => {
     replaceValueAtIndex(stateArray, setStateFunction, index);
   };
 
-//   useEffect(() => {
-//     console.log(calculationData);
-//   }, [calculationData]);
+  // useEffect(() => {
+  //   console.log(calculationData);
+  // }, [calculationData]);
   useEffect(() => {
     console.log(
     //   tierValueSum,
@@ -333,7 +333,7 @@ const CalculationStorageProvider = ({ children }) => {
     //   grossAnnualFeeValues,
     //   fpValues,
     //   netAnnualFeeValues,
-      totalClientFeeValues
+      //totalClientFeeValues
     );
   }, [
     tierValueSum,
