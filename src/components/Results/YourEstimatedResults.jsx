@@ -95,7 +95,6 @@ const YourEstimatedResults = ({
       getCalculationDataValue("AdditionalDetails")[index]?.fpPayOut || 0
     );
 
-
     // When updating, specify the index and the new value object
     updateStateAtIndex(setAccountValue, { rate: 0, price: accountValue });
     updateStateAtIndex(setFundExpenses, { rate: fundExp, price: "N/A" });
@@ -137,18 +136,17 @@ const YourEstimatedResults = ({
       const rate = parseFloat(calculationData.FPfeeFlat[index]?.amount) || 0;
       const FPfeeFlat = accountValue !== 0 ? (rate / 100) * accountValue : 0;
       updateStateAtIndex(setFpValues, {
-        rate: rate,
+        rate: rate.toFixed(4),
         price: FPfeeFlat.toFixed(2),
       });
-
     } else if (fpFeeType === "fixed") {
       const price = parseFloat(calculationData.FPfeeFixed[index]?.amount) || 0;
       const fpFeeFixedAmount =
         accountValue !== 0 ? (price / accountValue) * 100 : 0;
 
       updateStateAtIndex(setFpValues, {
-        rate: fpFeeFixedAmount.toFixed(2),
-        price: price,
+        rate: fpFeeFixedAmount.toFixed(4),
+        price: price.toFixed(2),
       });
     } else if (fpFeeType === "breakpoint") {
       const FPfeeBreakPoints = calculationData["FPfeeBreakPoints"][index];
@@ -174,10 +172,9 @@ const YourEstimatedResults = ({
           const rate = (totalFee / accountValue) * 100;
           const price = totalFee;
           updateStateAtIndex(setFpValues, {
-            rate: rate.toFixed(2),
+            rate: rate.toFixed(4),
             price: price.toFixed(2),
           });
-      
         }
       }
     } else if (fpFeeType === "tier") {
@@ -205,7 +202,7 @@ const YourEstimatedResults = ({
 
           updateStateAtIndex(setFpValues, {
             rate: rate.toFixed(2),
-            price: price.toFixed(2),
+            price: price.toFixed(4),
           });
         }
       }
@@ -226,8 +223,8 @@ const YourEstimatedResults = ({
         const rate = (roundedTotalRate / accountValue) * 100;
 
         updateStateAtIndex(setProgramFeeValues, {
-          rate: isNaN(rate) ? "N/A" : rate.toFixed(2),
-          price: roundedTotalRate,
+          rate: isNaN(rate) ? "N/A" : rate.toFixed(4),
+          price: roundedTotalRate.toFixed(2),
         });
       }
     }
@@ -249,9 +246,9 @@ const YourEstimatedResults = ({
         const percentageValue = strategistFeeCaap.value;
         const price =
           percentageValue !== 0 ? (percentageValue / 100) * accountValue : 0;
-    
+
         updateStateAtIndex(setStrategistFeeValues, {
-          rate: percentageValue,
+          rate: percentageValue.toFixed(4),
           price: price.toFixed(2),
         });
       }
@@ -264,9 +261,9 @@ const YourEstimatedResults = ({
         const percentageValue = strategistFeeCaapSmallAccount.value;
         const price =
           percentageValue !== 0 ? (percentageValue / 100) * accountValue : 0;
- 
+
         updateStateAtIndex(setStrategistFeeValues, {
-          rate: percentageValue,
+          rate: percentageValue.toFixed(4),
           price: price.toFixed(2),
         });
       }
@@ -281,8 +278,8 @@ const YourEstimatedResults = ({
       }
 
       updateStateAtIndex(setStrategistFeeValues, {
-        rate: parseFloat(sumResult).toFixed(2),
-        price: dollarValue || 0,
+        rate: parseFloat(sumResult).toFixed(4),
+        price: dollarValue.toFixed(2) || 0,
       });
     }
   }, [calculationData]);
@@ -324,7 +321,7 @@ const YourEstimatedResults = ({
       let dollerValue = (totalAccountFee / 100) * accountValue;
 
       updateStateAtIndex(setTotalAccountFeeValues, {
-        rate: isNaN(totalAccountFee) ? "N/A" : totalAccountFee.toFixed(2),
+        rate: isNaN(totalAccountFee) ? "N/A" : totalAccountFee.toFixed(4),
         price: isNaN(dollerValue) ? "N/A" : dollerValue.toFixed(2),
       });
       let percentageValue = (netAnnualFee / accountValue) * 100;
@@ -333,7 +330,7 @@ const YourEstimatedResults = ({
         rate:
           isNaN(percentageValue) || percentageValue === Infinity
             ? "N/A"
-            : percentageValue.toFixed(2),
+            : percentageValue.toFixed(4),
         price: isNaN(netAnnualFee) ? "N/A" : netAnnualFee.toFixed(2),
       });
     }
@@ -345,7 +342,7 @@ const YourEstimatedResults = ({
     let clientDollerValue = (totalClientFees / 100) * accountValue;
 
     updateStateAtIndex(setTotalClientFeeValues, {
-      rate: isNaN(totalClientFees) ? "N/A" : totalClientFees.toFixed(2),
+      rate: isNaN(totalClientFees) ? "N/A" : totalClientFees.toFixed(4),
       price: isNaN(clientDollerValue) ? "N/A" : clientDollerValue.toFixed(2),
     });
     let grossannualfee;
@@ -358,8 +355,11 @@ const YourEstimatedResults = ({
       grossannualfee !== "N/A" ? (grossannualfee / 100) * accountValue : "N/A";
 
     updateStateAtIndex(setgrossAnnualFeeValues, {
-      rate: isNaN(grossannualfee) ? "N/A" : grossannualfee.toFixed(2),
-      price: grossAnnualFeeDollerValue,
+      rate: isNaN(grossannualfee) ? "N/A" : grossannualfee.toFixed(4),
+      price:
+        grossAnnualFeeDollerValue !== "N/A"
+          ? grossAnnualFeeDollerValue.toFixed(2)
+          : grossAnnualFeeDollerValue,
     });
   }, [fpValues, programFeeValues, strategistFeeValues]);
 
@@ -383,10 +383,15 @@ const YourEstimatedResults = ({
               <div className="result-label">Financial Professional Fee</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {fpValues[index]?.rate || "N/A"}
+                  {/* {`${fpValues[index]?.rate}%` || "N/A"} */}
+                  {fpValues[index]?.rate != ""
+                    ? `${fpValues[index].rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {fpValues[index]?.price || "N/A"}
+                  {fpValues[index]?.price != ""
+                    ? `$${fpValues[index].price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -403,10 +408,14 @@ const YourEstimatedResults = ({
               <div className="result-label">Program Fee</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {programFeeValues[index]?.rate || "N/A"}
+                  {programFeeValues[index]?.rate !== ""
+                    ? `${programFeeValues[index].rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {programFeeValues[index]?.price || "N/A"}
+                  {programFeeValues[index]?.price !== ""
+                    ? `$${programFeeValues[index].price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -415,10 +424,14 @@ const YourEstimatedResults = ({
               <div className="result-label">Strategist Fee (if applicable)</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {strategistFeeValues[index]?.rate || "N/A"}
+                  {strategistFeeValues[index]?.rate !== ""
+                    ? `${strategistFeeValues[index].rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {strategistFeeValues[index]?.price || "N/A"}
+                  {strategistFeeValues[index]?.price !== ""
+                    ? `$${strategistFeeValues[index].price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -427,13 +440,18 @@ const YourEstimatedResults = ({
               <div className="result-label">Total Account Fee (annualized)</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {totalAccountFeeValues[index]?.rate || "N/A"}
+                  {totalAccountFeeValues[index]?.rate !== ""
+                    ? `${totalAccountFeeValues[index].rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {totalAccountFeeValues[index]?.price || "N/A"}
+                  {totalAccountFeeValues[index]?.price !== ""
+                    ? `$${totalAccountFeeValues[index]?.price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
+
             <div className="divider" />
             <div className="result-row">
               <div className="result-label">
@@ -441,10 +459,14 @@ const YourEstimatedResults = ({
               </div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {totalClientFeeValues[index]?.rate || "N/A"}
+                  {totalClientFeeValues[index]?.rate !== '0.0000'
+                    ? `${totalClientFeeValues[index]?.rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {totalClientFeeValues[index]?.price || "N/A"}
+                  {totalClientFeeValues[index]?.price !== '0.00'
+                    ? `$${totalClientFeeValues[index]?.price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -458,12 +480,21 @@ const YourEstimatedResults = ({
                 Gross Annual Fee to Financial Professional
               </div>
               <div className="result-value-container">
-                {" "}
                 <div className="result-value">
-                  {grossAnnualFeeValues[index]?.rate || "N/A"}
+                  {grossAnnualFeeValues[index]?.rate !== "" &&
+                  grossAnnualFeeValues[index]?.rate !== undefined &&
+                  grossAnnualFeeValues[index]?.rate !== "N/A"
+                    ? `${grossAnnualFeeValues[index]?.rate}%`
+                    : grossAnnualFeeValues[index]?.rate !== undefined
+                    ? "N/A"
+                    : ""}
                 </div>
+
                 <div className="result-value">
-                  {grossAnnualFeeValues[index]?.price || "N/A"}
+                  {grossAnnualFeeValues[index]?.price !== "" &&
+                  grossAnnualFeeValues[index]?.price !== "N/A"
+                    ? `$${grossAnnualFeeValues[index]?.price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -474,10 +505,15 @@ const YourEstimatedResults = ({
               </div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {netAnnualFeeValues[index]?.rate || "N/A"}
+                  {netAnnualFeeValues[index]?.rate !== "" ||
+                  netAnnualFeeValues[index]?.rate === 0
+                    ? `${netAnnualFeeValues[index]?.rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {netAnnualFeeValues[index]?.price || "N/A"}
+                  {netAnnualFeeValues[index]?.price !== ""
+                    ? `$${netAnnualFeeValues[index]?.price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -490,10 +526,14 @@ const YourEstimatedResults = ({
               <div className="result-label">Account Value</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {accountValue[index]?.rate || "N/A"}
+                  {accountValue[index]?.rate
+                    ? `${accountValue[index]?.rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">
-                  {accountValue[index]?.price || "N/A"}
+                  {accountValue[index]?.price
+                    ? `$${accountValue[index]?.price}`
+                    : "N/A"}
                 </div>
               </div>
             </div>
@@ -502,7 +542,9 @@ const YourEstimatedResults = ({
               <div className="result-label">Fund Expenses</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {fundExpenses[index]?.rate || "N/A"}
+                  {fundExpenses[index]?.rate
+                    ? `${fundExpenses[index]?.rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">N/A</div>
               </div>
@@ -512,7 +554,9 @@ const YourEstimatedResults = ({
               <div className="result-label">Financial Professional Payout</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {fpPayout[index]?.rate || "N/A"}
+                  {fpPayout[index]?.rate
+                    ? `${fpPayout[index]?.rate}%`
+                    : "N/A"}
                 </div>
                 <div className="result-value">N/A</div>
               </div>
@@ -522,9 +566,11 @@ const YourEstimatedResults = ({
               <div className="result-label">Household Value</div>
               <div className="result-value-container">
                 <div className="result-value">
-                  {houseHoldValue[index]?.rate || "N/A"}
+                  N/A
                 </div>
-                <div className="result-value">N/A</div>
+                <div className="result-value">{houseHoldValue[index]?.rate
+                    ? `$${houseHoldValue[index]?.rate}`
+                    : "N/A"}</div>
               </div>
             </div>
             <div className="divider" />
@@ -543,6 +589,7 @@ const YourEstimatedResults = ({
             </div>
           </div>
         );
+
       default:
         return null;
     }

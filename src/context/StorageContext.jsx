@@ -314,44 +314,44 @@ const CalculationStorageProvider = ({ children }) => {
     replaceValueAtIndex(stateArray, setStateFunction, index);
   };
 
+//   useEffect(() => {
+//     console.log(calculationData);
+//   }, [calculationData]);
   useEffect(() => {
-    console.log(calculationData);
-  }, [calculationData]);
-  // useEffect(() => {
-  //   console.log(
-  //     tierValueSum,
-  //     breakPointValueSum,
-  //     accountValue,
-  //     fundExpenses,
-  //     fpPayout,
-  //     houseHoldValue,
-  //     feeType,
-  //     programFee,
-  //     programFeeValues,
-  //     strategistFeeValues,
-  //     totalAccountFeeValues,
-  //     grossAnnualFeeValues,
-  //     fpValues,
-  //     netAnnualFeeValues,
-  //     totalClientFeeValues
-  //   );
-  // }, [
-  //   tierValueSum,
-  //   breakPointValueSum,
-  //   accountValue,
-  //   fundExpenses,
-  //   fpPayout,
-  //   houseHoldValue,
-  //   feeType,
-  //   programFee,
-  //   programFeeValues,
-  //   strategistFeeValues,
-  //   totalAccountFeeValues,
-  //   grossAnnualFeeValues,
-  //   fpValues,
-  //   netAnnualFeeValues,
-  //   totalClientFeeValues,
-  // ]); 
+    console.log(
+    //   tierValueSum,
+    //   breakPointValueSum,
+    //    accountValue,
+    //   fundExpenses,
+    //   fpPayout,
+    //   houseHoldValue,
+    //   feeType,
+    //   programFee,
+    //   programFeeValues,
+    //   strategistFeeValues,
+    //   totalAccountFeeValues,
+    //   grossAnnualFeeValues,
+    //   fpValues,
+    //   netAnnualFeeValues,
+      totalClientFeeValues
+    );
+  }, [
+    tierValueSum,
+    breakPointValueSum,
+    accountValue,
+    fundExpenses,
+    fpPayout,
+    houseHoldValue,
+    feeType,
+    programFee,
+    programFeeValues,
+    strategistFeeValues,
+    totalAccountFeeValues,
+    grossAnnualFeeValues,
+    fpValues,
+    netAnnualFeeValues,
+    totalClientFeeValues,
+  ]); 
 
   return (
     <CalculationStorageContext.Provider
