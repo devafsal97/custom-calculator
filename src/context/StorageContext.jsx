@@ -12,85 +12,6 @@ const CalculationStorageProvider = ({ children }) => {
 
   // Calculation details
 
-  // const [tierValueSum, setTierValueSum] = useState([
-  //   {
-  //     doller: "",
-  //     percentage: "",
-  //   },
-  // ]);
-  // const [breakPointValueSum, setBreakPointValueSum] = useState([
-  //   {
-  //     doller: "",
-  //     percentage: "",
-  //   },
-  // ]);
-
-  // const [accountValue, setAccountValue] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [fundExpenses, setFundExpenses] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-
-  // const [fpPayout, setFpPayout] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-
-  // const [houseHoldValue, setHouseHoldValue] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [feeType, setFeeType] = useState([""]);
-  // const [programFee, setProgramFee] = useState([""]);
-
-  // const [programFeeValues, setProgramFeeValues] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [strategistFeeValues, setStrategistFeeValues] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [totalAccountFeeValues, setTotalAccountFeeValues] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [totalClientFeeValues, setTotalClientFeeValues] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [grossAnnualFeeValues, setgrossAnnualFeeValues] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [netAnnualFeeValues, setNetAnnualFeeValues] = useState([
-  //   {
-  //     rate: "",
-  //     price: "",
-  //   },
-  // ]);
-  // const [fpValues, setFpValues] = useState([{ rate: "", price: "" }]);
   const [tierValueSum, setTierValueSum] = useState([
     { doller: "", percentage: "" },
   ]);
@@ -393,44 +314,44 @@ const CalculationStorageProvider = ({ children }) => {
     replaceValueAtIndex(stateArray, setStateFunction, index);
   };
 
-  // useEffect(() => {
-  //   console.log(calculationData);
-  // }, [calculationData]);
   useEffect(() => {
-    console.log(
-      tierValueSum,
-      breakPointValueSum,
-      accountValue,
-      fundExpenses,
-      fpPayout,
-      houseHoldValue,
-      feeType,
-      programFee,
-      programFeeValues,
-      strategistFeeValues,
-      totalAccountFeeValues,
-      grossAnnualFeeValues,
-      fpValues,
-      netAnnualFeeValues,
-      totalClientFeeValues
-    );
-  }, [
-    tierValueSum,
-    breakPointValueSum,
-    accountValue,
-    fundExpenses,
-    fpPayout,
-    houseHoldValue,
-    feeType,
-    programFee,
-    programFeeValues,
-    strategistFeeValues,
-    totalAccountFeeValues,
-    grossAnnualFeeValues,
-    fpValues,
-    netAnnualFeeValues,
-    totalClientFeeValues,
-  ]); 
+    console.log(calculationData);
+  }, [calculationData]);
+  // useEffect(() => {
+  //   console.log(
+  //     tierValueSum,
+  //     breakPointValueSum,
+  //     accountValue,
+  //     fundExpenses,
+  //     fpPayout,
+  //     houseHoldValue,
+  //     feeType,
+  //     programFee,
+  //     programFeeValues,
+  //     strategistFeeValues,
+  //     totalAccountFeeValues,
+  //     grossAnnualFeeValues,
+  //     fpValues,
+  //     netAnnualFeeValues,
+  //     totalClientFeeValues
+  //   );
+  // }, [
+  //   tierValueSum,
+  //   breakPointValueSum,
+  //   accountValue,
+  //   fundExpenses,
+  //   fpPayout,
+  //   houseHoldValue,
+  //   feeType,
+  //   programFee,
+  //   programFeeValues,
+  //   strategistFeeValues,
+  //   totalAccountFeeValues,
+  //   grossAnnualFeeValues,
+  //   fpValues,
+  //   netAnnualFeeValues,
+  //   totalClientFeeValues,
+  // ]); 
 
   return (
     <CalculationStorageContext.Provider

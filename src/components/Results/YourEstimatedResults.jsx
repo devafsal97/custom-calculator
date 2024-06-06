@@ -49,25 +49,6 @@ const YourEstimatedResults = ({
   const strategistFeeCaapSmallAccount =
     getCalculationDataValue("strategistFeeCaapSmallAccount")[index] || "";
 
-  // const updateStateAtIndex = (setter, value) => {
-  //   setter((prev) => {
-  //     // Create a copy of the previous state
-  //     const updated = [...prev];
-
-  //     // Check if the index is within the bounds of the current state array
-  //     if (index >= updated.length) {
-  //       // Extend the array to include the new index
-  //       updated.push(
-  //         ...Array(index - updated.length + 1).fill({ rate: "", price: "N/A" })
-  //       );
-  //     }
-
-  //     // Update the specified index with the new value
-  //     updated[index] = value;
-
-  //     return updated;
-  //   });
-  // };
   const updateStateAtIndex = (setter, value) => {
     setter((prev) => {
       // Create a copy of the previous state
@@ -114,12 +95,6 @@ const YourEstimatedResults = ({
       getCalculationDataValue("AdditionalDetails")[index]?.fpPayOut || 0
     );
 
-    // Summary value
-
-    // setAccountValue({ rate: 0, price: accountValue });
-    // setFundExpenses({ rate: fundExp, price: "N/A" });
-    // setFpPayout({ rate: fpPayout, price: "N/A" });
-    // setHouseHoldValue({ rate: householdAUM, price: "N/A" });
 
     // When updating, specify the index and the new value object
     updateStateAtIndex(setAccountValue, { rate: 0, price: accountValue });
@@ -165,18 +140,12 @@ const YourEstimatedResults = ({
         rate: rate,
         price: FPfeeFlat.toFixed(2),
       });
-      // setFpValues({
-      //   rate: rate,
-      //   price: FPfeeFlat.toFixed(2),
-      // });
+
     } else if (fpFeeType === "fixed") {
       const price = parseFloat(calculationData.FPfeeFixed[index]?.amount) || 0;
       const fpFeeFixedAmount =
         accountValue !== 0 ? (price / accountValue) * 100 : 0;
-      // setFpValues({
-      //   rate: fpFeeFixedAmount.toFixed(2),
-      //   price: price,
-      // });
+
       updateStateAtIndex(setFpValues, {
         rate: fpFeeFixedAmount.toFixed(2),
         price: price,
@@ -208,10 +177,7 @@ const YourEstimatedResults = ({
             rate: rate.toFixed(2),
             price: price.toFixed(2),
           });
-          // setFpValues({
-          //   rate: rate.toFixed(2),
-          //   price: price.toFixed(2),
-          // });
+      
         }
       }
     } else if (fpFeeType === "tier") {
@@ -237,10 +203,6 @@ const YourEstimatedResults = ({
           const rate = (totalFee / accountValue) * 100;
           const price = totalFee;
 
-          // setFpValues({
-          //   rate: rate.toFixed(2),
-          //   price: price.toFixed(2),
-          // });
           updateStateAtIndex(setFpValues, {
             rate: rate.toFixed(2),
             price: price.toFixed(2),
@@ -262,10 +224,7 @@ const YourEstimatedResults = ({
         });
         const roundedTotalRate = Math.ceil(totalRate);
         const rate = (roundedTotalRate / accountValue) * 100;
-        // setProgramFeeValues({
-        //   rate: isNaN(rate) ? "N/A" : rate.toFixed(2),
-        //   price: roundedTotalRate,
-        // });
+
         updateStateAtIndex(setProgramFeeValues, {
           rate: isNaN(rate) ? "N/A" : rate.toFixed(2),
           price: roundedTotalRate,
@@ -274,10 +233,7 @@ const YourEstimatedResults = ({
     }
     if (teamDirectedInput) {
       const price = (teamDirectedInput / 100) * accountValue;
-      // setStrategistFeeValues({
-      //   rate: teamDirectedInput,
-      //   price: price,
-      // });
+
       updateStateAtIndex(setStrategistFeeValues, {
         rate: teamDirectedInput,
         price: price,
@@ -293,10 +249,7 @@ const YourEstimatedResults = ({
         const percentageValue = strategistFeeCaap.value;
         const price =
           percentageValue !== 0 ? (percentageValue / 100) * accountValue : 0;
-        // setStrategistFeeValues({
-        //   rate: percentageValue,
-        //   price: price.toFixed(2),
-        // });
+    
         updateStateAtIndex(setStrategistFeeValues, {
           rate: percentageValue,
           price: price.toFixed(2),
@@ -311,10 +264,7 @@ const YourEstimatedResults = ({
         const percentageValue = strategistFeeCaapSmallAccount.value;
         const price =
           percentageValue !== 0 ? (percentageValue / 100) * accountValue : 0;
-        // setStrategistFeeValues({
-        //   rate: percentageValue,
-        //   price: price.toFixed(2),
-        // });
+ 
         updateStateAtIndex(setStrategistFeeValues, {
           rate: percentageValue,
           price: price.toFixed(2),
@@ -330,10 +280,6 @@ const YourEstimatedResults = ({
         dollarValue = parseFloat(dollarValue.toFixed(2)); // Ensure dollarValue is a number with two decimals
       }
 
-      // setStrategistFeeValues({
-      //   rate: parseFloat(sumResult).toFixed(2),
-      //   price: dollarValue || 0,
-      // });
       updateStateAtIndex(setStrategistFeeValues, {
         rate: parseFloat(sumResult).toFixed(2),
         price: dollarValue || 0,
@@ -376,22 +322,13 @@ const YourEstimatedResults = ({
         netAnnualFee = parseFloat(fpValues[index]?.price || 0);
       }
       let dollerValue = (totalAccountFee / 100) * accountValue;
-      // setTotalAccountFeeValues({
-      //   rate: isNaN(totalAccountFee) ? "N/A" : totalAccountFee.toFixed(2),
-      //   price: isNaN(dollerValue) ? "N/A" : dollerValue.toFixed(2),
-      // });
+
       updateStateAtIndex(setTotalAccountFeeValues, {
         rate: isNaN(totalAccountFee) ? "N/A" : totalAccountFee.toFixed(2),
         price: isNaN(dollerValue) ? "N/A" : dollerValue.toFixed(2),
       });
       let percentageValue = (netAnnualFee / accountValue) * 100;
-      // setNetAnnualFeeValues({
-      //   rate:
-      //     isNaN(percentageValue) || percentageValue === Infinity
-      //       ? "N/A"
-      //       : percentageValue.toFixed(2),
-      //   price: isNaN(netAnnualFee) ? "N/A" : netAnnualFee.toFixed(2),
-      // });
+
       updateStateAtIndex(setNetAnnualFeeValues, {
         rate:
           isNaN(percentageValue) || percentageValue === Infinity
@@ -406,10 +343,7 @@ const YourEstimatedResults = ({
       parseFloat(strategistFeeValues[index]?.rate || 0) +
       parseFloat(fundExpences || 0);
     let clientDollerValue = (totalClientFees / 100) * accountValue;
-    // setTotalClientFeeValues({
-    //   rate: isNaN(totalClientFees) ? "N/A" : totalClientFees.toFixed(2),
-    //   price: isNaN(clientDollerValue) ? "N/A" : clientDollerValue.toFixed(2),
-    // });
+
     updateStateAtIndex(setTotalClientFeeValues, {
       rate: isNaN(totalClientFees) ? "N/A" : totalClientFees.toFixed(2),
       price: isNaN(clientDollerValue) ? "N/A" : clientDollerValue.toFixed(2),
@@ -422,10 +356,7 @@ const YourEstimatedResults = ({
     }
     let grossAnnualFeeDollerValue =
       grossannualfee !== "N/A" ? (grossannualfee / 100) * accountValue : "N/A";
-    // setgrossAnnualFeeValues({
-    //   rate: isNaN(grossannualfee) ? "N/A" : grossannualfee.toFixed(2),
-    //   price: grossAnnualFeeDollerValue,
-    // });
+
     updateStateAtIndex(setgrossAnnualFeeValues, {
       rate: isNaN(grossannualfee) ? "N/A" : grossannualfee.toFixed(2),
       price: grossAnnualFeeDollerValue,

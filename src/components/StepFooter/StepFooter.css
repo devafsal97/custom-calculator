@@ -8,6 +8,7 @@
   padding: 12px 40px;
   position: sticky;
   bottom: 0;
+  z-index: 2000;
 }
 
 @media (max-width: 991px) {
@@ -75,5 +76,4 @@
   /* cursor: not-allowed; */
   background-color: #cccccc;
   color: #666666;
-  
 }

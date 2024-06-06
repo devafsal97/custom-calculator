@@ -80,7 +80,7 @@ const EstimatedResults = () => {
             </div>
           </div>
           {tablesIndex.map((table, index) => (
-            <div key={table} className={`investment-container ${accountValue[index] && accountValue[index].price == "" ? "active" : ''}`}>
+            <div key={table} className={`investment-container ${accountValue[index] && accountValue[index].price !== "" ? "active" : ''}`}>
               <div className="header">
                 <div className="title-block">
                   <h1>
