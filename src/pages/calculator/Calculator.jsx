@@ -20,6 +20,7 @@ function CalculatorPage() {
     index,
     setIndex,
   } = useCalculationStorage();
+  const [errorMessage, setErrorMessage] = useState('');
   const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
   const [selectedOption, setSelectedOption] = useState();
   const [currentStep, setCurrentStep] = useState(0);
@@ -28,7 +29,20 @@ function CalculatorPage() {
     setSelectedOption(option);
     // handleProgramFeeSelectionComplete();
   };
-
+ const handleDateChange = (e) => {
+  const currentDate = new Date();  
+  const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;  
+  handleChange({
+    target: { name: "currentDate", value: formattedDate },
+  });
+  const scenarioNames = getCalculationDataValue("scenario-name") || [];
+    if (scenarioNames.includes(e.target.value)) {
+      setErrorMessage('This scenario name already exists. Please choose a different name.');
+    } else {
+      setErrorMessage('');
+    }
+    handleChange(e);
+ }
   return (
     <div>
       {/* Header Section */}
@@ -86,14 +100,14 @@ function CalculatorPage() {
             <div className="scenario-label">Scenario Name</div>
             <input
               onChange={(e) => {
-                handleChange(e);
+                handleDateChange(e)
               }}
               name="scenario-name"
               className="scenario-input"
               type="text"
               value={getCalculationDataValue("scenario-name")[index] || ""}
               min="0"
-            />
+            />{errorMessage  && errorMessage  !== "" ? <div className="error-message active">{errorMessage}</div> :""}
           </div>
 
           {/* Account Value Section */}

@@ -53,18 +53,19 @@ const CalculationStorageProvider = ({ children }) => {
   // User Inputs
 
   const [calculationData, setCalculationData] = useState({
-    "scenario-name": ["Test Scenario 1",undefined],
-    "account-value": ["10000","","30000",undefined],
+    currentDate:[""],
+    "scenario-name": [""],
+    "account-value": [""],
     FPfee: [{}],
     AdditionalDetails: [
-      { auaDiscount: "0%", fpPayOut: "1", fundExpenses: "23", houseHoldValue: "" },
-      { auaDiscount: "5%", fpPayOut: "", fundExpenses: "", houseHoldValue: "" },
-      { auaDiscount: "0%", fpPayOut: "", fundExpenses: "3", houseHoldValue: "" },
+      { auaDiscount: "0%", fpPayOut: "", fundExpenses: "", houseHoldValue: "" },
+      { auaDiscount: "0%", fpPayOut: "", fundExpenses: "", houseHoldValue: "" },
+      { auaDiscount: "0%", fpPayOut: "", fundExpenses: "", houseHoldValue: "" },
     ],
-    paymentOption: ["team-directed", "team-directed", ""],
-    programOption: ["client","fp"],
+    paymentOption: ["", "", ""],
+    programOption: [""],
     "UMA-SMA-Strategist-Fee": [[], [], []],
-    FPfeeType: ["fixed","","flat"],
+    FPfeeType: [""],
     FPfeeTiers: [
       {
         tier1: {
@@ -129,14 +130,14 @@ const CalculationStorageProvider = ({ children }) => {
         },
       },
     ],
-    FPfeeFixed: [{type: 'fixed', amount: '21'},""],
+    FPfeeFixed: [""],
     FPfeeFlat: [""],
     strategistFeeCaap: [{}, {}, {}],
     strategistFeeCaapSmallAccount: [{}, {}, {}],
-    teamDirectedInput: [1,2,3],
+    teamDirectedInput: [],
   });
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target;    
     if (
       (e.target.type === "number" &&
         value !== "" &&

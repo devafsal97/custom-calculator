@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef  } from "react";
 import estimatedResults from "./EstimatedResults.css";
 import Button from "../../components/button/Button";
 import { useNavigate } from "react-router-dom";
@@ -36,7 +36,17 @@ const EstimatedResults = () => {
   //   setIndex(originalIndex);
   //   setOriginalIndex(null);
   // }, []);
+  const [dates, setDates] = useState([]);
 
+  useEffect(() => {
+    const fetchedDates = getCalculationDataValue("currentDate");
+    setDates(fetchedDates);
+  }, [getCalculationDataValue("currentDate")]);
+  const componentRef = useRef(null);
+    
+    const handleViewComparison = () => {      
+      componentRef.current.scrollIntoView({ behavior: 'smooth' });
+    };
   const numberToArray = (index) => {
     return Array.from({ length: index + 1 }, (_, i) => i);
   };
@@ -100,6 +110,7 @@ const EstimatedResults = () => {
                 <Button
                   text={"View Comparison"}
                   configuresStyles={"result-button"}
+                  onClick={handleViewComparison}
                 ></Button>
               </div>
             </div>
@@ -118,7 +129,7 @@ const EstimatedResults = () => {
                       {getCalculationDataValue("scenario-name")[index] ||
                         "Investment Account Fee Estimate 1"}
                     </h1>
-                    <p>As of Date: 01-21-2024</p>
+                    <p>As of Date: {dates[index] ? dates[index] :""}</p>
                   </div>
                   <div className="actions">
                     <Button
@@ -221,14 +232,14 @@ const EstimatedResults = () => {
                    
                     <div className="value-container">
                       <div className="value">
-                        {totalAccountFeeValues[index]?.rate
+                        {totalAccountFeeValues[index]?.rate && totalAccountFeeValues[index]?.rate !== "N/A"
                           ? `${Number(
                               totalAccountFeeValues[index]?.rate
                             ).toLocaleString()}%`
                           : "N/A"}
                       </div>
                       <div className="value">
-                        {totalAccountFeeValues[index]?.price
+                        {totalAccountFeeValues[index]?.price && totalAccountFeeValues[index]?.price !== "N/A"
                           ? `$${Number(
                               totalAccountFeeValues[index]?.price
                             ).toLocaleString()}`
@@ -297,14 +308,14 @@ const EstimatedResults = () => {
                     </div>
                     <div className="value-container">
                       <div className="value">
-                        {netAnnualFeeValues[index]?.rate
+                        {netAnnualFeeValues[index]?.rate &&netAnnualFeeValues[index]?.rate !== "N/A"
                           ? `${Number(
                               netAnnualFeeValues[index]?.rate
                             ).toLocaleString()}%`
                           : "N/A"}
                       </div>
                       <div className="value">
-                        {netAnnualFeeValues[index]?.price
+                        {netAnnualFeeValues[index]?.price &&netAnnualFeeValues[index]?.price !== "N/A"
                           ? `$${Number(
                               netAnnualFeeValues[index]?.price
                             ).toLocaleString()}`
@@ -380,13 +391,13 @@ const EstimatedResults = () => {
                     </div>
                   </div>
                   <div className="results-divider"></div>
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="label">Program Fee</div>
                     <div className="value-container types">
-                      <div className="value">{programFee[index] || "N/A"}</div>
+                      <div className="value">{programFee[index] && programFee[index] !== "" && programFee[index] !== undefined && !isNaN(programFee[index]) || "N/A"}</div>
                     </div>
                   </div>
-                  <div className="results-divider"></div>
+                  <div className="results-divider"></div> */}
                 </div>
               </div>
             ))}
@@ -411,7 +422,7 @@ const EstimatedResults = () => {
             </div>
           </div>
         </div>
-        <div className="bottom-section">
+        <div ref={componentRef} className="bottom-section">
           <Comparison />
         </div>
       </div>
