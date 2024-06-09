@@ -27,13 +27,7 @@ const StepFooter = ({ currentStep = 1, from }) => {
   };
 
   const handleSummary = () => {
-    if (stepsCompleted && originalIndex !== null) {
-      const currentDate = new Date();  
-      const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;
-      console.log(formattedDate,"formattedDate");
-      handleChange({
-        target: { name: "currentDate", value: formattedDate },
-      });
+    if (stepsCompleted && originalIndex !== null) {     
       setIndex(originalIndex);
       setOriginalIndex(null);
       navigate("/results");

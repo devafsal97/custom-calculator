@@ -25,6 +25,7 @@ const AdditionalDetail = ({
 
   const handleDiscountChange = (event) => {
     const { name, value } = event.target;
+    const formated_input = value.replace(/\D/g, "");
     // Temporary variables to hold the updated values
     let updatedSelectedDiscount = selectedDiscount;
     let updatedFundExpenses = fundExpenses;
@@ -36,14 +37,14 @@ const AdditionalDetail = ({
       updatedSelectedDiscount = value;
       setSelectedDiscount(value);
     } else if (name === "fundExpenses") {
-      updatedFundExpenses = value;
-      setFundExpenses(value);
+      updatedFundExpenses = formated_input;
+      setFundExpenses(formated_input);
     } else if (name === "fpPayOut") {
-      updatedFpPayOut = value;
-      setFpPayOut(value);
+      updatedFpPayOut = formated_input;
+      setFpPayOut(formated_input);
     } else if (name === "houseHoldValue") {
-      updatedHouseHoldValue = value;
-      setHouseHoldValue(value);
+      updatedHouseHoldValue = formated_input;
+      setHouseHoldValue(formated_input);
     }
 
     // Create and send custom event object with the updated values
@@ -75,10 +76,10 @@ const AdditionalDetail = ({
             <input
               onChange={handleDiscountChange}
               name="fundExpenses"
-              type="number"
+              type="text"
               placeholder="%"
               className="input-field"
-              value={fundExpenses}
+              value={`${fundExpenses}%`}
               min="0"
             />
           </div>
@@ -89,10 +90,10 @@ const AdditionalDetail = ({
             <input
               onChange={handleDiscountChange}
               name="fpPayOut"
-              type="number"
+              type="text"
               placeholder="%"
               className="input-field"
-              value={fpPayOut}
+              value={`${fpPayOut}%`}
               min="0"
             />
           </div>
@@ -104,10 +105,10 @@ const AdditionalDetail = ({
           <input
             onChange={handleDiscountChange}
             name="houseHoldValue"
-            type="number"
+            type="text"
             placeholder="$"
             className="input-field"
-            value={houseHoldValue}
+            value={`$${houseHoldValue}`}
             min="0"
           />
         </div>
@@ -125,8 +126,10 @@ const AdditionalDetail = ({
               value={discount}
               checked={selectedDiscount === discount}
               onChange={handleDiscountChange}
-              className="discount-radio"              
+              className="discount-radio" id="Red"  
+              class="custom-radio"     
             />
+            {/* <input type="radio" id="Red" name="colors" value="Red"></input> */}
             <span className="discount-value">{discount}</span>
           </label>
         ))}

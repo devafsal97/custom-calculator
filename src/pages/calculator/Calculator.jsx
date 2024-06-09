@@ -19,30 +19,62 @@ function CalculatorPage() {
     getCalculationDataValue,
     index,
     setIndex,
+    formatNumberWithCommas,
   } = useCalculationStorage();
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [completedSteps, setCompletedSteps] = useState([0]); // Step 0: Enter Account Value
   const [selectedOption, setSelectedOption] = useState();
   const [currentStep, setCurrentStep] = useState(0);
   const sectionsRef = useIntersectionObserver(setCurrentStep);
   const handleOptionChange = (option) => {
     setSelectedOption(option);
-    // handleProgramFeeSelectionComplete();
   };
- const handleDateChange = (e) => {
-  const currentDate = new Date();  
-  const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-${currentDate.getFullYear()}`;  
-  handleChange({
-    target: { name: "currentDate", value: formattedDate },
-  });
-  const scenarioNames = getCalculationDataValue("scenario-name") || [];
+  const handleDateChange = (e) => {
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(currentDate.getDate()).padStart(
+      2,
+      "0"
+    )}-${currentDate.getFullYear()}`;
+    handleChange({
+      target: { name: "currentDate", value: formattedDate },
+    });
+    const scenarioNames = getCalculationDataValue("scenario-name") || [];
     if (scenarioNames.includes(e.target.value)) {
-      setErrorMessage('This scenario name already exists. Please choose a different name.');
+      setErrorMessage(
+        "This scenario name already exists. Please choose a different name."
+      );
     } else {
-      setErrorMessage('');
+      setErrorMessage("");
     }
     handleChange(e);
- }
+  };
+
+  const [inputValue, setInputValue] = useState(
+    getCalculationDataValue("account-value")[index] || ""
+  );
+
+  // useEffect to initialize the input value
+  useEffect(() => {
+    let value = getCalculationDataValue("account-value")[index] || "";    
+      const numericValue = value.replace(/[^0-9,]/g, "");
+      const formattedValue = formatNumberWithCommas(numericValue);
+      setInputValue(formattedValue ? `$${formattedValue}` : "");    
+  }, [getCalculationDataValue("account-value")[index]]);
+
+  const handleAccountValueChange = (e) => {
+    const value = e.target.value;
+    const formated_input = value.replace(/\D/g, "");
+      handleChange({
+        target: {
+          name: "account-value",
+          value: formated_input,
+          type: "text",
+        },
+      });
+  };
   return (
     <div>
       {/* Header Section */}
@@ -72,7 +104,6 @@ function CalculatorPage() {
                   to quickly share and analyze your estimated fees.
                   <br />
                   <p>Get Started below.</p>
-                  
                   <p className="calculation-name">
                     {index === 0
                       ? "First Calculation"
@@ -100,14 +131,19 @@ function CalculatorPage() {
             <div className="scenario-label">Scenario Name</div>
             <input
               onChange={(e) => {
-                handleDateChange(e)
+                handleDateChange(e);
               }}
               name="scenario-name"
               className="scenario-input"
               type="text"
               value={getCalculationDataValue("scenario-name")[index] || ""}
               min="0"
-            />{errorMessage  && errorMessage  !== "" ? <div className="error-message active">{errorMessage}</div> :""}
+            />
+            {errorMessage && errorMessage !== "" ? (
+              <div className="error-message active">{errorMessage}</div>
+            ) : (
+              ""
+            )}
           </div>
 
           {/* Account Value Section */}
@@ -120,13 +156,11 @@ function CalculatorPage() {
             <div className="header-title">Enter Account Value</div>
             <div className="label-title">Account Value</div>
             <input
-              onChange={handleChange}
+              onChange={(e) => handleAccountValueChange(e)}
               name="account-value"
               className="scenario-input"
-              type="number" // Use text type to allow for comma-separated numbers
-              value={(
-                getCalculationDataValue("account-value")[index] || ""
-              ).toLocaleString()} //
+              type="text" // Use text type to allow for comma-separated numbers
+              value={inputValue} //
             />
           </div>
 
@@ -215,3 +249,4 @@ function CalculatorPage() {
 }
 
 export default CalculatorPage;
+

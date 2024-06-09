@@ -21,6 +21,7 @@ const FinancialProfessionalFee = ({
     setBreakPointValueSum,
     index,
     setIndex,
+    formatNumberWithCommas,
   } = useCalculationStorage();
 
   // const [tierValueSum, setTierValueSum] = useState({
@@ -33,17 +34,47 @@ const FinancialProfessionalFee = ({
   // });
 
   // Function to update tierValueSum and breakPointValueSum based on index
-const setArrayValueAtIndex = (setStateFunction, index, value) => {
-  setStateFunction((prevState) => {
-    const newState = [...prevState];
-    // Ensure the array is long enough
-    while (newState.length <= index) {
-      newState.push({ doller: "", percentage: "" });
+  const [flatValue, setFlatValue] = useState(
+    getCalculationDataValue("FPfeeFlat")[index] || ""
+  );
+  const [fixedValue, setFixedValue] = useState(
+    getCalculationDataValue("FPfeeFixed")[index] || ""
+  );
+
+
+  // useEffect to initialize the input value
+  const formatAndSetValue = (value, setValue, suffix) => {
+    const numericValue = value.replace(/[^0-9,]/g, "");
+    const formattedValue = formatNumberWithCommas(numericValue);
+    setValue(formattedValue ? `${formattedValue}` : "");
+  };
+  
+  useEffect(() => {
+    const fixedValue = getCalculationDataValue("FPfeeFixed")[index]?.amount || "";    
+    if (fixedValue !== undefined) {
+      formatAndSetValue(fixedValue, setFixedValue, "$");
     }
-    newState[index] = value;
-    return newState;
-  });
-};
+  
+    const flatValue = getCalculationDataValue("FPfeeFlat")[index]?.amount || "";
+    if (flatValue !== undefined) {
+      formatAndSetValue(flatValue, setFlatValue, "%");
+    }
+  }, [
+    getCalculationDataValue("FPfeeFixed")[index],
+    getCalculationDataValue("FPfeeFlat")[index],
+  ]);
+
+  const setArrayValueAtIndex = (setStateFunction, index, value) => {
+    setStateFunction((prevState) => {
+      const newState = [...prevState];
+      // Ensure the array is long enough
+      while (newState.length <= index) {
+        newState.push({ doller: "", percentage: "" });
+      }
+      newState[index] = value;
+      return newState;
+    });
+  };
   const updateTierAndBreakPointSums = (
     index,
     tierSum,
@@ -81,6 +112,7 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
 
   useEffect(() => {
     const FPfeeTiers = getCalculationDataValue("FPfeeTiers")[index] || "";
+    
     const FPfeeBreakPoints =
       getCalculationDataValue("FPfeeBreakPoints")[index] || "";
     const accountValue = getCalculationDataValue("account-value")[index] || "";
@@ -122,24 +154,28 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
   const fetchBreakPoints = () => {
     const tiersData = getCalculationDataValue("FPfeeBreakPoints")[index] || "";
     return Object.keys(tiersData).map((key) => ({
-      ...tiersData[key], // Spread the amount and percentage
-      id: key, // Keep track of the original key if needed
+      ...tiersData[key], 
+      id: key,
+      amount: formatNumberWithCommas(tiersData[key].amount),
+      percentage: formatNumberWithCommas(tiersData[key].percentage),
     }));
   };
-
+  
   const fetchTiers = () => {
     const tiersData = getCalculationDataValue("FPfeeTiers")[index] || "";
-    return Object.keys(tiersData).map((key) => ({
-      ...tiersData[key], // Spread the amount and percentage
-      id: key, // Keep track of the original key if needed
+    return Object.keys(tiersData).map((key) => ({      
+      ...tiersData[key], 
+      id: key, 
+      amount: formatNumberWithCommas(tiersData[key].amount),
+      percentage: formatNumberWithCommas(tiersData[key].percentage),
     }));
   };
-  // State hook to store tiers
-  const [tiers, setTiers] = useState(fetchTiers());
 
-  const [breakpoints, setBreakpoints] = useState(fetchBreakPoints());
-  // Example account value for progress calculations
-  const accountValue = 100000;
+  // State hook to store tiers
+  const [tiers, setTiers] = useState(fetchTiers());  
+  const [breakpoints, setBreakpoints] = useState(fetchBreakPoints());  
+  
+  // Example account value for progress calculations  
   const MAX_ITEMS = 9;
 
   // Handle change of fee type
@@ -168,8 +204,9 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
 
   // Update tier value
   const updateTier = (index, field, value) => {
-    const updatedTiers = [...tiers];
-    updatedTiers[index][field] = value;
+    const updatedTiers = [...tiers];    
+    const formated_value = value.replace(/\D/g, "");
+    updatedTiers[index][field] = formated_value;
     setTiers(updatedTiers);
     handleChange({
       target: {
@@ -185,7 +222,8 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
   // Update breakpoint value
   const updateBreakpoint = (index, field, value) => {
     const updatedBreakpoints = [...breakpoints];
-    updatedBreakpoints[index][field] = value;
+    const formated_input = value.replace(/\D/g, "");
+    updatedBreakpoints[index][field] = formated_input;
     setBreakpoints(updatedBreakpoints);
     handleChange({
       target: {
@@ -200,23 +238,29 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
 
   const handleFixed = (event) => {
     const value = event.target.value;
-    handleChange({
-      target: {
-        name: "FPfeeFixed",
-        value: { type: "fixed", amount: value },
-        type: "number",
-      },
-    });
+    const formated_input = value.replace(/\D/g, "");
+    if (formated_input !==undefined) {
+      handleChange({
+        target: {
+          name: "FPfeeFixed",
+          value: { type: "fixed", amount: formated_input },
+          type: "text",
+        },
+      });
+    }
   };
   const handleFlat = (event) => {
     const value = event.target.value;
-    handleChange({
-      target: {
-        name: "FPfeeFlat",
-        value: { type: "flat", amount: value },
-        type: "number",
-      },
-    });
+    const formated_input = value.replace(/\D/g, "");
+    if (formated_input !==undefined) {
+      handleChange({
+        target: {
+          name: "FPfeeFlat",
+          value: { type: "flat", amount: formated_input },
+          type: "text",
+        },
+      });
+    }
   };
 
   // Add another tier
@@ -233,23 +277,23 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
     }
   };
 
-  // Calculate the tier progress
-  const calculateTierProgress = () => {
-    const progress = tiers.reduce((total, tier) => {
-      const tierAmount = parseFloat(tier.amount) || 0;
-      return total + (tierAmount <= accountValue ? 1 : 0);
-    }, 0);
-    return (progress / tiers.length) * 100;
-  };
+  // // Calculate the tier progress
+  // const calculateTierProgress = () => {
+  //   const progress = tiers.reduce((total, tier) => {
+  //     const tierAmount = parseFloat(tier.amount) || 0;
+  //     return total + (tierAmount <= accountValue ? 1 : 0);
+  //   }, 0);
+  //   return (progress / tiers.length) * 100;
+  // };
 
-  // Calculate the breakpoint progress
-  const calculateBreakpointProgress = () => {
-    const progress = breakpoints.reduce((total, bp) => {
-      const bpAmount = parseFloat(bp.amount) || 0;
-      return total + (bpAmount <= accountValue ? 1 : 0);
-    }, 0);
-    return (progress / breakpoints.length) * 100;
-  };
+  // // Calculate the breakpoint progress
+  // const calculateBreakpointProgress = () => {
+  //   const progress = breakpoints.reduce((total, bp) => {
+  //     const bpAmount = parseFloat(bp.amount) || 0;
+  //     return total + (bpAmount <= accountValue ? 1 : 0);
+  //   }, 0);
+  //   return (progress / breakpoints.length) * 100;
+  // };
 
   // Dynamically label tiers and breakpoints
   const getOrdinalLabel = (index) => {
@@ -269,16 +313,13 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
 
   // Error Setup
 
-  let flatError = "";
   const FPfeeFlat = getCalculationDataValue("FPfeeFlat")[index];
   const paymentOption = getCalculationDataValue("paymentOption")[index];
 
   useEffect(() => {
     updateErrorMessages(FPfeeFlat, paymentOption);
   }, [FPfeeFlat, paymentOption]);
-  // totalAccountFeeValues, errorMessages, setErrorMessages
-  let maxValue,
-    minValue = "";
+
   const updateErrorMessages = (totalAccountFeeValues, paymentOption) => {
     let errorKey = null;
     let maxLimit = 3;
@@ -318,9 +359,9 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
             </div>
             <div className="fee-input-label">Enter Flat Fee Amount (%)</div>
             <input
-              type="number"
-              onChange={handleFlat}
-              value={getCalculationDataValue("FPfeeFlat")[index]?.amount || ""}
+              type="text"
+              onChange={handleFlat}              
+              value={`${flatValue || ""}%`}
               placeholder="%"
               className="scenario-input"
               min="0"
@@ -350,9 +391,9 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
             <div className="fee-input-label">Enter Fixed Fee ($)</div>
             <input
               onChange={handleFixed}
-              type="number"
+              type="text"
               placeholder="$"
-              value={getCalculationDataValue("FPfeeFixed")[index]?.amount || ""}
+              value={`$${fixedValue || ""}`}
               className="scenario-input"
               min="0"
             />
@@ -403,8 +444,8 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
                     {getOrdinalLabel(index)} Tier
                   </div>
                   <input
-                    type="number"
-                    value={tier.amount}
+                    type="text"                    
+                    value={`$${tier.amount || ""}`}
                     placeholder="$"
                     onChange={(e) =>
                       updateTier(index, "amount", e.target.value)
@@ -416,8 +457,8 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
                 <div className="percentage-input">
                   <div>% Fee</div>
                   <input
-                    type="number"
-                    value={tier.percentage}
+                    type="text"
+                    value={`${tier.percentage || ""}%`}
                     placeholder="%"
                     className="scenario-input"
                     onChange={(e) =>
@@ -499,8 +540,8 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
                     {getOrdinalLabel(index)} Breakpoint
                   </div>
                   <input
-                    type="number"
-                    value={bp.amount}
+                    type="text"
+                    value={`$${bp.amount || ""}`}
                     placeholder="$"
                     className="scenario-input"
                     onChange={(e) =>
@@ -512,8 +553,8 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
                 <div className="percentage-input">
                   <div>% Fee</div>
                   <input
-                    type="number"
-                    value={bp.percentage}
+                    type="text"
+                    value={`${bp.percentage || ""}%`}
                     placeholder="%"
                     className="scenario-input"
                     onChange={(e) =>
@@ -577,6 +618,7 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
             onChange={handleFeeChange}
             className="radio-input"
           />
+          
           <div className="fee-option-title">Flat</div>
         </label>
         <label className="fee-option">
@@ -616,3 +658,4 @@ const setArrayValueAtIndex = (setStateFunction, index, value) => {
 };
 
 export default FinancialProfessionalFee;
+

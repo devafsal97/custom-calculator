@@ -136,29 +136,17 @@ const CalculationStorageProvider = ({ children }) => {
     strategistFeeCaapSmallAccount: [{}, {}, {}],
     teamDirectedInput: [],
   });
+    // Function to format the number with commas
+    const formatNumberWithCommas = (value) => {
+      const number = value.split(",").join("");
+      if (!number || isNaN(number) || Number(number) < 0) {
+        return "";
+      }
+      return Number(number).toLocaleString();
+    };
+  
   const handleChange = (e) => {
     const { name, value } = e.target;    
-    if (
-      (e.target.type === "number" &&
-        value !== "" &&
-        Number(value.amount) < 0) ||
-      Number(value) < 0
-    ) {
-      return;
-    } else if (name === "FPfeeBreakPoints" || name === "FPfeeTiers") {
-      // for (const key in value) {
-      //   if (value.hasOwnProperty(key)) {
-      //     const tier = value[key];
-      //     const amount = parseFloat(tier.amount) || 0;
-      //     const percentage = parseFloat(tier.percentage) || 0;
-      //     console.log(percentage, amount, "percentage,amount");
-      //     // Check for negative values
-      //     if (amount < 0 || percentage < 0) {
-      //       return;
-      //     }
-      //   }
-      // }
-    }
     const newArray = [...calculationData[name]];
     newArray[index] = value;
     setCalculationData((prev) => ({ ...prev, [name]: newArray }));
@@ -400,7 +388,7 @@ const CalculationStorageProvider = ({ children }) => {
         originalIndex,
         setOriginalIndex,
         handleEdit,
-        handleDelete,
+        handleDelete,formatNumberWithCommas
       }}
     >
       {children}
@@ -414,3 +402,4 @@ const useCalculationStorage = () => {
 };
 
 export { CalculationStorageProvider, useCalculationStorage };
+

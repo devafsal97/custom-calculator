@@ -26,7 +26,19 @@ const StrategistFee = ({
   setCalculationData,
   calculationData,
 }) => {
-  const { index, setIndex } = useCalculationStorage();
+  const { index, setIndex,formatNumberWithCommas } = useCalculationStorage();
+
+  const [inputValue, setInputValue] = useState(
+    getCalculationDataValue("teamDirectedInput")[index] || ""
+  );
+
+  // useEffect to initialize the input value
+  useEffect(() => {
+    let value = getCalculationDataValue("teamDirectedInput")[index] || "";    
+    let numericValue = value.replace(/\D/g, "");
+    const formattedValue = formatNumberWithCommas(numericValue);
+    setInputValue(formattedValue ? `$${formattedValue}` : "");    
+  }, [getCalculationDataValue("teamDirectedInput")[index]]);
 
   const [feeType, setFeeType] = useState(
     getCalculationDataValue("paymentOption")[index] || ""
@@ -95,8 +107,10 @@ const StrategistFee = ({
   };
 
   const handleTeamDirected = (e) => {
+    const value = e.target.value;
+    const formated_input = value.replace(/\D/g, "");    
     handleChange({
-      target: { name: "teamDirectedInput", value: e.target.value },
+      target: { name: "teamDirectedInput", value: formated_input },
     });
   };
 
@@ -292,6 +306,9 @@ const StrategistFee = ({
             checked={editingStrategist === selected.value}
             onChange={() => setEditingStrategist(selected.value)}
           />
+          <span type="radio"
+            checked={editingStrategist === selected.value}
+            onChange={() => setEditingStrategist(selected.value)} />
           <div className="strategist-icon" />
           <div className="strategist-name">{selected.label}</div>
         </div>
@@ -329,10 +346,10 @@ const StrategistFee = ({
         <div className="fee-input-label">Enter Flat Fee (%)</div>
         <input
           onChange={handleTeamDirected}
-          type="number"
+          type="text"
           placeholder="%"
           className="scenario-input"
-          value={getCalculationDataValue("teamDirectedInput")[index] || ""}
+          value={inputValue || ""}
         />
       </div>
     );
