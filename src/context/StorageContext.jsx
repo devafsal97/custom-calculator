@@ -53,7 +53,7 @@ const CalculationStorageProvider = ({ children }) => {
   // User Inputs
 
   const [calculationData, setCalculationData] = useState({
-    currentDate:[""],
+    currentDate: [""],
     "scenario-name": [""],
     "account-value": [""],
     FPfee: [{}],
@@ -136,17 +136,25 @@ const CalculationStorageProvider = ({ children }) => {
     strategistFeeCaapSmallAccount: [{}, {}, {}],
     teamDirectedInput: [],
   });
-    // Function to format the number with commas
-    const formatNumberWithCommas = (value) => {
-      const number = value.split(",").join("");
-      if (!number || isNaN(number) || Number(number) < 0) {
-        return "";
-      }
-      return Number(number).toLocaleString();
-    };
-  
+  // Function to format the number with commas
+  const formatNumberWithCommas = (value) => {
+    const number = value.split(",").join("");
+    if (!number || isNaN(number) || Number(number) < 0) {
+      return "";
+    }
+    return Number(number).toLocaleString();
+  };
+  const formatCurrency = (value, icon) => {    
+    if (value === "" || value === "N/A" || value === undefined || value === NaN ) return "";
+    const number = parseFloat(value).toString();
+    if (icon == "%") {
+      return `${number.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}%`;
+    } else {
+      return `$${number.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    }
+  };
   const handleChange = (e) => {
-    const { name, value } = e.target;    
+    const { name, value } = e.target;
     const newArray = [...calculationData[name]];
     newArray[index] = value;
     setCalculationData((prev) => ({ ...prev, [name]: newArray }));
@@ -307,23 +315,24 @@ const CalculationStorageProvider = ({ children }) => {
     console.log(calculationData);
   }, [calculationData]);
   useEffect(() => {
-    console.log(
-    //   tierValueSum,
-    //   breakPointValueSum,
-    //    accountValue,
-    //   fundExpenses,
-    //   fpPayout,
-    //   houseHoldValue,
-    //   feeType,
-    //   programFee,
-    //   programFeeValues,
-    //   strategistFeeValues,
-    //   totalAccountFeeValues,
-    //   grossAnnualFeeValues,
-    //   fpValues,
-    //   netAnnualFeeValues,
+    console
+      .log
+      //   tierValueSum,
+      //   breakPointValueSum,
+      //    accountValue,
+      //   fundExpenses,
+      //   fpPayout,
+      //   houseHoldValue,
+      //   feeType,
+      //   programFee,
+      //   programFeeValues,
+      //   strategistFeeValues,
+      //   totalAccountFeeValues,
+      //   grossAnnualFeeValues,
+      //   fpValues,
+      //   netAnnualFeeValues,
       //totalClientFeeValues
-    );
+      ();
   }, [
     tierValueSum,
     breakPointValueSum,
@@ -340,7 +349,7 @@ const CalculationStorageProvider = ({ children }) => {
     fpValues,
     netAnnualFeeValues,
     totalClientFeeValues,
-  ]); 
+  ]);
 
   return (
     <CalculationStorageContext.Provider
@@ -388,7 +397,9 @@ const CalculationStorageProvider = ({ children }) => {
         originalIndex,
         setOriginalIndex,
         handleEdit,
-        handleDelete,formatNumberWithCommas
+        handleDelete,
+        formatNumberWithCommas,
+        formatCurrency,
       }}
     >
       {children}
@@ -402,4 +413,3 @@ const useCalculationStorage = () => {
 };
 
 export { CalculationStorageProvider, useCalculationStorage };
-

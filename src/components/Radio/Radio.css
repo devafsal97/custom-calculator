@@ -1,0 +1,25 @@
+.radio {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .radio-button {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: transparent;
+  }
+  
+  .checked .radio-button {
+    background-color: #186ADE; 
+  }
+  .checked.radio {
+    border: 2px solid black;
+  }
+  

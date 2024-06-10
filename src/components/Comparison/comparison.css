@@ -121,3 +121,6 @@
 .main-container .header {
     margin-bottom: 47px;
 }
+.main-container.active {
+    display: none;
+}

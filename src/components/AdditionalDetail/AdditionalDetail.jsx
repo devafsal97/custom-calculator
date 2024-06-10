@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import "./AdditionalDetail.css";
 import { useCalculationStorage } from "../../context/StorageContext";
+import Radio from "../Radio/Radio";
+// import { Radio } from "@mui/material";
 const AdditionalDetail = ({
   handleChange,
   getCalculationDataValue,
   setCalculationData,
   calculationData,
 }) => {
-  const {index,setIndex} = useCalculationStorage();
-  
+  const { index, setIndex, formatCurrency } = useCalculationStorage();
+
   // State for the WealthPort AUA discount selection
   const [selectedDiscount, setSelectedDiscount] = useState(
     getCalculationDataValue("AdditionalDetails")[index]?.auaDiscount || "0%"
@@ -79,7 +81,7 @@ const AdditionalDetail = ({
               type="text"
               placeholder="%"
               className="input-field"
-              value={`${fundExpenses}%`}
+              value={formatCurrency(fundExpenses, "%")}
               min="0"
             />
           </div>
@@ -93,7 +95,7 @@ const AdditionalDetail = ({
               type="text"
               placeholder="%"
               className="input-field"
-              value={`${fpPayOut}%`}
+              value={formatCurrency(fpPayOut, "%")}
               min="0"
             />
           </div>
@@ -108,7 +110,7 @@ const AdditionalDetail = ({
             type="text"
             placeholder="$"
             className="input-field"
-            value={`$${houseHoldValue}`}
+            value={formatCurrency(houseHoldValue, "$")}
             min="0"
           />
         </div>
@@ -120,14 +122,11 @@ const AdditionalDetail = ({
       <div className="discounts">
         {["0%", "10%", "15%", "20%", "25%"].map((discount) => (
           <label key={discount} className="discount-item">
-            <input
-              type="radio"
-              name="auaDiscount"
+            <Radio              
+              selectedValue={selectedDiscount}
               value={discount}
-              checked={selectedDiscount === discount}
-              onChange={handleDiscountChange}
-              className="discount-radio" id="Red"  
-              class="custom-radio"     
+              onchange={handleDiscountChange}
+              name="auaDiscount"
             />
             {/* <input type="radio" id="Red" name="colors" value="Red"></input> */}
             <span className="discount-value">{discount}</span>

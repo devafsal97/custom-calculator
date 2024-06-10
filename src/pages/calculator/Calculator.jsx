@@ -10,6 +10,7 @@ import StepIndicator from "../../components/StepIndicatorFolder/StepIndicator";
 import YourEstimatedResults from "../../components/Results/YourEstimatedResults";
 import StepFooter from "../../components/StepFooter/StepFooter";
 import useIntersectionObserver from "../../components/useIntersectionObserver/useIntersectionObserver";
+import CurrencyInput from "../../components/Radio/Radio"
 import { useCalculationStorage } from "../../context/StorageContext";
 function CalculatorPage() {
   const {
@@ -49,6 +50,7 @@ function CalculatorPage() {
     } else {
       setErrorMessage("");
     }
+
     handleChange(e);
   };
 
@@ -161,7 +163,7 @@ function CalculatorPage() {
               className="scenario-input"
               type="text" // Use text type to allow for comma-separated numbers
               value={inputValue} //
-            />
+            />            
           </div>
 
           {/* Financial Professional Fee Section */}

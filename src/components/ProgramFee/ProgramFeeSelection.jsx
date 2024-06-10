@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./ProgramFeeSelection.css";
 import { useCalculationStorage } from "../../context/StorageContext";
-
+import Radio from "../Radio/Radio"
 const programOptions = [
   {
     id: 1,
@@ -55,12 +55,12 @@ const ProgramFeeSelection = ({
   );
   const [errorOption, setErrorOption] = useState(null);
 
-  const handleOptionChange = (event) => {
+  const handleOptionChange = (event) => {    
     handleChange(event);
     const option = event.target.value;
     setSelectedOption(option);
-    setErrorOption(null); // Reset error when option changes
-    onOptionChange(option); // Call the prop function with the selected option
+    setErrorOption(null); 
+    onOptionChange(option);
   };
 
   // Validation function
@@ -90,15 +90,20 @@ const ProgramFeeSelection = ({
         {programOptions.map((option) => (
           <label key={option.id} className="program-card">
             <div className="program-card-header">
-              <input
+              {/* <input
                 type="radio"
                 name="paymentOption"
                 value={option.value}
                 checked={selectedOption === option.value}
                 onChange={handleOptionChange}
                 className="radio-input"
+              /> */}
+              <Radio
+                selectedValue={selectedOption}
+                value={option.value}
+                onchange={handleOptionChange}
+                name="paymentOption"
               />
-
               <div className="program-card-title">{option.title}</div>
             </div>
             <p className="program-card-description">{option.description}</p>

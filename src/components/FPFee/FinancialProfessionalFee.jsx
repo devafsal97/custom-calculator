@@ -3,6 +3,7 @@ import CircularProgress from "../CircularProgress/CircularProgress";
 // import './FinancialProfessionalFee.css';
 import { useCalculationStorage } from "../../context/StorageContext";
 import { type } from "@testing-library/user-event/dist/type";
+import Radio from "../Radio/Radio";
 
 const FinancialProfessionalFee = ({
   onComplete,
@@ -22,6 +23,7 @@ const FinancialProfessionalFee = ({
     index,
     setIndex,
     formatNumberWithCommas,
+    formatCurrency,
   } = useCalculationStorage();
 
   // const [tierValueSum, setTierValueSum] = useState({
@@ -41,20 +43,20 @@ const FinancialProfessionalFee = ({
     getCalculationDataValue("FPfeeFixed")[index] || ""
   );
 
-
   // useEffect to initialize the input value
   const formatAndSetValue = (value, setValue, suffix) => {
     const numericValue = value.replace(/[^0-9,]/g, "");
     const formattedValue = formatNumberWithCommas(numericValue);
     setValue(formattedValue ? `${formattedValue}` : "");
   };
-  
+
   useEffect(() => {
-    const fixedValue = getCalculationDataValue("FPfeeFixed")[index]?.amount || "";    
+    const fixedValue =
+      getCalculationDataValue("FPfeeFixed")[index]?.amount || "";
     if (fixedValue !== undefined) {
       formatAndSetValue(fixedValue, setFixedValue, "$");
     }
-  
+
     const flatValue = getCalculationDataValue("FPfeeFlat")[index]?.amount || "";
     if (flatValue !== undefined) {
       formatAndSetValue(flatValue, setFlatValue, "%");
@@ -112,7 +114,7 @@ const FinancialProfessionalFee = ({
 
   useEffect(() => {
     const FPfeeTiers = getCalculationDataValue("FPfeeTiers")[index] || "";
-    
+
     const FPfeeBreakPoints =
       getCalculationDataValue("FPfeeBreakPoints")[index] || "";
     const accountValue = getCalculationDataValue("account-value")[index] || "";
@@ -154,28 +156,28 @@ const FinancialProfessionalFee = ({
   const fetchBreakPoints = () => {
     const tiersData = getCalculationDataValue("FPfeeBreakPoints")[index] || "";
     return Object.keys(tiersData).map((key) => ({
-      ...tiersData[key], 
+      ...tiersData[key],
       id: key,
       amount: formatNumberWithCommas(tiersData[key].amount),
       percentage: formatNumberWithCommas(tiersData[key].percentage),
     }));
   };
-  
+
   const fetchTiers = () => {
     const tiersData = getCalculationDataValue("FPfeeTiers")[index] || "";
-    return Object.keys(tiersData).map((key) => ({      
-      ...tiersData[key], 
-      id: key, 
+    return Object.keys(tiersData).map((key) => ({
+      ...tiersData[key],
+      id: key,
       amount: formatNumberWithCommas(tiersData[key].amount),
       percentage: formatNumberWithCommas(tiersData[key].percentage),
     }));
   };
 
   // State hook to store tiers
-  const [tiers, setTiers] = useState(fetchTiers());  
-  const [breakpoints, setBreakpoints] = useState(fetchBreakPoints());  
-  
-  // Example account value for progress calculations  
+  const [tiers, setTiers] = useState(fetchTiers());
+  const [breakpoints, setBreakpoints] = useState(fetchBreakPoints());
+
+  // Example account value for progress calculations
   const MAX_ITEMS = 9;
 
   // Handle change of fee type
@@ -204,7 +206,7 @@ const FinancialProfessionalFee = ({
 
   // Update tier value
   const updateTier = (index, field, value) => {
-    const updatedTiers = [...tiers];    
+    const updatedTiers = [...tiers];
     const formated_value = value.replace(/\D/g, "");
     updatedTiers[index][field] = formated_value;
     setTiers(updatedTiers);
@@ -239,7 +241,7 @@ const FinancialProfessionalFee = ({
   const handleFixed = (event) => {
     const value = event.target.value;
     const formated_input = value.replace(/\D/g, "");
-    if (formated_input !==undefined) {
+    if (formated_input !== undefined) {
       handleChange({
         target: {
           name: "FPfeeFixed",
@@ -252,7 +254,7 @@ const FinancialProfessionalFee = ({
   const handleFlat = (event) => {
     const value = event.target.value;
     const formated_input = value.replace(/\D/g, "");
-    if (formated_input !==undefined) {
+    if (formated_input !== undefined) {
       handleChange({
         target: {
           name: "FPfeeFlat",
@@ -360,7 +362,7 @@ const FinancialProfessionalFee = ({
             <div className="fee-input-label">Enter Flat Fee Amount (%)</div>
             <input
               type="text"
-              onChange={handleFlat}              
+              onChange={handleFlat}
               value={`${flatValue || ""}%`}
               placeholder="%"
               className="scenario-input"
@@ -444,8 +446,8 @@ const FinancialProfessionalFee = ({
                     {getOrdinalLabel(index)} Tier
                   </div>
                   <input
-                    type="text"                    
-                    value={`$${tier.amount || ""}`}
+                    type="text"
+                    value={formatCurrency(tier.amount, "$")}
                     placeholder="$"
                     onChange={(e) =>
                       updateTier(index, "amount", e.target.value)
@@ -458,7 +460,7 @@ const FinancialProfessionalFee = ({
                   <div>% Fee</div>
                   <input
                     type="text"
-                    value={`${tier.percentage || ""}%`}
+                    value={formatCurrency(tier.percentage, "%")}
                     placeholder="%"
                     className="scenario-input"
                     onChange={(e) =>
@@ -541,7 +543,7 @@ const FinancialProfessionalFee = ({
                   </div>
                   <input
                     type="text"
-                    value={`$${bp.amount || ""}`}
+                    value={formatCurrency(bp.amount, "$")}
                     placeholder="$"
                     className="scenario-input"
                     onChange={(e) =>
@@ -554,7 +556,7 @@ const FinancialProfessionalFee = ({
                   <div>% Fee</div>
                   <input
                     type="text"
-                    value={`${bp.percentage || ""}%`}
+                    value={formatCurrency(bp.percentage, "%")}
                     placeholder="%"
                     className="scenario-input"
                     onChange={(e) =>
@@ -611,43 +613,66 @@ const FinancialProfessionalFee = ({
       <div className="fee-title">Financial Professional Fee</div>
       <div className="fee-options-container">
         <label className="fee-option">
-          <input
+          {/* <input
             type="radio"
             value="flat"
             checked={feeType === "flat"}
             onChange={handleFeeChange}
             className="radio-input"
+          /> */}
+          <Radio
+            selectedValue={feeType}
+            value="flat"
+            onchange={handleFeeChange}
+            name=""
           />
-          
           <div className="fee-option-title">Flat</div>
         </label>
         <label className="fee-option">
-          <input
+          {/* <input
             type="radio"
             value="fixed"
             checked={feeType === "fixed"}
             onChange={handleFeeChange}
             className="radio-input"
+          /> */}
+          <Radio
+            selectedValue={feeType}
+            value="fixed"
+            onchange={handleFeeChange}
+            name=""
           />
           <div className="fee-option-title">Fixed</div>
         </label>
         <label className="fee-option">
-          <input
+          {/* <input
             type="radio"
             value="tier"
             checked={feeType === "tier"}
             onChange={handleFeeChange}
             className="radio-input"
+          /> */}
+          <Radio
+            selectedValue={feeType}
+            value="tier"
+            onchange={handleFeeChange}
+            name=""
           />
           <div className="fee-option-title">Tier</div>
         </label>
         <label className="fee-option">
-          <input
+          {/* <input
             type="radio"
             value="breakpoint"
             checked={feeType === "breakpoint"}
             onChange={handleFeeChange}
             className="radio-input"
+          /> */}
+          <Radio
+            selectedValue={feeType}
+            value="breakpoint"
+            onchange={handleFeeChange}
+            name=""
           />
           <div className="fee-option-title">Breakpoint</div>
         </label>
@@ -658,4 +683,3 @@ const FinancialProfessionalFee = ({
 };
 
 export default FinancialProfessionalFee;
-

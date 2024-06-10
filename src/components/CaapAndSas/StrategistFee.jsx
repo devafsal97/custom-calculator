@@ -3,6 +3,7 @@ import "./StrategistFee.css";
 import Select from "react-select";
 import CircularProgress from "../CircularProgress/CircularProgress";
 import { useCalculationStorage } from "../../context/StorageContext";
+import Radio from "../Radio/Radio";
 import {
   StrategistCaapSassConst,
   StrategistCaapConst,
@@ -26,7 +27,8 @@ const StrategistFee = ({
   setCalculationData,
   calculationData,
 }) => {
-  const { index, setIndex,formatNumberWithCommas } = useCalculationStorage();
+  const { index, setIndex, formatNumberWithCommas, formatCurrency } =
+    useCalculationStorage();
 
   const [inputValue, setInputValue] = useState(
     getCalculationDataValue("teamDirectedInput")[index] || ""
@@ -34,10 +36,10 @@ const StrategistFee = ({
 
   // useEffect to initialize the input value
   useEffect(() => {
-    let value = getCalculationDataValue("teamDirectedInput")[index] || "";    
+    let value = getCalculationDataValue("teamDirectedInput")[index] || "";
     let numericValue = value.replace(/\D/g, "");
     const formattedValue = formatNumberWithCommas(numericValue);
-    setInputValue(formattedValue ? `$${formattedValue}` : "");    
+    setInputValue(formattedValue ? `$${formattedValue}` : "");
   }, [getCalculationDataValue("teamDirectedInput")[index]]);
 
   const [feeType, setFeeType] = useState(
@@ -63,9 +65,8 @@ const StrategistFee = ({
   const [selectedEquitySMA, setSelectedEquitySMA] = useState(initialEquitySMA);
   const [selectedMFETF, setSelectedMFETF] = useState(initialMFETF);
   const [editingStrategist, setEditingStrategist] = useState(null);
-
   const handleFocus = (selected) => {
-    setEditingStrategist(selected.value);
+    setEditingStrategist(selected.label);
   };
 
   const strategistOptions = Object.keys(StrategistCaapConst).map((key) => ({
@@ -108,7 +109,7 @@ const StrategistFee = ({
 
   const handleTeamDirected = (e) => {
     const value = e.target.value;
-    const formated_input = value.replace(/\D/g, "");    
+    const formated_input = value.replace(/\D/g, "");
     handleChange({
       target: { name: "teamDirectedInput", value: formated_input },
     });
@@ -119,8 +120,7 @@ const StrategistFee = ({
     setShowCalculation((prev) => !prev);
   };
 
-
-  const handleMFETFChange = (selectedOptions, type) => {    
+  const handleMFETFChange = (selectedOptions, type) => {
     setSelectedMFETF(selectedOptions || []);
 
     // Convert the selected options to the format expected by the state
@@ -183,7 +183,7 @@ const StrategistFee = ({
     });
   };
 
-   const handleEquitySMAChange = (selectedOptions, type) => {
+  const handleEquitySMAChange = (selectedOptions, type) => {
     setSelectedEquitySMA(selectedOptions || []);
     // Convert the selected options to the format expected by the state
     const updatedOptions = selectedOptions.map((option) => ({
@@ -241,10 +241,11 @@ const StrategistFee = ({
     });
   };
 
-  const handleStrategistInput = (e, type,data_value) => {
-    
-    const { name, dataset, key } = e.target;  
-    const value = data_value;     
+  const handleStrategistInput = (e, type, data_value) => {
+    const { name, dataset, key } = e.target;
+    const formated_input = e.target.value.replace(/\D/g, "");
+    const userInputValue = formated_input;
+    const value = data_value;
     const strategistName = dataset.label;
     const accountValue =
       parseFloat(calculationData["account-value"][index]) || 0;
@@ -254,8 +255,7 @@ const StrategistFee = ({
       accountValue !== 0 || accountValue !== null
         ? (accountValue * value) / 100
         : 0;
-  
-    const roundedValue = Math.ceil(dollarValue);    
+    const roundedValue = Math.ceil(dollarValue);
     if (type === "Equity") {
       setSelectedEquitySMA((prev) =>
         prev.map((item) =>
@@ -279,7 +279,7 @@ const StrategistFee = ({
       if (strategist.name === strategistName) {
         return {
           ...strategist,
-          inputValue: value,
+          inputValue: userInputValue,
           dollarValue: roundedValue,
         };
       }
@@ -288,27 +288,32 @@ const StrategistFee = ({
 
     setCalculationData((prevData) => {
       const updatedArray = [...prevData["UMA-SMA-Strategist-Fee"]];
-      updatedArray[index] = updatedStrategists;
+      updatedArray[index] = updatedStrategists;      
       return {
         ...prevData,
         "UMA-SMA-Strategist-Fee": updatedArray,
       };
     });
   };
-
   // Function to render selected strategists with input fields for fee and value
   const renderSelectedStrategists = (selectedList) =>
     selectedList.map((selected) => (
       <div key={selected.value} className="strategist-item">
         <div className="strategist-info">
-          <input
+          {/* <input
             type="radio"
             checked={editingStrategist === selected.value}
             onChange={() => setEditingStrategist(selected.value)}
+          /> */}
+          <Radio
+            selectedValue={selected.label}
+            value={editingStrategist}
+            onchange={setEditingStrategist}
+            name="paymentOption"
           />
-          <span type="radio"
+          {/* <span type="radio"
             checked={editingStrategist === selected.value}
-            onChange={() => setEditingStrategist(selected.value)} />
+            onChange={() => setEditingStrategist(selected.value)} /> */}
           <div className="strategist-icon" />
           <div className="strategist-name">{selected.label}</div>
         </div>
@@ -317,7 +322,7 @@ const StrategistFee = ({
             <input
               onFocus={() => handleFocus(selected)}
               onChange={(e) => {
-                handleStrategistInput(e, selected.type,selected.data_value);
+                handleStrategistInput(e, selected.type, selected.data_value);
               }}
               data-label={selected.label}
               data-name={selected.type}
@@ -325,9 +330,12 @@ const StrategistFee = ({
               type="number"
               placeholder="% "
               className="fee-input"
+  
             />
           </div>
-          <div className="fee-dollar-value">{selected.dollarValue || 0}</div>
+          <div className="fee-dollar-value">{`$${
+            selected.dollarValue || 0
+          }`}</div>
         </div>
       </div>
     ));
@@ -435,7 +443,7 @@ const StrategistFee = ({
             options={MFEFT.map((option) => ({
               label: option.name,
               data_value: option.data_value,
-              value:option.value,
+              value: option.value,
               type: option.type,
             }))}
             key="MF/ETF Strategists"
@@ -463,7 +471,7 @@ const StrategistFee = ({
             options={EquitySma.map((option) => ({
               label: option.name,
               data_value: option.data_value,
-              value:option.value,
+              value: option.value,
               type: option.type,
             }))}
             value={selectedEquitySMA}

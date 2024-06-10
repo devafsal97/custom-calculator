@@ -53,7 +53,7 @@
 .option-fp {
   display: flex;
   gap: 8px;
-  align-items: flex-start;
+  align-items: center;
   cursor: pointer;
 }
 
@@ -344,7 +344,7 @@ input:focus-visible {
 
 .fee-option {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
 }
 

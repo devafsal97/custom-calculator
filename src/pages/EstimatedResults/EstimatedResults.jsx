@@ -32,10 +32,6 @@ const EstimatedResults = () => {
     handleDelete,
   } = useCalculationStorage();
 
-  // useEffect(() => {
-  //   setIndex(originalIndex);
-  //   setOriginalIndex(null);
-  // }, []);
   const [dates, setDates] = useState([]);
 
   useEffect(() => {
@@ -210,14 +206,14 @@ const EstimatedResults = () => {
                     
                     <div className="value-container">
                       <div className="value">
-                        {strategistFeeValues[index]?.rate
+                        {strategistFeeValues[index]?.rate && strategistFeeValues[index]?.rate !== "N/A"
                           ? `${Number(
                               strategistFeeValues[index]?.rate
                             ).toLocaleString()}%`
                           : "N/A"}
                       </div>
                       <div className="value">
-                        {strategistFeeValues[index]?.price
+                        {strategistFeeValues[index]?.price && strategistFeeValues[index]?.price !== "N/A"
                           ? `$${Number(
                               strategistFeeValues[index]?.price
                             ).toLocaleString()}`

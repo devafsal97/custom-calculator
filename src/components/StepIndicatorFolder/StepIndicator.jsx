@@ -43,12 +43,12 @@ const VerticalLinearStepper = ({ calculationData }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(new Set());
 
-  useEffect(() => {
+  useEffect(() => {    
     const newCompletedSteps = new Set(completedSteps);
 
     if (
-      calculationData["scenario-name"][index] &&
-      calculationData["account-value"][index]
+      calculationData["scenario-name"][index] && calculationData["scenario-name"][index].trim() !== "" &&
+      calculationData["account-value"][index] && calculationData["account-value"][index] > 0
     ) {
       newCompletedSteps.add(1);
     } else {

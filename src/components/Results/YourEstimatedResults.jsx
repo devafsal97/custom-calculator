@@ -273,7 +273,7 @@ const YourEstimatedResults = ({
       let dollarValue = 0;
       if (accountValue && accountValue !== 0) {
         dollarValue = (sumResult / 100) * accountValue;
-        dollarValue = parseFloat(dollarValue.toFixed(2)); // Ensure dollarValue is a number with two decimals
+        dollarValue = parseFloat(dollarValue.toFixed(2));
       }
 
       updateStateAtIndex(setStrategistFeeValues, {
