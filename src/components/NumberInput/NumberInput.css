@@ -1,0 +1,56 @@
+.custom-number-input {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.input-wrapper input {  
+  margin: 0;
+}
+.input-wrapper .input-symbol {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;  
+}
+
+.arrow-buttons {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+}
+
+.arrow-buttons button {
+  width: 20px;
+  height: 18px;
+  padding: 0;
+  line-height: 1;
+  background: none;
+  border: 1px solid #dce3e8;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.arrow-up {
+  border-bottom: none;
+}
+
+.arrow-down {
+  border-top: none;
+}
+.arrow-up.clicked,.arrow-down.clicked{
+    background: black;
+}
+.hai{
+    fill: red;
+}

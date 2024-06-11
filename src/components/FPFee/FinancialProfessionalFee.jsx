@@ -4,7 +4,7 @@ import CircularProgress from "../CircularProgress/CircularProgress";
 import { useCalculationStorage } from "../../context/StorageContext";
 import { type } from "@testing-library/user-event/dist/type";
 import Radio from "../Radio/Radio";
-
+import NumberInput from "../../components/NumberInput/NumberInput";
 const FinancialProfessionalFee = ({
   onComplete,
   handleChange,
@@ -207,7 +207,7 @@ const FinancialProfessionalFee = ({
   // Update tier value
   const updateTier = (index, field, value) => {
     const updatedTiers = [...tiers];
-    const formated_value = value.replace(/\D/g, "");
+    const formated_value = value;
     updatedTiers[index][field] = formated_value;
     setTiers(updatedTiers);
     handleChange({
@@ -224,7 +224,7 @@ const FinancialProfessionalFee = ({
   // Update breakpoint value
   const updateBreakpoint = (index, field, value) => {
     const updatedBreakpoints = [...breakpoints];
-    const formated_input = value.replace(/\D/g, "");
+    const formated_input = value;
     updatedBreakpoints[index][field] = formated_input;
     setBreakpoints(updatedBreakpoints);
     handleChange({
@@ -346,6 +346,14 @@ const FinancialProfessionalFee = ({
     }
   };
 
+  const handleAmountChange = (index, e, type, from) => {
+    const newValue = e.target.value;
+    if (from == "tier") {
+      updateTier(index, type, newValue);
+    } else {
+      updateBreakpoint(index, type, newValue);
+    }
+  };
   // Render the appropriate content based on the fee type
   const renderFeeContent = () => {
     switch (feeType) {
@@ -360,13 +368,20 @@ const FinancialProfessionalFee = ({
               is 2.15%.{" "}
             </div>
             <div className="fee-input-label">Enter Flat Fee Amount (%)</div>
-            <input
+            {/* <input
               type="text"
               onChange={handleFlat}
               value={`${flatValue || ""}%`}
               placeholder="%"
               className="scenario-input"
               min="0"
+            /> */}
+            <NumberInput
+              value={flatValue}
+              onChange={handleFlat}
+              // placeholder="$ "
+              className="scenario-input"
+              symbol={"%"}
             />
 
             <p
@@ -391,13 +406,20 @@ const FinancialProfessionalFee = ({
               Team-directed is 2.25%; CAAP and UMA is 2.15%.
             </div>
             <div className="fee-input-label">Enter Fixed Fee ($)</div>
-            <input
+            {/* <input
               onChange={handleFixed}
               type="text"
               placeholder="$"
               value={`$${fixedValue || ""}`}
               className="scenario-input"
               min="0"
+            /> */}
+            <NumberInput
+              value={fixedValue}
+              onChange={handleFixed}
+              // placeholder="$ "
+              className="scenario-input"
+              symbol={"$"}
             />
             <p
               className={`error-message ${
@@ -445,7 +467,7 @@ const FinancialProfessionalFee = ({
                   <div className="tier-label">
                     {getOrdinalLabel(index)} Tier
                   </div>
-                  <input
+                  {/* <input
                     type="text"
                     value={formatCurrency(tier.amount, "$")}
                     placeholder="$"
@@ -454,11 +476,20 @@ const FinancialProfessionalFee = ({
                     }
                     className="scenario-input"
                     min="0"
+                  /> */}
+                  <NumberInput
+                    value={tier.amount}
+                    from={"tier"}
+                    onChange={(e) =>
+                      handleAmountChange(index, e, "amount", "tier")
+                    }
+                    className="scenario-input"
+                    symbol="$"
                   />
                 </div>
                 <div className="percentage-input">
                   <div>% Fee</div>
-                  <input
+                  {/* <input
                     type="text"
                     value={formatCurrency(tier.percentage, "%")}
                     placeholder="%"
@@ -467,6 +498,15 @@ const FinancialProfessionalFee = ({
                       updateTier(index, "percentage", e.target.value)
                     }
                     min="0"
+                  /> */}
+                  <NumberInput
+                    from={"tier"}
+                    value={tier.percentage}
+                    onChange={(e) =>
+                      handleAmountChange(index, e, "percentage", "tier")
+                    }
+                    className="scenario-input"
+                    symbol="%"
                   />
                 </div>
               </div>
@@ -541,7 +581,7 @@ const FinancialProfessionalFee = ({
                   <div className="tier-label">
                     {getOrdinalLabel(index)} Breakpoint
                   </div>
-                  <input
+                  {/* <input
                     type="text"
                     value={formatCurrency(bp.amount, "$")}
                     placeholder="$"
@@ -550,11 +590,20 @@ const FinancialProfessionalFee = ({
                       updateBreakpoint(index, "amount", e.target.value)
                     }
                     min="0"
+                  /> */}
+                  <NumberInput
+                    from={"breakPoint"}
+                    value={bp.amount}
+                    onChange={(e) =>
+                      handleAmountChange(index, e, "amount", "bp")
+                    }
+                    className="scenario-input"
+                    symbol="$"
                   />
                 </div>
                 <div className="percentage-input">
                   <div>% Fee</div>
-                  <input
+                  {/* <input
                     type="text"
                     value={formatCurrency(bp.percentage, "%")}
                     placeholder="%"
@@ -563,6 +612,15 @@ const FinancialProfessionalFee = ({
                       updateBreakpoint(index, "percentage", e.target.value)
                     }
                     min="0"
+                  /> */}
+                  <NumberInput
+                    from={"breakPoint"}
+                    value={bp.percentage}                    
+                    onChange={(e) =>
+                      handleAmountChange(index, e, "percentage", "bp")
+                    }
+                    className="scenario-input"
+                    symbol="%"
                   />
                 </div>
               </div>

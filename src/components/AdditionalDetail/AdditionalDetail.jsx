@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./AdditionalDetail.css";
 import { useCalculationStorage } from "../../context/StorageContext";
 import Radio from "../Radio/Radio";
+import NumberInput from "../../components/NumberInput/NumberInput";
 // import { Radio } from "@mui/material";
 const AdditionalDetail = ({
   handleChange,
@@ -25,9 +26,9 @@ const AdditionalDetail = ({
     getCalculationDataValue("AdditionalDetails")[index]?.houseHoldValue || ""
   );
 
-  const handleDiscountChange = (event) => {
-    const { name, value } = event.target;
-    const formated_input = value.replace(/\D/g, "");
+  const handleDiscountChange = (event) => {    
+    const { name, value } = event.target;    
+    const formated_input = value;
     // Temporary variables to hold the updated values
     let updatedSelectedDiscount = selectedDiscount;
     let updatedFundExpenses = fundExpenses;
@@ -54,10 +55,10 @@ const AdditionalDetail = ({
       target: {
         name: "AdditionalDetails",
         value: {
-          fundExpenses: updatedFundExpenses,
-          fpPayOut: updatedFpPayOut,
-          auaDiscount: updatedSelectedDiscount,
-          houseHoldValue: updatedHouseHoldValue,
+          fundExpenses: updatedFundExpenses.replace(/\D/g, ""),
+          fpPayOut: updatedFpPayOut.replace(/\D/g, ""),
+          auaDiscount: updatedSelectedDiscount.replace(/\D/g, ""),
+          houseHoldValue: updatedHouseHoldValue.replace(/\D/g, ""),
         },
       },
     };
@@ -74,8 +75,8 @@ const AdditionalDetail = ({
       <div className="section">
         <div className="subsection">
           <div className="subsection-header">Fund Expenses</div>
-          <div className="input-group">
-            <input
+          {/* <div className="input-group"> */}
+            {/* <input
               onChange={handleDiscountChange}
               name="fundExpenses"
               type="text"
@@ -83,13 +84,20 @@ const AdditionalDetail = ({
               className="input-field"
               value={formatCurrency(fundExpenses, "%")}
               min="0"
+            /> */}
+            <NumberInput              
+              name={"fundExpenses"}
+              value={fundExpenses}
+              onChange={handleDiscountChange}              
+              className="scenario-input"
+              symbol={"%"}
             />
-          </div>
+          {/* </div> */}
         </div>
         <div className="subsection">
           <div className="subsection-header">Financial Professional Payout</div>
-          <div className="input-group">
-            <input
+          {/* <div className="input-group"> */}
+            {/* <input
               onChange={handleDiscountChange}
               name="fpPayOut"
               type="text"
@@ -97,14 +105,21 @@ const AdditionalDetail = ({
               className="input-field"
               value={formatCurrency(fpPayOut, "%")}
               min="0"
+            /> */}
+            <NumberInput
+              value={fpPayOut}
+              onChange={handleDiscountChange}              
+              className="scenario-input"
+              symbol={"%"}
+              name="fpPayOut"
             />
-          </div>
+          {/* </div> */}
         </div>
       </div>
       <div className="subsection household">
         <div className="subsection-header">Household Value</div>
-        <div className="input-group">
-          <input
+        {/* <div className="input-group"> */}
+          {/* <input
             onChange={handleDiscountChange}
             name="houseHoldValue"
             type="text"
@@ -112,8 +127,15 @@ const AdditionalDetail = ({
             className="input-field"
             value={formatCurrency(houseHoldValue, "$")}
             min="0"
-          />
-        </div>
+          /> */}
+          <NumberInput
+              name="houseHoldValue"
+              value={houseHoldValue}
+              onChange={handleDiscountChange}              
+              className="scenario-input"
+              symbol={"$"}
+            />
+        {/* </div> */}
       </div>
       <div className="title">WealthPort AUA Discount</div>
       <div className="sub-description">

@@ -4,6 +4,8 @@ import Select from "react-select";
 import CircularProgress from "../CircularProgress/CircularProgress";
 import { useCalculationStorage } from "../../context/StorageContext";
 import Radio from "../Radio/Radio";
+import NumberInput from "../../components/NumberInput/NumberInput";
+import SelectComponent from "../SelectComponent/SelectComponent";
 import {
   StrategistCaapSassConst,
   StrategistCaapConst,
@@ -35,12 +37,12 @@ const StrategistFee = ({
   );
 
   // useEffect to initialize the input value
-  useEffect(() => {
-    let value = getCalculationDataValue("teamDirectedInput")[index] || "";
-    let numericValue = value.replace(/\D/g, "");
-    const formattedValue = formatNumberWithCommas(numericValue);
-    setInputValue(formattedValue ? `$${formattedValue}` : "");
-  }, [getCalculationDataValue("teamDirectedInput")[index]]);
+  // useEffect(() => {
+  //   let value = getCalculationDataValue("teamDirectedInput")[index] || "";
+  //   let numericValue = value.replace(/\D/g, "");
+  //   const formattedValue = formatNumberWithCommas(numericValue);
+  //   setInputValue(formattedValue ? `$${formattedValue}` : "");
+  // }, [getCalculationDataValue("teamDirectedInput")[index]]);
 
   const [feeType, setFeeType] = useState(
     getCalculationDataValue("paymentOption")[index] || ""
@@ -50,7 +52,7 @@ const StrategistFee = ({
   }, [calculationData]);
 
   const [selectedMFOptions, setSelectedMFOptions] = useState();
-  const [selectedOption, setSelectedOption] = useState();
+  // const [selectedOption, setSelectedOption] = useState();
 
   const [showCalculation, setShowCalculation] = useState(false);
   const initialOptions =
@@ -109,7 +111,8 @@ const StrategistFee = ({
 
   const handleTeamDirected = (e) => {
     const value = e.target.value;
-    const formated_input = value.replace(/\D/g, "");
+    setInputValue(value);
+    const formated_input = value;
     handleChange({
       target: { name: "teamDirectedInput", value: formated_input },
     });
@@ -288,12 +291,15 @@ const StrategistFee = ({
 
     setCalculationData((prevData) => {
       const updatedArray = [...prevData["UMA-SMA-Strategist-Fee"]];
-      updatedArray[index] = updatedStrategists;      
+      updatedArray[index] = updatedStrategists;
       return {
         ...prevData,
         "UMA-SMA-Strategist-Fee": updatedArray,
       };
     });
+  };
+  const handleInputChange = (e, type, data_value) => {
+    handleStrategistInput(e, type, data_value);
   };
   // Function to render selected strategists with input fields for fee and value
   const renderSelectedStrategists = (selectedList) =>
@@ -330,8 +336,20 @@ const StrategistFee = ({
               type="number"
               placeholder="% "
               className="fee-input"
-  
             />
+            {/* <NumberInput
+              data-label={selected.label}
+              data-name={selected.type}
+              name={selected.value}
+              value={selected.value}
+              onChange={(e) =>
+                handleInputChange(e, selected.type, selected.data_value)
+              }
+              placeholder="%"
+              className="fee-input"
+              symbol="%"
+              onFocus={() => handleFocus(selected)}
+            /> */}
           </div>
           <div className="fee-dollar-value">{`$${
             selected.dollarValue || 0
@@ -352,16 +370,25 @@ const StrategistFee = ({
         <div className="fee-type">Team-directed</div>
         <div className="fee-info">Maximum Team-directed fee is 3%</div>
         <div className="fee-input-label">Enter Flat Fee (%)</div>
-        <input
+        {/* <input
           onChange={handleTeamDirected}
           type="text"
           placeholder="%"
           className="scenario-input"
           value={inputValue || ""}
+        /> */}
+        <NumberInput
+          value={inputValue}
+          onChange={handleTeamDirected}
+          // placeholder="$ "
+          className="scenario-input"
+          symbol={"%"}
         />
       </div>
     );
   }
+  const selectedOption_strategistFeeCaap = getCalculationDataValue("strategistFeeCaap")[index]?.name || '';
+  const selectedOption_strategistFeeCaapSmallAccount = getCalculationDataValue("strategistFeeCaapSmallAccount")[index]?.name || '';
 
   if (feeType === "caap" || feeType === "caap-small-account") {
     const title = feeType === "caap" ? "CAAP" : "CAAP Small Account Solutions";
@@ -377,7 +404,7 @@ const StrategistFee = ({
         {getCalculationDataValue("paymentOption")[index] === "caap" ? (
           <select
             className="strategist-dropdown scenario-input"
-            value={selectedOption}
+            value={selectedOption_strategistFeeCaap}
             onChange={handleOptionChange}
           >
             <option value="" disabled>
@@ -389,12 +416,13 @@ const StrategistFee = ({
               </option>
             ))}
           </select>
+          
         ) : getCalculationDataValue("paymentOption")[index] ===
           "caap-small-account" ? (
           <select
             className="strategist-dropdown scenario-input"
             onChange={handleOptionChange}
-            //value={selectedOption}
+            value={selectedOption_strategistFeeCaapSmallAccount}
           >
             <option value="" disabled>
               Select a strategist option

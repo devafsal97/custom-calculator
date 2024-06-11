@@ -10,8 +10,9 @@ import StepIndicator from "../../components/StepIndicatorFolder/StepIndicator";
 import YourEstimatedResults from "../../components/Results/YourEstimatedResults";
 import StepFooter from "../../components/StepFooter/StepFooter";
 import useIntersectionObserver from "../../components/useIntersectionObserver/useIntersectionObserver";
-import CurrencyInput from "../../components/Radio/Radio"
+import CurrencyInput from "../../components/Radio/Radio";
 import { useCalculationStorage } from "../../context/StorageContext";
+import NumberInput from "../../components/NumberInput/NumberInput"
 function CalculatorPage() {
   const {
     calculationData,
@@ -58,24 +59,25 @@ function CalculatorPage() {
     getCalculationDataValue("account-value")[index] || ""
   );
 
-  // useEffect to initialize the input value
-  useEffect(() => {
-    let value = getCalculationDataValue("account-value")[index] || "";    
-      const numericValue = value.replace(/[^0-9,]/g, "");
-      const formattedValue = formatNumberWithCommas(numericValue);
-      setInputValue(formattedValue ? `$${formattedValue}` : "");    
-  }, [getCalculationDataValue("account-value")[index]]);
+  // // useEffect to initialize the input value
+  // useEffect(() => {
+  //   let value = getCalculationDataValue("account-value")[index] || "";
+  //   const numericValue = value.replace(/[^0-9,]/g, "");
+  //   const formattedValue = formatNumberWithCommas(numericValue);
+  //   setInputValue(formattedValue ? `$${formattedValue}` : "");
+  // }, [getCalculationDataValue("account-value")[index]]);
 
   const handleAccountValueChange = (e) => {
     const value = e.target.value;
+    setInputValue(value)
     const formated_input = value.replace(/\D/g, "");
-      handleChange({
-        target: {
-          name: "account-value",
-          value: formated_input,
-          type: "text",
-        },
-      });
+    handleChange({
+      target: {
+        name: "account-value",
+        value: formated_input,
+        type: "text",
+      },
+    });
   };
   return (
     <div>
@@ -157,13 +159,20 @@ function CalculatorPage() {
           >
             <div className="header-title">Enter Account Value</div>
             <div className="label-title">Account Value</div>
-            <input
+            {/* <input
               onChange={(e) => handleAccountValueChange(e)}
               name="account-value"
               className="scenario-input"
               type="text" // Use text type to allow for comma-separated numbers
               value={inputValue} //
-            />            
+            />             */}
+            <NumberInput
+              value={inputValue}
+              onChange={handleAccountValueChange}
+              // placeholder="$ "
+              className="scenario-input"
+              symbol={"$"}
+            />
           </div>
 
           {/* Financial Professional Fee Section */}
@@ -251,4 +260,3 @@ function CalculatorPage() {
 }
 
 export default CalculatorPage;
-
