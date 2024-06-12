@@ -42,14 +42,12 @@ const StepFooter = ({ currentStep = 1, from }) => {
       }
     }
   };
-  console.log();
+
   return (
     <div className="step-footer">
       <div className="step-info">{stepLabels[currentStep]}</div>
-      <div className="result step-info">
-        <span>Financial Professional Fee</span>
-        {/* <span>{`Rate: ${fpValues[index].rate || "000"} %`}</span>
-          <span>{`Price: $${fpValues[index].price.toLocaleString() || "000"} `}</span> */}
+      {/* <div className="result step-info">
+        <span>Financial Professional Fee</span>        
         <span>{`Rate: ${
           fpValues[index] && fpValues[index].rate && fpValues[index].rate !== undefined && fpValues[index].rate !== ""
             ? `${fpValues[index].rate} %`
@@ -60,7 +58,7 @@ const StepFooter = ({ currentStep = 1, from }) => {
             ? `$${Number(fpValues[index].price).toLocaleString()}`
             : "$000"
         }`}</span>
-      </div>
+      </div> */}
       <div className="step-actions">
         {/* <div className={`step-cancel`} onClick={handleBack}>
           Back

@@ -138,6 +138,7 @@ const CalculationStorageProvider = ({ children }) => {
   });
   // Function to format the number with commas
   const formatNumberWithCommas = (value) => {
+    if (value === "" || value === "N/A" || value === undefined || value === NaN ) return "";
     const number = value.split(",").join("");
     if (!number || isNaN(number) || Number(number) < 0) {
       return "";

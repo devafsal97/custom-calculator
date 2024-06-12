@@ -66,6 +66,7 @@ const StrategistFee = ({
 
   const [selectedEquitySMA, setSelectedEquitySMA] = useState(initialEquitySMA);
   const [selectedMFETF, setSelectedMFETF] = useState(initialMFETF);
+  console.log(selectedMFETF);
   const [editingStrategist, setEditingStrategist] = useState(null);
   const handleFocus = (selected) => {
     setEditingStrategist(selected.label);
@@ -86,7 +87,6 @@ const StrategistFee = ({
   const handleOptionChange = (event) => {
     const selectedValue = event.target.value;
     const paymentOption = getCalculationDataValue("paymentOption")[index] || "";
-
     const selectedLabel =
       strategistOptions.find((option) => option.key == selectedValue) ||
       selectedValue;
@@ -246,7 +246,7 @@ const StrategistFee = ({
 
   const handleStrategistInput = (e, type, data_value) => {
     const { name, dataset, key } = e.target;
-    const formated_input = e.target.value.replace(/\D/g, "");
+    const formated_input = e.target.value.replace(/[^\d.]/g, "");
     const userInputValue = formated_input;
     const value = data_value;
     const strategistName = dataset.label;
@@ -263,7 +263,7 @@ const StrategistFee = ({
       setSelectedEquitySMA((prev) =>
         prev.map((item) =>
           item.label === strategistName
-            ? { ...item, dollarValue: roundedValue }
+            ? { ...item, dollarValue: roundedValue , inputValue: userInputValue,}
             : item
         )
       );
@@ -271,14 +271,14 @@ const StrategistFee = ({
       setSelectedMFETF((prev) =>
         prev.map((item) =>
           item.label === strategistName
-            ? { ...item, dollarValue: roundedValue }
+            ? { ...item, dollarValue: roundedValue, inputValue: userInputValue, }
             : item
         )
       );
     }
 
     // Update the strategist fee array at the specified index
-    const updatedStrategists = UMA_SMA_Strategist_Fee.map((strategist) => {
+    const updatedStrategists = UMA_SMA_Strategist_Fee.map((strategist) => {      
       if (strategist.name === strategistName) {
         return {
           ...strategist,
@@ -316,7 +316,7 @@ const StrategistFee = ({
             value={editingStrategist}
             onchange={setEditingStrategist}
             name="paymentOption"
-          />
+          />          
           {/* <span type="radio"
             checked={editingStrategist === selected.value}
             onChange={() => setEditingStrategist(selected.value)} /> */}
@@ -333,9 +333,11 @@ const StrategistFee = ({
               data-label={selected.label}
               data-name={selected.type}
               name={selected.value}
-              type="number"
-              placeholder="% "
+              type="text"
+              placeholder="%"
               className="fee-input"
+              // value={}
+              value={`${formatNumberWithCommas(selected.inputValue)|| ""} `}
             />
             {/* <NumberInput
               data-label={selected.label}

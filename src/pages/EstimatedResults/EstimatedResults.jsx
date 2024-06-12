@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef  } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import estimatedResults from "./EstimatedResults.css";
 import Button from "../../components/button/Button";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import StepFooter from "../../components/StepFooter/StepFooter";
 import { useCalculationStorage } from "../../context/StorageContext";
 import Comparison from "../../components/Comparison/Comparison";
 import Modal from "../../components/Modal/Modal";
+import ExportToPDF from "../../components/ExportToPDF/ExportToPDF"
 const EstimatedResults = () => {
   const navigate = useNavigate();
 
@@ -39,10 +40,10 @@ const EstimatedResults = () => {
     setDates(fetchedDates);
   }, [getCalculationDataValue("currentDate")]);
   const componentRef = useRef(null);
-    
-    const handleViewComparison = () => {      
-      componentRef.current.scrollIntoView({ behavior: 'smooth' });
-    };
+
+  const handleViewComparison = () => {
+    componentRef.current.scrollIntoView({ behavior: "smooth" });
+  };
   const numberToArray = (index) => {
     return Array.from({ length: index + 1 }, (_, i) => i);
   };
@@ -59,11 +60,12 @@ const EstimatedResults = () => {
     navigate("/");
   };
   const tablesIndex = [0, 1, 2];
-  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPDFModal, setShowPDFModal] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState("");
 
   const handleOpenModal = (index) => {
-    setShowModal(true);
+    setShowDeleteModal(true);
     setDeleteIndex(index);
   };
 
@@ -71,10 +73,17 @@ const EstimatedResults = () => {
     if (text == "confirm") {
       handleDelete(deleteIndex);
     }
-    setShowModal(false);
+    setShowDeleteModal(false);
+    setShowPDFModal(false);
     setDeleteIndex("");
   };
-  return (
+  const handleOpenPDFModal = () => {
+    setShowPDFModal(true);
+  }
+  const handlePdfGeneration = (type) => {
+    
+  } 
+   return (
     <div className="estimated-results">
       <div className="headerContainer">
         <img
@@ -83,10 +92,10 @@ const EstimatedResults = () => {
           className="logoImage"
         />
       </div>
-      <div className="results-section">
+      <div className="results-section"><ExportToPDF dates={dates} />
         <div className="section-container">
           <div className="left-subSection">
-            <div className="breadcrumb">
+            {/* <div className="breadcrumb">
               <span className="breadcrumb-item">WealthPort</span>
               <span className="breadcrumb-separator">{">"}</span>
               <span className="breadcrumb-item" onClick={handleRedirect}>
@@ -109,7 +118,7 @@ const EstimatedResults = () => {
                   onClick={handleViewComparison}
                 ></Button>
               </div>
-            </div>
+            </div> */}
             {tablesIndex.map((table, index) => (
               <div
                 key={table}
@@ -125,7 +134,7 @@ const EstimatedResults = () => {
                       {getCalculationDataValue("scenario-name")[index] ||
                         "Investment Account Fee Estimate 1"}
                     </h1>
-                    <p>As of Date: {dates[index] ? dates[index] :""}</p>
+                    <p>As of Date: {dates[index] ? dates[index] : ""}</p>
                   </div>
                   <div className="actions">
                     <Button
@@ -146,11 +155,12 @@ const EstimatedResults = () => {
                     ></Button>
                     <Button
                       text={"Export ▼"}
+                      onClick={handleOpenPDFModal}
                       configuresStyles={"result-button action-button"}
                     ></Button>
                   </div>
                 </div>
-                <div className="fee-details">
+                <div className="fee-details" style={{display:"none"}}>
                   <div className="left-section-heading">
                     <div className="section-title">
                       Financial Professional Payout
@@ -182,7 +192,7 @@ const EstimatedResults = () => {
                   <div className="results-divider"></div>
                   <div className="row">
                     <div className="label">Program Fee</div>
-                   
+
                     <div className="value-container">
                       <div className="value">
                         {programFeeValues[index]?.rate
@@ -203,17 +213,19 @@ const EstimatedResults = () => {
                   <div className="results-divider"></div>
                   <div className="row">
                     <div className="label">Strategist Fee (if applicable)</div>
-                    
+
                     <div className="value-container">
                       <div className="value">
-                        {strategistFeeValues[index]?.rate && strategistFeeValues[index]?.rate !== "N/A"
+                        {strategistFeeValues[index]?.rate &&
+                        strategistFeeValues[index]?.rate !== "N/A"
                           ? `${Number(
                               strategistFeeValues[index]?.rate
                             ).toLocaleString()}%`
                           : "N/A"}
                       </div>
                       <div className="value">
-                        {strategistFeeValues[index]?.price && strategistFeeValues[index]?.price !== "N/A"
+                        {strategistFeeValues[index]?.price &&
+                        strategistFeeValues[index]?.price !== "N/A"
                           ? `$${Number(
                               strategistFeeValues[index]?.price
                             ).toLocaleString()}`
@@ -225,17 +237,19 @@ const EstimatedResults = () => {
                   <div className="results-divider"></div>
                   <div className="row">
                     <div className="label">Total Account Fee (annualized)</div>
-                   
+
                     <div className="value-container">
                       <div className="value">
-                        {totalAccountFeeValues[index]?.rate && totalAccountFeeValues[index]?.rate !== "N/A"
+                        {totalAccountFeeValues[index]?.rate &&
+                        totalAccountFeeValues[index]?.rate !== "N/A"
                           ? `${Number(
                               totalAccountFeeValues[index]?.rate
                             ).toLocaleString()}%`
                           : "N/A"}
                       </div>
                       <div className="value">
-                        {totalAccountFeeValues[index]?.price && totalAccountFeeValues[index]?.price !== "N/A"
+                        {totalAccountFeeValues[index]?.price &&
+                        totalAccountFeeValues[index]?.price !== "N/A"
                           ? `$${Number(
                               totalAccountFeeValues[index]?.price
                             ).toLocaleString()}`
@@ -248,7 +262,7 @@ const EstimatedResults = () => {
                     <div className="label">
                       Total Client Fees (including Fund Expenses)
                     </div>
-                  
+
                     <div className="value-container">
                       <div className="value">
                         {/* {totalClientFeeValues[index]?.rate */}
@@ -277,7 +291,7 @@ const EstimatedResults = () => {
                       Gross Annual Fee to Financial Professional
                     </div>
                     <div className="value-container">
-                      <div className="value">                                     
+                      <div className="value">
                         {grossAnnualFeeValues[index]?.rate &&
                         !isNaN(grossAnnualFeeValues[index]?.rate) &&
                         grossAnnualFeeValues[index]?.rate !== ""
@@ -304,14 +318,16 @@ const EstimatedResults = () => {
                     </div>
                     <div className="value-container">
                       <div className="value">
-                        {netAnnualFeeValues[index]?.rate &&netAnnualFeeValues[index]?.rate !== "N/A"
+                        {netAnnualFeeValues[index]?.rate &&
+                        netAnnualFeeValues[index]?.rate !== "N/A"
                           ? `${Number(
                               netAnnualFeeValues[index]?.rate
                             ).toLocaleString()}%`
                           : "N/A"}
                       </div>
                       <div className="value">
-                        {netAnnualFeeValues[index]?.price &&netAnnualFeeValues[index]?.price !== "N/A"
+                        {netAnnualFeeValues[index]?.price &&
+                        netAnnualFeeValues[index]?.price !== "N/A"
                           ? `$${Number(
                               netAnnualFeeValues[index]?.price
                             ).toLocaleString()}`
@@ -386,20 +402,13 @@ const EstimatedResults = () => {
                       <div className="value">{feeType[index] || "N/A"}</div>
                     </div>
                   </div>
-                  <div className="results-divider"></div>
-                  {/* <div className="row">
-                    <div className="label">Program Fee</div>
-                    <div className="value-container types">
-                      <div className="value">{programFee[index] && programFee[index] !== "" && programFee[index] !== undefined && !isNaN(programFee[index]) || "N/A"}</div>
-                    </div>
-                  </div>
-                  <div className="results-divider"></div> */}
+                  <div className="results-divider"></div>                  
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="right-sub-section">
+          {/* <div className="right-sub-section">
             <div className="sub-section">
               <p className="get-started-heading">Ready to get started?</p>
               <p className="get-started-paragraph">
@@ -416,14 +425,14 @@ const EstimatedResults = () => {
 
               <button className="get-started-button">Contact Us</button>
             </div>
-          </div>
+          </div> */}
         </div>
         <div ref={componentRef} className="bottom-section">
           <Comparison />
         </div>
       </div>
 
-      <Modal show={showModal} onClose={handleCloseModal}>
+      <Modal show={""} onClose={handleCloseModal}>
         <p className="modal-heading">Confirm Delete ?</p>
         <p className="modal-desc">
           Scenario Name :{" "}
@@ -448,6 +457,62 @@ const EstimatedResults = () => {
           </button>
         </div>
       </Modal>
+      <Modal show={showPDFModal} providedName={"pdf-modal"} onClose={handleCloseModal}><span className="line"></span>
+        <p className="pdf-modal-heading">DOWNLOAD YOUR RESULTS</p>
+        <p className="pdf-modal-desc" onClick={handlePdfGeneration("internal")} >
+          Download your results to PDF, including FP payout information not
+          intended for client use
+        </p>
+        {/* <span className="line"></span> */}
+        <p className="pdf-modal-heading">SHARE WITH A CLIENT</p>
+        <p className="pdf-modal-desc" onClick={handlePdfGeneration("client")}>
+          Download a Printable PDF that can be share with a client
+        </p>
+        {/* <div className="modal-buttons">
+          <button
+            className="confirm-button"
+            onClick={() => {
+              handleCloseModal("confirm");
+            }}
+          >
+            Confirm
+          </button>
+          <button
+            className="cancel-button"
+            onClick={() => {
+              handleCloseModal("cancel");
+            }}
+          >
+            Close
+          </button>
+        </div> */}
+      </Modal>
+      <Modal show={showDeleteModal} onClose={handleCloseModal}>
+        <p className="modal-heading">Confirm Delete ?</p>
+        <p className="modal-desc">
+          Scenario Name :{" "}
+          {getCalculationDataValue("scenario-name")[deleteIndex]}
+        </p>
+        <div className="modal-buttons">
+          <button
+            className="confirm-button"
+            onClick={() => {
+              handleCloseModal("confirm");
+            }}
+          >
+            Confirm
+          </button>
+          <button
+            className="cancel-button"
+            onClick={() => {
+              handleCloseModal("cancel");
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+      
       <div className="footer-container">
         <StepFooter from={"estimated-results"}></StepFooter>
       </div>
