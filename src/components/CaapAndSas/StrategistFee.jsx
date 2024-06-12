@@ -112,7 +112,7 @@ const StrategistFee = ({
   const handleTeamDirected = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    const formated_input = value;
+    const formated_input = value.replace(/[^\d.]/g, "");
     handleChange({
       target: { name: "teamDirectedInput", value: formated_input },
     });

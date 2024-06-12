@@ -76,3 +76,6 @@
   margin: 0;
   color: #AF0801;
 }
+.program-card.selected{
+  border-color: #AF0801;
+}

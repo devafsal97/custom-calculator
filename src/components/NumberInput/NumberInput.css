@@ -12,13 +12,13 @@
   align-items: center;
   width: 100%;
 }
-.input-wrapper input {  
+.input-wrapper input {
   margin: 0;
 }
 .input-wrapper .input-symbol {
   position: absolute;
   left: 10px;
-  pointer-events: none;  
+  pointer-events: none;
 }
 
 .arrow-buttons {
@@ -34,7 +34,7 @@
   padding: 0;
   line-height: 1;
   background: none;
-  border: 1px solid #dce3e8;
+  border: inherit;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -48,9 +48,20 @@
 .arrow-down {
   border-top: none;
 }
-.arrow-up.clicked,.arrow-down.clicked{
-    background: black;
+.arrow-up.clicked,
+.arrow-down.clicked {
+  background: black;
 }
-.hai{
-    fill: red;
+.hai {
+  fill: red;
+}
+button.arrow-up {
+  border-left: 1px solid #dce3e8;
+  border-bottom: 1px solid #dce3e8;
+}
+button.arrow-down {
+  border-left: 1px solid #dce3e8;
+}
+.scenario-input.active{
+  border-color:#af0801 ;
 }

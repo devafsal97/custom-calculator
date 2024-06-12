@@ -88,7 +88,7 @@ const ProgramFeeSelection = ({
       </p>
       <div className="program-grid">
         {programOptions.map((option) => (
-          <label key={option.id} className="program-card">
+          <label key={option.id} className={`program-card ${selectedOption === option.value && !validateOption(option.value) ? "selected" : ""}`}>
             <div className="program-card-header">
               {/* <input
                 type="radio"

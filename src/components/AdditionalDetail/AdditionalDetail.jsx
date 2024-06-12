@@ -55,11 +55,11 @@ const AdditionalDetail = ({
       target: {
         name: "AdditionalDetails",
         value: {
-          fundExpenses: updatedFundExpenses.replace(/\D/g, ""),
-          fpPayOut: updatedFpPayOut.replace(/\D/g, ""),
-          auaDiscount: updatedSelectedDiscount.replace(/\D/g, ""),
-          houseHoldValue: updatedHouseHoldValue.replace(/\D/g, ""),
-        },
+          fundExpenses: updatedFundExpenses.replace(/[^\d.]/g, ""),
+          fpPayOut: updatedFpPayOut.replace(/[^\d.]/g, ""),
+          auaDiscount: updatedSelectedDiscount.replace(/[^\d.]/g, ""),
+          houseHoldValue: updatedHouseHoldValue.replace(/[^\d.]/g, ""),
+        }, 
       },
     };
     handleChange(eventObject);

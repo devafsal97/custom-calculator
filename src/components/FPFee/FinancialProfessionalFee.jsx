@@ -50,21 +50,21 @@ const FinancialProfessionalFee = ({
     setValue(formattedValue ? `${formattedValue}` : "");
   };
 
-  useEffect(() => {
-    const fixedValue =
-      getCalculationDataValue("FPfeeFixed")[index]?.amount || "";
-    if (fixedValue !== undefined) {
-      formatAndSetValue(fixedValue, setFixedValue, "$");
-    }
+  // useEffect(() => {
+  //   const fixedValue =
+  //     getCalculationDataValue("FPfeeFixed")[index]?.amount || "";
+  //   if (fixedValue !== undefined) {
+  //     formatAndSetValue(fixedValue, setFixedValue, "$");
+  //   }
 
-    const flatValue = getCalculationDataValue("FPfeeFlat")[index]?.amount || "";
-    if (flatValue !== undefined) {
-      formatAndSetValue(flatValue, setFlatValue, "%");
-    }
-  }, [
-    getCalculationDataValue("FPfeeFixed")[index],
-    getCalculationDataValue("FPfeeFlat")[index],
-  ]);
+  //   const flatValue = getCalculationDataValue("FPfeeFlat")[index]?.amount || "";
+  //   if (flatValue !== undefined) {
+  //     formatAndSetValue(flatValue, setFlatValue, "%");
+  //   }
+  // }, [
+  //   getCalculationDataValue("FPfeeFixed")[index],
+  //   getCalculationDataValue("FPfeeFlat")[index],
+  // ]);
 
   const setArrayValueAtIndex = (setStateFunction, index, value) => {
     setStateFunction((prevState) => {
@@ -207,7 +207,7 @@ const FinancialProfessionalFee = ({
   // Update tier value
   const updateTier = (index, field, value) => {
     const updatedTiers = [...tiers];
-    const formated_value = value;
+    const formated_value = value.replace(/[^\d.]/g, "");
     updatedTiers[index][field] = formated_value;
     setTiers(updatedTiers);
     handleChange({
@@ -224,7 +224,7 @@ const FinancialProfessionalFee = ({
   // Update breakpoint value
   const updateBreakpoint = (index, field, value) => {
     const updatedBreakpoints = [...breakpoints];
-    const formated_input = value;
+    const formated_input = value.replace(/[^\d.]/g, "");
     updatedBreakpoints[index][field] = formated_input;
     setBreakpoints(updatedBreakpoints);
     handleChange({
@@ -240,7 +240,8 @@ const FinancialProfessionalFee = ({
 
   const handleFixed = (event) => {
     const value = event.target.value;
-    const formated_input = value.replace(/\D/g, "");
+    setFixedValue(value);
+    const formated_input = value.replace(/[^\d.]/g, "");
     if (formated_input !== undefined) {
       handleChange({
         target: {
@@ -253,7 +254,8 @@ const FinancialProfessionalFee = ({
   };
   const handleFlat = (event) => {
     const value = event.target.value;
-    const formated_input = value.replace(/\D/g, "");
+    setFlatValue(value);
+    const formated_input = value.replace(/[^\d.]/g, "");
     if (formated_input !== undefined) {
       handleChange({
         target: {
@@ -354,6 +356,11 @@ const FinancialProfessionalFee = ({
       updateBreakpoint(index, type, newValue);
     }
   };
+  // Function to format number by adding commas
+  const formatNumber = (num) => {
+    if (!num) return "";
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
   // Render the appropriate content based on the fee type
   const renderFeeContent = () => {
     switch (feeType) {
@@ -380,7 +387,12 @@ const FinancialProfessionalFee = ({
               value={flatValue}
               onChange={handleFlat}
               // placeholder="$ "
-              className="scenario-input"
+              className={`scenario-input ${
+                getCalculationDataValue("FPfeeFlat")[index]?.amount > "2.25" ||
+                getCalculationDataValue("FPfeeFlat")[index]?.amount > 2.25
+                  ? "active"
+                  : ""
+              }`}
               symbol={"%"}
             />
 
@@ -406,18 +418,9 @@ const FinancialProfessionalFee = ({
               Team-directed is 2.25%; CAAP and UMA is 2.15%.
             </div>
             <div className="fee-input-label">Enter Fixed Fee ($)</div>
-            {/* <input
-              onChange={handleFixed}
-              type="text"
-              placeholder="$"
-              value={`$${fixedValue || ""}`}
-              className="scenario-input"
-              min="0"
-            /> */}
             <NumberInput
               value={fixedValue}
               onChange={handleFixed}
-              // placeholder="$ "
               className="scenario-input"
               symbol={"$"}
             />
@@ -467,18 +470,8 @@ const FinancialProfessionalFee = ({
                   <div className="tier-label">
                     {getOrdinalLabel(index)} Tier
                   </div>
-                  {/* <input
-                    type="text"
-                    value={formatCurrency(tier.amount, "$")}
-                    placeholder="$"
-                    onChange={(e) =>
-                      updateTier(index, "amount", e.target.value)
-                    }
-                    className="scenario-input"
-                    min="0"
-                  /> */}
                   <NumberInput
-                    value={tier.amount}
+                    value={`${formatNumber(tier.amount)}`}
                     from={"tier"}
                     onChange={(e) =>
                       handleAmountChange(index, e, "amount", "tier")
@@ -489,19 +482,9 @@ const FinancialProfessionalFee = ({
                 </div>
                 <div className="percentage-input">
                   <div>% Fee</div>
-                  {/* <input
-                    type="text"
-                    value={formatCurrency(tier.percentage, "%")}
-                    placeholder="%"
-                    className="scenario-input"
-                    onChange={(e) =>
-                      updateTier(index, "percentage", e.target.value)
-                    }
-                    min="0"
-                  /> */}
                   <NumberInput
-                    from={"tier"}
-                    value={tier.percentage}
+                    from={"tier"}                    
+                    value={`${formatNumber(tier.percentage)}`}
                     onChange={(e) =>
                       handleAmountChange(index, e, "percentage", "tier")
                     }
@@ -580,20 +563,10 @@ const FinancialProfessionalFee = ({
                 <div className="tier-breakpoint-input">
                   <div className="tier-label">
                     {getOrdinalLabel(index)} Breakpoint
-                  </div>
-                  {/* <input
-                    type="text"
-                    value={formatCurrency(bp.amount, "$")}
-                    placeholder="$"
-                    className="scenario-input"
-                    onChange={(e) =>
-                      updateBreakpoint(index, "amount", e.target.value)
-                    }
-                    min="0"
-                  /> */}
+                  </div>                  
                   <NumberInput
-                    from={"breakPoint"}
-                    value={bp.amount}
+                    from={"breakPoint"}                    
+                    value={`${formatNumber(bp.amount)}`}
                     onChange={(e) =>
                       handleAmountChange(index, e, "amount", "bp")
                     }
@@ -614,8 +587,8 @@ const FinancialProfessionalFee = ({
                     min="0"
                   /> */}
                   <NumberInput
-                    from={"breakPoint"}
-                    value={bp.percentage}                    
+                    from={"breakPoint"}                    
+                    value={`${formatNumber(bp.percentage)}`}
                     onChange={(e) =>
                       handleAmountChange(index, e, "percentage", "bp")
                     }

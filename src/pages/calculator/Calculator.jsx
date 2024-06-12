@@ -58,19 +58,11 @@ function CalculatorPage() {
   const [inputValue, setInputValue] = useState(
     getCalculationDataValue("account-value")[index] || ""
   );
-
-  // // useEffect to initialize the input value
-  // useEffect(() => {
-  //   let value = getCalculationDataValue("account-value")[index] || "";
-  //   const numericValue = value.replace(/[^0-9,]/g, "");
-  //   const formattedValue = formatNumberWithCommas(numericValue);
-  //   setInputValue(formattedValue ? `$${formattedValue}` : "");
-  // }, [getCalculationDataValue("account-value")[index]]);
-
+  
   const handleAccountValueChange = (e) => {
     const value = e.target.value;
     setInputValue(value)
-    const formated_input = value.replace(/\D/g, "");
+    const formated_input = value.replace(/[^\d.]/g, "");
     handleChange({
       target: {
         name: "account-value",
@@ -168,8 +160,7 @@ function CalculatorPage() {
             />             */}
             <NumberInput
               value={inputValue}
-              onChange={handleAccountValueChange}
-              // placeholder="$ "
+              onChange={handleAccountValueChange}              
               className="scenario-input"
               symbol={"$"}
             />
