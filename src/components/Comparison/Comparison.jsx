@@ -3,7 +3,7 @@ import { useCalculationStorage } from "../../context/StorageContext";
 import comparison from "./comparison.css";
 import Button from "../../components/button/Button";
 
-const Comparison = () => {
+const Comparison = ({handlePdfGeneration,handleShare}) => {
   const {
     fpValues,
     accountValue,
@@ -63,10 +63,12 @@ const Comparison = () => {
             ></Button>
             <Button
               text={"Share"}
+              onClick={() => handleShare(0, "group-scenario")}
               configuresStyles={"result-button action-button"}
             ></Button>
             <Button
               text={"Export ▼"}
+              onClick={() => handlePdfGeneration("comparison", 0)}
               configuresStyles={"result-button action-button"}
             ></Button>
           </div>

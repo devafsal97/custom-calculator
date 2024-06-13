@@ -6,7 +6,10 @@ import StepFooter from "../../components/StepFooter/StepFooter";
 import { useCalculationStorage } from "../../context/StorageContext";
 import Comparison from "../../components/Comparison/Comparison";
 import Modal from "../../components/Modal/Modal";
-import ExportToPDF from "../../components/ExportToPDF/ExportToPDF"
+import ExportToPDF from "../../components/ExportToPDF/ExportToPDF";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { storeData, retrieveData } from "../../utils/dynamoDB";
+import formatDate from "../../utils/dateFormatter";
 const EstimatedResults = () => {
   const navigate = useNavigate();
 
@@ -63,7 +66,9 @@ const EstimatedResults = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState("");
-
+  const [showShareModal, setShareModal] = useState(false);
+  const [shareDate, setShareDate] = useState();
+  const [link, setLink] = useState("");
   const handleOpenModal = (index) => {
     setShowDeleteModal(true);
     setDeleteIndex(index);
@@ -76,14 +81,75 @@ const EstimatedResults = () => {
     setShowDeleteModal(false);
     setShowPDFModal(false);
     setDeleteIndex("");
+    setShareModal(false);
   };
   const handleOpenPDFModal = () => {
     setShowPDFModal(true);
-  }
-  const handlePdfGeneration = (type) => {
-    
-  } 
-   return (
+  };
+  const [showPdf, setShowPdf] = useState(false);
+  const [pdfType, setPdfType] = useState("");
+  const [pdfIndex, setPdfIndex] = useState();
+  const handlePdfGeneration = (type, index) => {
+    setShowPdf(true);
+    setPdfType(type);
+    setPdfIndex(index);
+    setShowPDFModal(false);
+  };
+
+  const handleShare = async (index, type) => {
+    const currentDate = new Date();
+    setShareDate(formatDate(currentDate));
+    if (
+      getCalculationDataValue("scenario-name")[index] &&
+      getCalculationDataValue("scenario-name")[index] !== ""
+    ) {
+      setLink(
+        "http://localhost:3000/results/scenario-id:" +
+          getCalculationDataValue("scenario-name")[index]
+      );
+    }
+    setShareModal(true);
+    const data1 = {
+      name: getCalculationDataValue("scenario-name")[index],
+      fpValues: fpValues[index],
+      accountValue: accountValue[index],
+      fundExpenses: fundExpenses[index],
+      fpPayout: fpPayout[index],
+      houseHoldValue: houseHoldValue[index],
+      feeType: feeType[index],
+      programFee: programFee[index],
+      programFeeValues: programFeeValues[index],
+      strategistFeeValues: strategistFeeValues[index],
+      totalAccountFeeValues: totalAccountFeeValues[index],
+      totalClientFeeValues: totalClientFeeValues[index],
+      grossAnnualFeeValues: grossAnnualFeeValues[index],
+      netAnnualFeeValues: netAnnualFeeValues[index],
+    };
+    const data2 = {
+      name: getCalculationDataValue("scenario-name")[index],
+      fpValues: fpValues,
+      accountValue: accountValue,
+      fundExpenses: fundExpenses,
+      fpPayout: fpPayout,
+      houseHoldValue: houseHoldValue,
+      feeType: feeType,
+      programFee: programFee,
+      programFeeValues: programFeeValues,
+      strategistFeeValues: strategistFeeValues,
+      totalAccountFeeValues: totalAccountFeeValues,
+      totalClientFeeValues: totalClientFeeValues,
+      grossAnnualFeeValues: grossAnnualFeeValues,
+      netAnnualFeeValues: netAnnualFeeValues,
+    };
+    // Store data
+    await storeData(data2);
+
+    // Retrieve data
+    const retrievedData = await retrieveData(data2.name);
+    console.log(retrievedData);
+  };
+
+  return (
     <div className="estimated-results">
       <div className="headerContainer">
         <img
@@ -92,10 +158,21 @@ const EstimatedResults = () => {
           className="logoImage"
         />
       </div>
-      <div className="results-section"><ExportToPDF dates={dates} />
+      <div className="results-section">
+        <div className="pdf-sectionn">
+          <ExportToPDF
+            dates={dates}
+            showPdf={showPdf}
+            pdfType={pdfType}
+            pdfIndex={pdfIndex}
+            setShowPdf={setShowPdf}
+            setPdfType={setPdfType}
+            setPdfIndex={setPdfIndex}
+          />
+        </div>
         <div className="section-container">
           <div className="left-subSection">
-            {/* <div className="breadcrumb">
+            <div className="breadcrumb">
               <span className="breadcrumb-item">WealthPort</span>
               <span className="breadcrumb-separator">{">"}</span>
               <span className="breadcrumb-item" onClick={handleRedirect}>
@@ -118,7 +195,7 @@ const EstimatedResults = () => {
                   onClick={handleViewComparison}
                 ></Button>
               </div>
-            </div> */}
+            </div>
             {tablesIndex.map((table, index) => (
               <div
                 key={table}
@@ -151,6 +228,7 @@ const EstimatedResults = () => {
                     ></Button>
                     <Button
                       text={"Share"}
+                      //onClick={() => handleShare(index, "individual-scenario")}
                       configuresStyles={"result-button action-button"}
                     ></Button>
                     <Button
@@ -160,7 +238,7 @@ const EstimatedResults = () => {
                     ></Button>
                   </div>
                 </div>
-                <div className="fee-details" style={{display:"none"}}>
+                <div className="fee-details">
                   <div className="left-section-heading">
                     <div className="section-title">
                       Financial Professional Payout
@@ -402,13 +480,13 @@ const EstimatedResults = () => {
                       <div className="value">{feeType[index] || "N/A"}</div>
                     </div>
                   </div>
-                  <div className="results-divider"></div>                  
+                  <div className="results-divider"></div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* <div className="right-sub-section">
+          <div className="right-sub-section">
             <div className="sub-section">
               <p className="get-started-heading">Ready to get started?</p>
               <p className="get-started-paragraph">
@@ -425,67 +503,74 @@ const EstimatedResults = () => {
 
               <button className="get-started-button">Contact Us</button>
             </div>
-          </div> */}
+          </div>
         </div>
         <div ref={componentRef} className="bottom-section">
-          <Comparison />
+          <Comparison
+            handleShare={handleShare}
+            handlePdfGeneration={handlePdfGeneration}
+          />
         </div>
       </div>
 
-      <Modal show={""} onClose={handleCloseModal}>
-        <p className="modal-heading">Confirm Delete ?</p>
-        <p className="modal-desc">
-          Scenario Name :{" "}
-          {getCalculationDataValue("scenario-name")[deleteIndex]}
-        </p>
-        <div className="modal-buttons">
-          <button
-            className="confirm-button"
-            onClick={() => {
-              handleCloseModal("confirm");
-            }}
-          >
-            Confirm
-          </button>
-          <button
-            className="cancel-button"
-            onClick={() => {
-              handleCloseModal("cancel");
-            }}
-          >
-            Close
-          </button>
+      <Modal
+        show={showShareModal}
+        onClose={handleCloseModal}
+        providedName={"share-modal"}
+      >
+        <div className="modal-content">
+          <h2 className="modal-title">Save Estimate</h2>
+          <h4 className="modal-subtitle">Public server acknowledgment</h4>
+          <div className="notification">
+            <CheckCircleOutlineIcon
+              sx={{ fill: "white", width: "20px", height: "20px" }}
+            />
+            <p className="modal-notification-message">
+              Your "My Estimate" has been saved successfully. Last update:
+              <span>{shareDate}</span>
+            </p>
+          </div>
+          <div className="share-link">
+            <label className="modal-share-link-label">Public Share Link:</label>
+            <p className="modal-notification-link-message">
+              Public Share Link Copy and save or bookmark this link for your
+              records. You must use the link below to retrieve your estimate.
+              This link will expire after 1 year.
+            </p>
+            <div className="share-link-section">
+              <input type="text" value={link} readOnly />
+              <button className="copy-button">Copy Public Link</button>
+            </div>
+          </div>
+          <div className="actions">
+            <button className="cancel-button" onClick={handleCloseModal}>
+              Cancel
+            </button>
+            <button className="agree-button">Agree and Continue</button>
+          </div>
         </div>
       </Modal>
-      <Modal show={showPDFModal} providedName={"pdf-modal"} onClose={handleCloseModal}><span className="line"></span>
+      <Modal
+        show={showPDFModal}
+        providedName={"pdf-modal"}
+        onClose={handleCloseModal}
+      >
+        <span className="line"></span>
         <p className="pdf-modal-heading">DOWNLOAD YOUR RESULTS</p>
-        <p className="pdf-modal-desc" onClick={handlePdfGeneration("internal")} >
+        <p
+          className="pdf-modal-desc"
+          onClick={() => handlePdfGeneration("internal", index)}
+        >
           Download your results to PDF, including FP payout information not
           intended for client use
         </p>
-        {/* <span className="line"></span> */}
         <p className="pdf-modal-heading">SHARE WITH A CLIENT</p>
-        <p className="pdf-modal-desc" onClick={handlePdfGeneration("client")}>
-          Download a Printable PDF that can be share with a client
+        <p
+          className="pdf-modal-desc"
+          onClick={() => handlePdfGeneration("client", index)}
+        >
+          Download a Printable PDF that can be shared with a client
         </p>
-        {/* <div className="modal-buttons">
-          <button
-            className="confirm-button"
-            onClick={() => {
-              handleCloseModal("confirm");
-            }}
-          >
-            Confirm
-          </button>
-          <button
-            className="cancel-button"
-            onClick={() => {
-              handleCloseModal("cancel");
-            }}
-          >
-            Close
-          </button>
-        </div> */}
       </Modal>
       <Modal show={showDeleteModal} onClose={handleCloseModal}>
         <p className="modal-heading">Confirm Delete ?</p>
@@ -512,7 +597,7 @@ const EstimatedResults = () => {
           </button>
         </div>
       </Modal>
-      
+
       <div className="footer-container">
         <StepFooter from={"estimated-results"}></StepFooter>
       </div>

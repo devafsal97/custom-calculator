@@ -26,6 +26,7 @@
     text-align: left;
     display: flex;
     flex-direction: column;
+    color:rgba(28, 43, 54, 1) ;
   }
   .label span {
     font-size: 9px;
@@ -56,7 +57,171 @@
   .value.total_client_fee {
     font-size: 9px;
     font-weight: 600;
-    line-height: 12.29px;    
+    line-height: 12.29px;
     color: rgba(28, 43, 54, 1);
+  }
+  .left-section-heading.optional {
+    padding-top: 25px;
+  }
+  .bottom-section-heading {
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 12.29px;
+    text-align: left;
+    color: rgba(62, 84, 99, 1);
+  }
+  .label.second-table {
+    font-size: 9px;
+    font-weight: 400;
+    line-height: 12.29px;
+    text-align: left;
+  }
+  .label.pdf-bottom-section {
+    font-size: 9px;
+    font-weight: 400;
+    line-height: 12.29px;
+    text-align: left;
+    color: rgba(28, 43, 54, 1);
+  }
+  .pdf-bottom-section-parent {
+    display: flex;
+    gap: 10px;
+    padding-top: 30px;
+  }
+  .pdf-bottom-left,
+  .pdf-bottom-right {
+    width: 50%;
+  }
+}
+
+.comparison-pdf {
+  .field-container {
+    display: flex;
+    width: 100%;
+    /* margin: 6px 0px; */
+    font-family: Avenir Next, -apple-system, Roboto, Helvetica, sans-serif !important;
+    border-bottom: 1px solid #9fb1bd;
+  }
+
+  .header-labels,
+  .input-values {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+    display: flex;
+    align-items: center;
+  }
+
+  .field-name {
+    /* width: 500px; */
+    border-right: 1px solid #9fb1bd;
+  }
+
+  .header-label {
+    flex: 1;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 12.29px;
+    text-align: right;
+
+    /* min-width: 100px; */
+  }
+
+  .field-name {
+    color: #1c2b36;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 200px;
+    padding: 6px 8px;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 12.29px;
+    text-align: left;
+  }
+
+  .field-container.black-section {
+    background: #0f2731;
+    height: 32px;
+    align-items: center;
+    padding: 0 0px;
+    width: 100%;
+  }
+
+  .field-container.black-section .field-name {
+    color: #fff;
+  }
+
+  .field-container.black-section .header-label {
+    color: #fff;
+    border: none;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 12.29px;
+    text-align: right;
+  }
+
+  .field-container.rate-doller .header-label {
+    line-height: 20px;
+    color: #3e5463;
+    padding-bottom: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 12.29px;
+    text-align: center;
+  }
+
+  .field-name > span {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    color: #3e5463;
+  }
+
+  .header-label.three-column {
+    /* min-width: 150px; */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    color: #1c2b36;
+    border-right: 1px solid #9fb1bd;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input-values {
+    flex: 1;
+    text-align: center;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    /* min-width: 100px; */
+    color: #1c2b36;
+    border-right: 1px solid #9fb1bd;
+    height: 100%;
+    font-size: 9px;
+    font-weight: 400;
+    line-height: 12.29px;
+    text-align: right;
+  }
+
+  .table-wrapper {
+    overflow: auto;
+    max-width: 100%;
+  }
+
+  .field-container.rate-doller .field-name {
+    border: none;
+  }
+
+  .main-container .header {
+    margin-bottom: 47px;
+  }
+  .main-container.active {
+    display: none;
   }
 }

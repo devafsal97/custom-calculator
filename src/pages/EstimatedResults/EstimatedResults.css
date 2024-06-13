@@ -403,10 +403,110 @@ span {
   text-align: left;
   color: rgba(28, 43, 54, 1);
 }
-.line{
+.line {
   width: 100%;
   height: 1.5px;
   display: block;
   left: 0;
   background: rgba(220, 227, 232, 1);
+}
+.pdf-section {
+  display: none;
+}
+
+.modal-overlay.share-modal .modal-content {
+  margin-top: 0;
+  .modal-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    text-align: left;
+    color: rgba(28, 43, 54, 1);
+  }
+  .modal-subtitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: rgba(28, 43, 54, 1);
+    padding-bottom: 15px;
+  }
+  .notification {
+    background: rgba(7, 125, 85, 1);
+    padding: 12px;
+    gap: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+  }
+  .modal-notification-message {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    color: rgba(255, 255, 255, 1);
+    margin: 0;
+  }
+  .modal-share-link-label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: left;
+    color: rgba(28, 43, 54, 1);
+  }
+  .modal-notification-link-message {
+    color: rgba(28, 43, 54, 1);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    margin: 0;
+    padding-top: 15px;
+  }
+  .share-link-section {
+    display: flex;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    input {
+      flex: auto;
+      border: 1px solid rgba(159, 177, 189, 1);
+      border-radius: 2px;
+      width: Fill (473px) px;
+      padding: 5px 8px 5px 8px;
+    }
+    .copy-button {
+      border: 1px solid rgba(159, 177, 189, 1);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+
+      padding: 0px 8px 0px 8px;
+      border-radius: 0px 2px 2px 0px;
+      background: rgba(220, 227, 232, 1);
+    }
+  }
+  .actions {
+    align-items: center;
+    justify-content: end;
+  }
+  .cancel-button {
+    padding: 6px 16px 6px 16px;
+    gap: 8px;
+    border-radius: 2px 0px 0px 0px;
+    opacity: 0px;
+    background: rgba(220, 227, 232, 1);
+  }
+  .agree-button {
+    padding: 6px 16px 6px 16px;
+    gap: 8px;
+    border-radius: 2px 0px 0px 0px;
+    background: rgba(24, 106, 222, 1);
+    color: white;
+  }
+  .share-link{
+    padding-top: 15px;
+  }
 }
