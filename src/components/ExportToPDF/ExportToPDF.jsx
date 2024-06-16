@@ -40,11 +40,47 @@ const ExportToPDF = ({
     }
   }, [showPdf]);
 
+  // const handlePrint = () => {
+  //   const input = printRef.current;
+  //   const originalDisplay = input.style.display;
+  //   input.style.display = "block";
+  //   html2canvas(input, { scale: 1 }).then((canvas) => {
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("p", "mm", "a4");
+  //     const imgWidth = 210; // A4 width in mm
+  //     const pageHeight = 295; // A4 height in mm
+  //     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  //     let heightLeft = imgHeight;
+  //     let position = 0;
+
+  //     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  //     heightLeft -= pageHeight;
+
+  //     while (heightLeft >= 0) {
+  //       position = heightLeft - imgHeight;
+  //       pdf.addPage();
+  //       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  //       heightLeft -= pageHeight;
+  //     }
+
+  //     pdf.save("download.pdf");
+  //     input.style.display = originalDisplay;
+  //     setShowPdf(false);
+  //     setPdfType("");
+  //     setPdfIndex("");
+  //   });
+  // };
   const handlePrint = () => {
     const input = printRef.current;
     const originalDisplay = input.style.display;
     input.style.display = "block";
-    html2canvas(input, { scale: 1 }).then((canvas) => {
+  
+    // Add a temporary style to center the content and adjust padding
+    input.style.padding = "20px";
+    input.style.width = "80%";
+    input.style.margin = "auto";
+  
+    html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const imgWidth = 210; // A4 width in mm
@@ -52,25 +88,31 @@ const ExportToPDF = ({
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
       let position = 0;
-
+  
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
+  
+      while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
-
+  
       pdf.save("download.pdf");
+  
+      // Revert the styles back to original
       input.style.display = originalDisplay;
+      input.style.padding = "";
+      input.style.width = "";
+      input.style.margin = "";
+  
       setShowPdf(false);
       setPdfType("");
       setPdfIndex("");
     });
   };
-
+  
   const renderValue = (value) => {
     if (value)
       return (

@@ -10,7 +10,10 @@ const StepFooter = ({ currentStep = 1, from }) => {
     index,
     setIndex,
     originalIndex,
-    setOriginalIndex,handleChange
+    setOriginalIndex,
+    handleChange,
+    accountValue,
+    getCalculationDataValue,
   } = useCalculationStorage();
   const navigate = useNavigate();
   const stepLabels = {
@@ -27,7 +30,7 @@ const StepFooter = ({ currentStep = 1, from }) => {
   };
 
   const handleSummary = () => {
-    if (stepsCompleted && originalIndex !== null) {     
+    if (stepsCompleted && originalIndex !== null) {
       setIndex(originalIndex);
       setOriginalIndex(null);
       navigate("/results");
@@ -41,6 +44,10 @@ const StepFooter = ({ currentStep = 1, from }) => {
         navigate("/");
       }
     }
+  };
+  const handleBack = () => {
+    const accountValues = getCalculationDataValue("scenario-name") || "";
+    navigate("/results");
   };
 
   return (
@@ -60,11 +67,11 @@ const StepFooter = ({ currentStep = 1, from }) => {
         }`}</span>
       </div> */}
       <div className="step-actions">
-        {/* <div className={`step-cancel`} onClick={handleBack}>
-          Back
-        </div> */}
+        
         <div className="step-cancel" onClick={handleCancel}>
           Cancel
+        </div><div className={`step-cancel`} onClick={handleBack}>
+          Back
         </div>
         <div
           className={`step-save ${

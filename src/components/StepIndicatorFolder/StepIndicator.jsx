@@ -234,7 +234,6 @@ const VerticalLinearStepper = ({ calculationData }) => {
       newCompletedSteps.add(2);
       newInvalidSteps.delete(2);
     } else if (isFPFeeValid === false) {
-      console.log("inside");
       newCompletedSteps.delete(2);
       newInvalidSteps.add(2);
     }

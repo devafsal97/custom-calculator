@@ -66,7 +66,6 @@ const StrategistFee = ({
 
   const [selectedEquitySMA, setSelectedEquitySMA] = useState(initialEquitySMA);
   const [selectedMFETF, setSelectedMFETF] = useState(initialMFETF);
-  console.log(selectedMFETF);
   const [editingStrategist, setEditingStrategist] = useState(null);
   const handleFocus = (selected) => {
     setEditingStrategist(selected.label);
@@ -333,11 +332,11 @@ const StrategistFee = ({
               data-label={selected.label}
               data-name={selected.type}
               name={selected.value}
-              type="text"
+              type="number"
               placeholder="%"
               className="fee-input"
-              // value={}
-              value={`${formatNumberWithCommas(selected.inputValue)|| ""} `}
+               value={selected.inputValue}
+              // value={`${formatNumberWithCommas()} `}
             />
             {/* <NumberInput
               data-label={selected.label}

@@ -10,9 +10,10 @@ import ExportToPDF from "../../components/ExportToPDF/ExportToPDF";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { storeData, retrieveData } from "../../utils/dynamoDB";
 import formatDate from "../../utils/dateFormatter";
+import { useParams } from "react-router-dom";
 const EstimatedResults = () => {
   const navigate = useNavigate();
-
+  const { scenarioId } = useParams();
   const {
     fpValues,
     accountValue,
@@ -37,11 +38,18 @@ const EstimatedResults = () => {
   } = useCalculationStorage();
 
   const [dates, setDates] = useState([]);
-
+  const tablesIndex = [0, 1, 2];
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState("");
+  const [showShareModal, setShareModal] = useState(false);
+  const [shareDate, setShareDate] = useState();
+  const [link, setLink] = useState("");
   useEffect(() => {
     const fetchedDates = getCalculationDataValue("currentDate");
     setDates(fetchedDates);
   }, [getCalculationDataValue("currentDate")]);
+
   const componentRef = useRef(null);
 
   const handleViewComparison = () => {
@@ -49,6 +57,14 @@ const EstimatedResults = () => {
   };
   const numberToArray = (index) => {
     return Array.from({ length: index + 1 }, (_, i) => i);
+  };
+  const handleCopyLink = () => {
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {})
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
   };
 
   const handleNewEstimate = () => {
@@ -62,13 +78,7 @@ const EstimatedResults = () => {
   const handleRedirect = () => {
     navigate("/");
   };
-  const tablesIndex = [0, 1, 2];
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showPDFModal, setShowPDFModal] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState("");
-  const [showShareModal, setShareModal] = useState(false);
-  const [shareDate, setShareDate] = useState();
-  const [link, setLink] = useState("");
+
   const handleOpenModal = (index) => {
     setShowDeleteModal(true);
     setDeleteIndex(index);
@@ -89,66 +99,149 @@ const EstimatedResults = () => {
   const [showPdf, setShowPdf] = useState(false);
   const [pdfType, setPdfType] = useState("");
   const [pdfIndex, setPdfIndex] = useState();
+  const [shareIndex, setShareIndex] = useState();
+  const [shareType, setShareType] = useState();
   const handlePdfGeneration = (type, index) => {
     setShowPdf(true);
     setPdfType(type);
     setPdfIndex(index);
     setShowPDFModal(false);
   };
+  const formatId = (name) => name.replace(/\s+/g, "");
+  // const handleShare = async (index, type) => {
+  //   console.log("type",type)
+  //   const currentDate = new Date();
+  //   setShareDate(formatDate(currentDate));
+  //   if (
+  //     getCalculationDataValue("scenario-name")[index] &&
+  //     getCalculationDataValue("scenario-name")[index] !== ""
+  //   ) {
+  //     setLink(
+  //       "http://localhost:3000/scenario-viewer?scenarioId=" +
+  //       formatId(getCalculationDataValue("scenario-name")[index])
+  //     );
+  //   } else {
+  //     setLink("http://localhost:3000/scenario-viewer?scenarioId=" + "test");
+  //   }
 
+  //   setShareModal(true);
+  //   const data1 = {
+  //     name: getCalculationDataValue("scenario-name")[index] || "test",
+  //     id:formatId(getCalculationDataValue("scenario-name")[index] || "test"),
+  //     fpValues: fpValues[index],
+  //     accountValue: accountValue[index],
+  //     fundExpenses: fundExpenses[index],
+  //     fpPayout: fpPayout[index],
+  //     houseHoldValue: houseHoldValue[index],
+  //     feeType: feeType[index],
+  //     programFee: programFee[index],
+  //     programFeeValues: programFeeValues[index],
+  //     strategistFeeValues: strategistFeeValues[index],
+  //     totalAccountFeeValues: totalAccountFeeValues[index],
+  //     totalClientFeeValues: totalClientFeeValues[index],
+  //     grossAnnualFeeValues: grossAnnualFeeValues[index],
+  //     netAnnualFeeValues: netAnnualFeeValues[index],
+  //   };
+  //   const data2 = {
+  //     name: getCalculationDataValue("scenario-name")[0] || "test",
+  //     id:formatId(getCalculationDataValue("scenario-name")[index] || "test"),
+  //     fpValues: fpValues,
+  //     accountValue: accountValue,
+  //     fundExpenses: fundExpenses,
+  //     fpPayout: fpPayout,
+  //     houseHoldValue: houseHoldValue,
+  //     feeType: feeType,
+  //     programFee: programFee,
+  //     programFeeValues: programFeeValues,
+  //     strategistFeeValues: strategistFeeValues,
+  //     totalAccountFeeValues: totalAccountFeeValues,
+  //     totalClientFeeValues: totalClientFeeValues,
+  //     grossAnnualFeeValues: grossAnnualFeeValues,
+  //     netAnnualFeeValues: netAnnualFeeValues,
+  //   };
+  //   // Store data
+  //   if(type === "group-scenario"){
+  //     await storeData(data2);
+  //   } else {
+  //     await storeData(data1);
+  //   }
+
+  //   // Retrieve data
+  //   const retrievedData = await retrieveData(data2.name);
+  //   console.log(retrievedData);
+  // };
   const handleShare = async (index, type) => {
+    setShareIndex(index);
+    setShareType(type);
     const currentDate = new Date();
     setShareDate(formatDate(currentDate));
-    if (
-      getCalculationDataValue("scenario-name")[index] &&
-      getCalculationDataValue("scenario-name")[index] !== ""
-    ) {
-      setLink(
-        "http://localhost:3000/results/scenario-id:" +
-          getCalculationDataValue("scenario-name")[index]
-      );
-    }
+    const scenarioName =
+      getCalculationDataValue("scenario-name")[index] || "test";
+    setLink(
+      `http://localhost:3000/scenario-viewer?scenarioId=${formatId(
+        scenarioName
+      )}`
+    );
     setShareModal(true);
-    const data1 = {
-      name: getCalculationDataValue("scenario-name")[index],
-      fpValues: fpValues[index],
-      accountValue: accountValue[index],
-      fundExpenses: fundExpenses[index],
-      fpPayout: fpPayout[index],
-      houseHoldValue: houseHoldValue[index],
-      feeType: feeType[index],
-      programFee: programFee[index],
-      programFeeValues: programFeeValues[index],
-      strategistFeeValues: strategistFeeValues[index],
-      totalAccountFeeValues: totalAccountFeeValues[index],
-      totalClientFeeValues: totalClientFeeValues[index],
-      grossAnnualFeeValues: grossAnnualFeeValues[index],
-      netAnnualFeeValues: netAnnualFeeValues[index],
-    };
-    const data2 = {
-      name: getCalculationDataValue("scenario-name")[index],
-      fpValues: fpValues,
-      accountValue: accountValue,
-      fundExpenses: fundExpenses,
-      fpPayout: fpPayout,
-      houseHoldValue: houseHoldValue,
-      feeType: feeType,
-      programFee: programFee,
-      programFeeValues: programFeeValues,
-      strategistFeeValues: strategistFeeValues,
-      totalAccountFeeValues: totalAccountFeeValues,
-      totalClientFeeValues: totalClientFeeValues,
-      grossAnnualFeeValues: grossAnnualFeeValues,
-      netAnnualFeeValues: netAnnualFeeValues,
-    };
-    // Store data
-    await storeData(data2);
-
-    // Retrieve data
-    const retrievedData = await retrieveData(data2.name);
-    console.log(retrievedData);
   };
 
+  const handleAgreeAndContinue = async () => {
+    let scenarioName = "";
+    let data = {};
+    
+
+    if (shareType === "group-scenario") {
+      scenarioName = getCalculationDataValue("scenario-name")[0] || "test";
+     const AUAdiscount = getCalculationDataValue("AdditionalDetails");
+     const scenarioNames = getCalculationDataValue("scenario-name");
+      const formattedId = formatId(scenarioName);
+      data = {
+        name: scenarioName,
+        id: formattedId,
+        fpValues: fpValues,
+        scenarios:scenarioNames,
+        accountValue: accountValue,
+        fundExpenses: fundExpenses,
+        fpPayout: fpPayout,
+        houseHoldValue: houseHoldValue,
+        feeType: feeType,
+        programFee: programFee,
+        programFeeValues: programFeeValues,
+        strategistFeeValues: strategistFeeValues,
+        totalAccountFeeValues: totalAccountFeeValues,
+        totalClientFeeValues: totalClientFeeValues,
+        grossAnnualFeeValues: grossAnnualFeeValues,
+        netAnnualFeeValues: netAnnualFeeValues,
+        AUAdiscount:AUAdiscount,
+
+      };
+    } else {
+      scenarioName =
+        getCalculationDataValue("scenario-name")[shareIndex] || "test";
+      const formattedId = formatId(scenarioName);
+      data = {
+        name: scenarioName,
+        id: formattedId,
+        fpValues: fpValues[shareIndex],
+        scenarios:scenarioName,
+        accountValue: accountValue[shareIndex],
+        fundExpenses: fundExpenses[shareIndex],
+        fpPayout: fpPayout[shareIndex],
+        houseHoldValue: houseHoldValue[shareIndex],
+        feeType: feeType[shareIndex],
+        programFee: programFee[shareIndex],
+        programFeeValues: programFeeValues[shareIndex],
+        strategistFeeValues: strategistFeeValues[shareIndex],
+        totalAccountFeeValues: totalAccountFeeValues[shareIndex],
+        totalClientFeeValues: totalClientFeeValues[shareIndex],
+        grossAnnualFeeValues: grossAnnualFeeValues[shareIndex],
+        netAnnualFeeValues: netAnnualFeeValues[shareIndex],        
+      };
+    }
+
+    await storeData(data);
+    setShareModal(false);
+  };
   return (
     <div className="estimated-results">
       <div className="headerContainer">
@@ -228,7 +321,7 @@ const EstimatedResults = () => {
                     ></Button>
                     <Button
                       text={"Share"}
-                      //onClick={() => handleShare(index, "individual-scenario")}
+                      onClick={() => handleShare(index, "individual-scenario")}
                       configuresStyles={"result-button action-button"}
                     ></Button>
                     <Button
@@ -539,14 +632,18 @@ const EstimatedResults = () => {
             </p>
             <div className="share-link-section">
               <input type="text" value={link} readOnly />
-              <button className="copy-button">Copy Public Link</button>
+              <button className="copy-button" onClick={handleCopyLink}>
+                Copy Public Link
+              </button>
             </div>
           </div>
           <div className="actions">
             <button className="cancel-button" onClick={handleCloseModal}>
               Cancel
             </button>
-            <button className="agree-button">Agree and Continue</button>
+            <button className="agree-button" onClick={handleAgreeAndContinue}>
+              Agree and Continue
+            </button>
           </div>
         </div>
       </Modal>

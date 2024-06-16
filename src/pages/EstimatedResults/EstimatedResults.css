@@ -308,7 +308,7 @@ span {
   margin-bottom: 50px;
   display: none;
 }
-.section-container {
+.section-container {  
   display: flex;
   gap: 60px;
   flex-wrap: wrap;
@@ -506,7 +506,40 @@ span {
     background: rgba(24, 106, 222, 1);
     color: white;
   }
-  .share-link{
+  .share-link {
     padding-top: 15px;
+  }
+  .copy-button:active {
+    background: rgb(148 154 158);
+  }
+  .cancel-button:active {
+    background: rgb(148 154 158);
+  }
+  .agree-button:active {
+    background: rgb(0 62 149);
+  }
+}
+.confirm-button:active{
+  background: rgb(0 62 149);
+}
+.cancel-button:active {
+  background: rgb(148 154 158);
+}
+
+.result-section-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 100px;
+  .investment-container.active {
+    margin-bottom: 100px;
+  }
+  .table-wrapper{
+    width: fit-content;
+    margin-bottom: 100px;
+  }
+  .field-name{
+    width: 600px;
   }
 }

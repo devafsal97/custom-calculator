@@ -39,9 +39,9 @@
   padding: 0;
   width: 300px;
 }
-.modal-overlay.pdf-modal .modal-close {
+/* .modal-overlay.pdf-modal .modal-close {
   display: none;
-}
+} */
 .modal-overlay.pdf-modal .pdf-modal-heading,
 .modal-overlay.pdf-modal .pdf-modal-desc {
   padding: 5px 20px;

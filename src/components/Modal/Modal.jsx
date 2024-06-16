@@ -7,7 +7,7 @@ const Modal = ({ show, onClose, children,providedName }) => {
   }
 
   return (
-    <div onClick={onClose} className={`modal-overlay ${providedName ? providedName : ""}`}>
+    <div  className={`modal-overlay ${providedName ? providedName : ""}`}>
       <div className="modal">
         <button className="modal-close" onClick={onClose}>
           &times;

@@ -10,20 +10,17 @@ AWS.config.update({
   endpoint: 'http://localhost:8000', // Endpoint for local DynamoDB
 });
 
-console.log('AWS SDK Configuration:', AWS.config);
-console.log('AWS Credentials:', AWS.config.credentials);
-
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = 'Calculations';
 
 // Function to store data in DynamoDB
-export const storeData = async (data) => {
-    console.log(data,"from aws");
+export const storeData = async (data) => {    
   const params = {
     TableName: TABLE_NAME,
     Item: {
-      id: data.name,
+      id: data.id,
       name: data.name,
+      scenarios:data.scenarios,
       fpValues: data.fpValues,
       accountValue: data.accountValue,
       fundExpenses: data.fundExpenses,
@@ -37,6 +34,7 @@ export const storeData = async (data) => {
       totalClientFeeValues: data.totalClientFeeValues,
       grossAnnualFeeValues: data.grossAnnualFeeValues,
       netAnnualFeeValues: data.netAnnualFeeValues,
+      AUAdiscount:data.AUAdiscount,
     },
   };
 
